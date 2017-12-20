@@ -1,5 +1,8 @@
 <resources>
+    <!-- Begin app bar labels -->
     <string name="app_name">NoteGala</string>
+    <string name="sign_in_label">Sign In</string>
+    <!-- End app bar labels -->
 
     <string name="server_client_id">433727588326-p22mnnor8dd50sb1hugoia97jr0v9c9o.apps.googleusercontent.com</string>
 
