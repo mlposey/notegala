@@ -1,0 +1,20 @@
+FROM node:9.3-alpine
+
+RUN apk add --update --no-cache \
+    bash \
+    git
+
+WORKDIR /usr/src/app
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 8080
+ENV NODE_ENV test
+
+RUN git clone https://github.com/vishnubob/wait-for-it.git \
+ && mv wait-for-it/wait-for-it.sh .
+
+ENTRYPOINT /bin/bash wait-for-it.sh $SQL_HOST:5432 -t 0 -- npm test
