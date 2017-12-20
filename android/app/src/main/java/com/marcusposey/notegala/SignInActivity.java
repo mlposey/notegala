@@ -149,4 +149,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(getApplicationContext(), "no connection", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onBackPressed() {}
 }
