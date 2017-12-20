@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_library_books_black_24dp"
+            android:title="@string/home_name" />
+        <item
+            android:id="@+id/nav_starred"
+            android:icon="@drawable/ic_star_black_24dp"
+            android:title="@string/starred_name" />
+        <item
+            android:id="@+id/nav_explore"
+            android:icon="@drawable/ic_explore_black_24dp"
+            android:title="@string/explore_name" />
+    </group>
+
+    <item android:title="@string/notebooks_name">
+        <menu>
+            <item
+                android:id="@+id/nav_misc"
+                android:icon="@drawable/ic_book_black_24dp"
+                android:title="@string/default_name" />
+        </menu>
+    </item>
+
+</menu>

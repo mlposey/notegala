@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">NoteGala</string>
+
+    <!-- Begin navigation drawer items -->
+    <string name="home_name">My Notes</string>
+    <string name="starred_name">Starred</string>
+    <string name="explore_name">Explore</string>
+    <string name="notebooks_name">Notebooks</string>
+    <string name="default_name">Misc.</string>
+    <!-- End navigation drawer items -->
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
