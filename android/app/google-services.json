@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "801862616568",
+    "project_id": "firebase-notegala"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801862616568:android:9be2f567baf7689f",
+        "android_client_info": {
+          "package_name": "com.marcusposey.notegala"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801862616568-n2sbbm6furhuej2ud17k6alrih5626u7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.marcusposey.notegala",
+            "certificate_hash": "948d670c02fb2488e22e70a6962c2dd14c49ff61"
+          }
+        },
+        {
+          "client_id": "801862616568-o6hfhmi9pjvdmr2ch7urrgbmo5s4kph7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjEj60Y6zMoqvLou9hIHn57Pst-VNItV4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
