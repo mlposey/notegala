@@ -4,7 +4,8 @@ CREATE TABLE users (
     id serial PRIMARY KEY,
     created_at timestamptz NOT NULL DEFAULT NOW(),
     last_seen timestamptz NOT NULL DEFAULT NOW(),
-    email text UNIQUE NOT NULL
+    email text UNIQUE NOT NULL,
+    name text NOT NULL
 );
 
 CREATE TABLE tags (
