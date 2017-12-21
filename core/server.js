@@ -1,6 +1,8 @@
 'use strict';
 const express = require('express');
 const AuthMiddleware = require('./service/auth-middleware');
+// Perform initial connection health check.
+require('./service/database');
 
 var app = express();
 app.use('/status', (req, res, next) => {
