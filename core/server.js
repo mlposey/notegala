@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express');
+const graphql = require('express-graphql');
 const AuthMiddleware = require('./service/auth-middleware');
 // Perform initial connection health check.
 require('./service/database');
@@ -24,6 +25,12 @@ if (process.env.NODE_ENV != 'test') {
         next();
     });
 }
+
+app.use('/graphql', graphql({
+    schema:    require('./gql-spec/schema.js').schema,
+    rootValue: require('./gql-spec/resolver.js').root,
+    graphiql:  process.env.NODE_ENV == 'test'
+}));
 
 app.listen(8080);
 console.log('server started');
