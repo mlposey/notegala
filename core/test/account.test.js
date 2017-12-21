@@ -31,12 +31,39 @@ describe('Account', () => {
         it('should throw an Error if the account is missing', async () => {
             let wasThrown = false;
             try {
-                let acct = await Account.fromEmail(userToken.email);
-                console.log(acct);
+                await Account.fromEmail(userToken.email);
             } catch (err) {
                 wasThrown = true;
             }
             wasThrown.should.eql(true);
         });
+    });
+
+    describe('#construct(email, name)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should create the account if the email is unique', async () => {
+            let account =
+                await Account.construct(userToken.email, userToken.name);
+
+            account.email.should.eql(userToken.email);
+            account.name.should.eql(userToken.name);
+
+            let rows = await db.select().table('users');
+            rows.length.should.not.eql(0);
+        });
+
+        it('should throw an Error if the email is taken', async () => {
+            await Account.construct(userToken.email, userToken.name);
+
+            let wasThrown = false;
+            try {
+                await Account.construct(userToken.email, userToken.name);
+            } catch (err) {
+                wasThrown = true;
+            }
+            wasThrown.should.eql(true);
+        });
+        
     });
 });
