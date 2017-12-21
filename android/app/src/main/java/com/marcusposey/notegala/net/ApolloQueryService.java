@@ -1,7 +1,12 @@
 package com.marcusposey.notegala.net;
 
+import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+
+import javax.annotation.Nonnull;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,8 +42,29 @@ public class ApolloQueryService extends QueryService {
     }
 
 
+    /**
+     * Fetches data relating to the user account
+     *
+     * This method corresponds to the 'account' query in the core API's
+     * GraphQL spec.
+     */
     @Override
     public void getAccount(Listener<GetAccountQuery.Account> listener) {
         // TODO: Perform an account query.
+        mApolloClient.query(GetAccountQuery.builder().build()).enqueue(new ApolloCall.Callback<GetAccountQuery.Data>() {
+            @Override
+            public void onResponse(@Nonnull Response<GetAccountQuery.Data> response) {
+                if (response.data() == null) {
+                    listener.onResult(new Exception("missing account data"), null);
+                } else {
+                    listener.onResult(null, response.data().account());
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException e) {
+                listener.onResult(e, null);
+            }
+        });
     }
 }
