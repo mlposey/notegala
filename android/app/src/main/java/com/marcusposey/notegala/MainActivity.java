@@ -74,8 +74,10 @@ public class MainActivity extends AppCompatActivity {
             QueryService.awaitInstance(service -> {
                 service.getAccount((err, acct) -> {
                     if (err != null) {
+                        Log.e(LOG_TAG, err.getMessage());
+
                         runOnUiThread(() -> {
-                            Toast.makeText(getApplicationContext(), "connection error",
+                            Toast.makeText(getApplicationContext(), "network error",
                                     Toast.LENGTH_LONG).show();
                         });
                     } else {
