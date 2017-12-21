@@ -1,0 +1,6 @@
+query GetAccount {
+    account {
+        email
+        name
+    }
+}
