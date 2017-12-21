@@ -8,9 +8,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.MenuItem;
+import android.widget.TextView;
+
+import com.marcusposey.notegala.net.gen.GetAccountQuery;
 
 /** Processes events related to the left navigation drawer */
 public class SidePane extends NavigationView {
+    private MainActivity mParent;
     private DrawerLayout mDrawer;
 
     public SidePane(Context context) {
@@ -27,6 +31,8 @@ public class SidePane extends NavigationView {
 
     /** Attaches the pane to the main activity */
     public void attach(MainActivity activity) {
+        mParent = activity;
+
         Toolbar toolbar = activity.findViewById(R.id.toolbar);
         mDrawer = activity.findViewById(R.id.drawer_layout);
 
@@ -37,6 +43,15 @@ public class SidePane extends NavigationView {
         toggle.syncState();
 
         setNavigationItemSelectedListener(this::onNavigationItemSelected);
+    }
+
+    /** Uses account data to populate pane header information */
+    public void displayUserData(GetAccountQuery.Account account) {
+        TextView displayName = mParent.findViewById(R.id.header_display_name);
+        displayName.setText(account.name());
+
+        TextView email = mParent.findViewById(R.id.header_email);
+        email.setText(account.email());
     }
 
     private boolean onNavigationItemSelected(MenuItem item) {
