@@ -5,7 +5,7 @@ const AuthMiddleware = require('../service/auth-middleware');
 const chai = require('chai');
 const should = chai.should();
 
-describe('Auth', () => {
+describe('AuthMiddleware', () => {
     describe('#storeClaims()', () => {
         it('should require the email claim', () => {
             let auth = new AuthMiddleware('test');
