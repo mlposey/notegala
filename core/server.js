@@ -19,7 +19,7 @@ if (process.env.NODE_ENV != 'test') {
     let auth = new AuthMiddleware('test-client-id');    
     app.use((req, res, next) => {
         auth.storeClaims(req, {
-            email: 'test',
+            email: 'janedoe@example.com',
             name: 'Jane Doe'
         })
         next();
