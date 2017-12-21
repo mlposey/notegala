@@ -10,6 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.marcusposey.notegala.net.ApolloQueryService;
+import com.marcusposey.notegala.net.QueryService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,6 +22,8 @@ public class MainActivity extends AppCompatActivity {
 
     // Request code for starting SignInActivity for a result
     private static final int SIGN_IN_REQUEST = 1;
+
+    private SidePane mSidePane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ((SidePane) findViewById(R.id.nav_view)).attach(this);
+        mSidePane = findViewById(R.id.nav_view);
+        mSidePane.attach(this);
     }
 
     @Override
@@ -59,7 +66,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SIGN_IN_REQUEST && resultCode == Activity.RESULT_OK) {
-            Log.i(LOG_TAG, "id token - " + data.getStringExtra(SignInActivity.TOKEN_EXTRA));
+            String token = data.getStringExtra(SignInActivity.TOKEN_EXTRA);
+            Log.i(LOG_TAG, "id token - " + token);
+
+            new ApolloQueryService(token);
+            // Best stick to the interface.
+            QueryService.awaitInstance(service -> {
+                service.getAccount((err, acct) -> {
+                    if (err != null) {
+                        runOnUiThread(() -> {
+                            Toast.makeText(getApplicationContext(), "connection error",
+                                    Toast.LENGTH_LONG).show();
+                        });
+                    } else {
+                        mSidePane.displayUserData(acct);
+                    }
+                });
+            });
         }
     }
 }
