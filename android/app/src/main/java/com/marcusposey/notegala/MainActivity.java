@@ -73,16 +73,15 @@ public class MainActivity extends AppCompatActivity {
             // Best stick to the interface.
             QueryService.awaitInstance(service -> {
                 service.getAccount((err, acct) -> {
-                    if (err != null) {
-                        Log.e(LOG_TAG, err.getMessage());
-
-                        runOnUiThread(() -> {
-                            Toast.makeText(getApplicationContext(), "network error",
-                                    Toast.LENGTH_LONG).show();
-                        });
-                    } else {
-                        mSidePane.displayUserData(acct);
-                    }
+                    runOnUiThread(() -> {
+                        if (err != null) {
+                            Log.e(LOG_TAG, err.getMessage());
+                                Toast.makeText(getApplicationContext(), "network error",
+                                        Toast.LENGTH_LONG).show();
+                        } else {
+                            mSidePane.displayUserData(acct);
+                        }
+                    });
                 });
             });
         }
