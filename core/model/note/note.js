@@ -29,7 +29,6 @@ module.exports = class Note {
         // TODO: Note#tags()
     }
 
-
     /**
      * Resolves the watchers field
      * @returns {Promise.<Array.<NoteWatcher>>}
