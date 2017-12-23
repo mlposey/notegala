@@ -6,7 +6,10 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
 
@@ -66,6 +69,29 @@ public class ApolloQueryService extends QueryService {
             public void onFailure(@Nonnull ApolloException e) {
                 listener.onResult(e, null);
             }
+        });
+    }
+
+    /**
+     * Fetches all notes owned by the user
+     *
+     * This method corresponds to the 'myNotes' query in the core API's
+     * GraphQL spec
+     */
+    @Override
+    public void getMyNotes(Listener<List<MyNotesQuery.Note>> listener) {
+        mApolloClient.query(MyNotesQuery.builder().build()).enqueue(new ApolloCall.Callback<MyNotesQuery.Data>() {
+            @Override
+            public void onResponse(@Nonnull Response<MyNotesQuery.Data> response) {
+                if (response.data() == null) {
+                    listener.onResult(new Exception("failed to retrieve notes"), null);
+                } else {
+                    listener.onResult(null, response.data().notes());
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
         });
     }
 
