@@ -40,6 +40,7 @@ public class SidePane extends NavigationView {
                 activity, mDrawer, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
+        getMenu().getItem(0).setChecked(true);
         toggle.syncState();
 
         setNavigationItemSelectedListener(this::onNavigationItemSelected);
