@@ -47,7 +47,8 @@ CREATE TABLE note_watchers (
     note_id integer NOT NULL REFERENCES notes(id),
     user_id integer NOT NULL REFERENCES users(id),
     can_edit boolean NOT NULL DEFAULT FALSE,
-    last_edit timestamptz
+    last_edit timestamptz,
+    UNIQUE (note_id, user_id)
 );
 
 CREATE TABLE note_tags (
