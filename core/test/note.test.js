@@ -89,6 +89,16 @@ describe('Note', () => {
             const rows = await db.select('id').table('note_tags');
             rows.length.should.eql(1);
         });
+
+        it('should ignore duplicate tags', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+            await note.addTag(payload.input.tags[0]);
+
+            const rows = await db.select().table('note_tags');
+            rows.length.should.eql(payload.input.tags.length);
+        });
     });
 
     describe('#addWatcher(email, canEdit)', () => {

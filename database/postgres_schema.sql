@@ -53,5 +53,6 @@ CREATE TABLE note_watchers (
 CREATE TABLE note_tags (
     id serial PRIMARY KEY,
     note_id integer NOT NULL REFERENCES notes(id),
-    tag_id integer NOT NULL REFERENCES tags(id)
+    tag_id integer NOT NULL REFERENCES tags(id),
+    UNIQUE (note_id, tag_id)
 );
