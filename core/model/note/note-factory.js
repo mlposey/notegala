@@ -17,42 +17,23 @@ module.exports = class NoteFactory {
     static async construct(email, input) {
         if (!input.body) throw new Error('missing body field in input note');
         
-        let rows = await db('users').select('id').where({email: email});
-        if (rows.length != 1) throw new Error('unrecognized email');
+        const users = await db('users').select('id').where({email: email});
+        if (users.length != 1) throw new Error('unrecognized email');
+        const uid = users[0].id;
 
-        const uid = rows[0].id;
-        rows = await db('notes')
+        const noteRows = await db('notes')
             .insert({title: input.title, body: input.body})
             .returning(['id', 'created_at', 'last_modified', 'is_public',
                        'title', 'body']);
 
-        let row = rows[0];
+        let row = noteRows[0];
         const note = new Note(row.id, row.created_at, row.last_modified,
             row.is_public, row.title, row.body);
 
-        if (input.tags) await this.linkTags(note.id, input.tags);
-        return note;
-    }
-
-    /**
-     * Links tags to a note identified by an id
-     * 
-     * @param {number} noteId 
-     * @param {Array.<string>} tags 
-     * @throws {Error} If noteId does not belong to any note
-     */
-    static async linkTags(noteId, tags) {
-        for (let tag of tags) {
-            await db.raw(`
-                WITH tag AS (
-                    INSERT INTO tags (label) VALUES (?)
-                    ON CONFLICT(label) DO UPDATE
-                    SET label=EXCLUDED.label
-                    RETURNING id
-                )
-                INSERT INTO note_tags (note_id, tag_id)
-                VALUES (?, (SELECT id FROM tag));
-            `, [tag, noteId]);
+        if (input.tags) {
+            for (let tag of input.tags) await note.addTag(tag);
         }
-    }
+        await note.addWatcher(email, true);
+        return note;
+    }    
 };

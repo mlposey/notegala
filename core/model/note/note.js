@@ -13,6 +13,37 @@ module.exports = class Note {
     }
 
     /**
+     * Adds a user to the note's watchers list
+     * @param {string} email The email of the user to add
+     * @param {boolean} canEdit Watchers with edit privileges can modify notes
+     */
+    async addWatcher(email, canEdit) {
+        await db('note_watchers').insert({
+            note_id: this.id,
+            user_id: db('users').select('id').where({ email: email }),
+            can_edit: canEdit
+        });
+    }
+
+    /**
+     * Adds a tag to the note
+     * Tags are single words or phrases that aid in note categorization.
+     * @param {string} tag 
+     */
+    async addTag(tag) {
+        await db.raw(`
+            WITH tag AS (
+                INSERT INTO tags (label) VALUES (?)
+                ON CONFLICT(label) DO UPDATE
+                SET label=EXCLUDED.label
+                RETURNING id
+            )
+            INSERT INTO note_tags (note_id, tag_id)
+            VALUES (?, (SELECT id FROM tag));
+        `, [tag, this.id]);
+    }
+
+    /**
      * Resolves the tags field
      * @returns {Promise.<Array.<string>>}
      */
