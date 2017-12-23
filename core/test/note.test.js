@@ -73,3 +73,28 @@ describe('NoteFactory', () => {
         });
     });
 });
+
+describe('Note', () => {
+    describe('#tags()', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should return an empty array instead of null', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note = await NoteFactory.construct(payload.email, {
+                body: 'test'
+            });
+            const tags = await note.tags();
+            console.log(typeof tags);
+            tags.should.be.a('array').that.has.length(0);
+        });
+
+        it('should return all linked tags', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+            const tags = await note.tags();
+
+            tags.should.be.a('array').that.has.length(payload.input.tags.length);
+        });
+    });
+});
