@@ -11,9 +11,9 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 
-/** Handles a homogeneous collection of notes */
-public class NotesFragment extends Fragment {
-    public NotesFragment() {
+/** Handles notes that the user owns */
+public class MyNotesFragment extends Fragment {
+    public MyNotesFragment() {
         // Required empty public constructor
     }
 

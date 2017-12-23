@@ -60,7 +60,7 @@ public class SidePane extends NavigationView {
     private boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                NotesFragment fragment = new NotesFragment();
+                MyNotesFragment fragment = new MyNotesFragment();
                 mParent.getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, fragment)
