@@ -6,6 +6,15 @@
     android:layout_height="match_parent"
     tools:context="com.marcusposey.notegala.note.MyNotesFragment">
 
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:divider="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_menu"
         android:layout_width="wrap_content"

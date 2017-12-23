@@ -2,7 +2,7 @@ package com.marcusposey.notegala.note;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,7 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.marcusposey.notegala.R;
 
 /** Handles notes that the user owns */
-public class MyNotesFragment extends Fragment {
+public class MyNotesFragment extends ListFragment {
     public MyNotesFragment() {
         // Required empty public constructor
     }
@@ -21,7 +21,7 @@ public class MyNotesFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_notes, container, false);
+        View root = inflater.inflate(R.layout.fragment_my_notes, container, false);
 
         configureFloatingActionButtons(root);
         return root;
