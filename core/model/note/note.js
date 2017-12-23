@@ -1,5 +1,6 @@
 'use strict';
 const { db } = require('../../service/database');
+const NoteWatcher = require('./note-watcher');
 
 /** Represents the Note GraphQL type */
 module.exports = class Note {
@@ -57,9 +58,16 @@ module.exports = class Note {
 
     /**
      * Resolves the watchers field
-     * @returns {Promise.<Array.<NoteWatcher>>}
+     * @returns {Promise.<Array.<NoteWatcher>>} This array is guaranteed to hold
+     *                                          at least one watcher
      */
     async watchers() {
-        // TODO: Note#watchers()
+        return await db('note_watchers')
+            .join('users', 'note_watchers.user_id', 'users.id')
+            .select(['users.id', 'users.name', 'note_watchers.can_edit'])
+            .where({ note_id: this.id })
+            .map(row => {
+                return new NoteWatcher(row.id, row.name, row.can_edit);
+            });
     }
 };
