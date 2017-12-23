@@ -30,7 +30,7 @@ module.exports = class NoteFactory {
         const note = new Note(row.id, row.created_at, row.last_modified,
             row.is_public, row.title, row.body);
 
-        await this.linkTags(note.id, input.tags);
+        if (input.tags) await this.linkTags(note.id, input.tags);
         return note;
     }
 
