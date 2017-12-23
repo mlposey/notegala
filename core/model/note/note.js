@@ -12,16 +12,6 @@ module.exports = class Note {
     }
 
     /**
-     * Constructs a new Note in the persistence layer
-     * @param {string} email The email address of the note creator
-     * @param {Object} input An object that models the NewNoteInput GraphQL type
-     * @returns {Promise.<Note>}
-     */
-    static async construct(email, input) {
-        // TODO: Note#construct(email, input)
-    }
-
-    /**
      * Resolves the tags field
      * @returns {Promise.<Array.<string>>}
      */
