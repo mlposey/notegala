@@ -23,6 +23,7 @@ CREATE TABLE notes (
     created_at timestamptz NOT NULL DEFAULT NOW(),
     last_modified timestamptz NOT NULL DEFAULT NOW(),
     is_public boolean NOT NULL DEFAULT FALSE,
+    owner_id integer NOT NULL REFERENCES users(id),
     title text NOT NULL DEFAULT '',
     title_tsv tsvector,
     body text NOT NULL,
