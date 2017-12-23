@@ -1,5 +1,5 @@
 mutation CreateNote($input: NewNoteInput!) {
-    createNote(input: $input) {
+    note: createNote(input: $input) {
         id
     }
 }
