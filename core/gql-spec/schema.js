@@ -10,6 +10,11 @@ module.exports.schema = buildSchema(`
         # to uniquely identify an account. An account
         # will be created if one does not already exist.
         account: Account!
+
+        # Retrieves all notes owned by the requester
+        #
+        # first - The maximum number of notes to retrieve
+        myNotes(first: Int): [Note!]!
     }
 
     type Mutation {
