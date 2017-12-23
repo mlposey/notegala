@@ -40,10 +40,12 @@ public class SidePane extends NavigationView {
                 activity, mDrawer, toolbar, R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
-        getMenu().getItem(0).setChecked(true);
         toggle.syncState();
 
         setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        MenuItem home = getMenu().getItem(0);
+        home.setChecked(true);
+        onNavigationItemSelected(home);
     }
 
     /** Uses account data to populate pane header information */
@@ -57,10 +59,22 @@ public class SidePane extends NavigationView {
 
     private boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_home: break;
-            case R.id.nav_starred: break;
-            case R.id.nav_explore: break;
-            case R.id.nav_misc: break;
+            case R.id.nav_home:
+                NotesFragment fragment = new NotesFragment();
+                mParent.getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_frame, fragment)
+                        .commit();
+                break;
+            case R.id.nav_starred:
+                // TODO: Load starred notes into content frame.
+                break;
+            case R.id.nav_explore:
+                // TODO: Load explore section into content frame.
+                break;
+            case R.id.nav_misc:
+                // TODO: Load notebooks into the content frame.
+                break;
         }
 
         mDrawer.closeDrawer(GravityCompat.START);
