@@ -31,15 +31,18 @@ public class NoteActivity extends AppCompatActivity {
 
         QueryService.awaitInstance(service -> {
             service.createNote(note, (e, response) -> {
-                if (e != null) {
-                    Log.e(LOG_TAG, e.getMessage());
-                    runOnUiThread(() -> {
+                runOnUiThread(() -> {
+                    if (e != null) {
+                        Log.e(LOG_TAG, e.getMessage());
                         Toast.makeText(getApplicationContext(), "network error",
                                 Toast.LENGTH_LONG).show();
-                    });
-                } else {
-                    finish();
-                }
+                    } else {
+                        Log.i(LOG_TAG, "note created");
+                        Toast.makeText(getApplicationContext(), "note created",
+                                Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
+                });
             });
         });
 
