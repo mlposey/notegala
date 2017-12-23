@@ -1,4 +1,5 @@
 'use strict';
+const { db } = require('../../service/database');
 
 /** Represents the Note GraphQL type */
 module.exports = class Note {
@@ -16,7 +17,11 @@ module.exports = class Note {
      * @returns {Promise.<Array.<string>>}
      */
     async tags() {
-        // TODO: Note#tags()
+        return await db('note_tags')
+            .select('tags.label')
+            .join('tags', 'note_tags.tag_id', 'tags.id')
+            .where({ note_id: this.id })
+            .map(row => { return row.label; });
     }
 
     /**
