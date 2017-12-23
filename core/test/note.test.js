@@ -72,6 +72,41 @@ describe('NoteFactory', () => {
             extras.length.should.be.eql(0);
         });
     });
+
+    describe('#getOwned(email)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should return an empty array instead of null', async () => {
+            await Account.construct(payload.email, payload.name);
+            const notes = await NoteFactory.getOwned(payload.email, null);
+            notes.length.should.eql(0);
+        });
+
+        it('should return only notes that the user owns', async () => {
+            await Account.construct(payload.email, payload.name);
+            await NoteFactory.construct(payload.email, payload.input);
+
+            const user = await Account.construct('test' + payload.email,
+                payload.name);
+            const body = user.email + user.name;
+            await NoteFactory.construct(user.email, {body: body});
+
+            const notes = await NoteFactory.getOwned(user.email, null);
+            notes.length.should.eql(1);
+            notes[0].body.should.eql(body);
+        });
+
+        it('should respect the specified limit', async () => {
+            await Account.construct(payload.email, payload.name);
+            await NoteFactory.construct(payload.email, payload.input);
+            await NoteFactory.construct(payload.email, payload.input);
+            
+            const max = 1;
+            const notes = await NoteFactory.getOwned(payload.email, max);
+            
+            notes.length.should.eql(max);
+        });
+    });
 });
 
 describe('Note', () => {
