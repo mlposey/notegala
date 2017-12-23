@@ -57,6 +57,11 @@ module.exports.schema = buildSchema(`
         # A unique id for the note
         id: ID!
 
+        # The id of the user that owns the note
+        # The note owner can manage the edit permissions
+        # of all watchers.
+        ownerId: ID!
+
         # Timestamp with timezone indicating creation time
         createdAt: String!
 

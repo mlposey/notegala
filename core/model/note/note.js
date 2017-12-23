@@ -4,8 +4,9 @@ const NoteWatcher = require('./note-watcher');
 
 /** Represents the Note GraphQL type */
 module.exports = class Note {
-    constructor(id, createdAt, lastModified, isPublic, title, body) {
+    constructor(id, ownerId, createdAt, lastModified, isPublic, title, body) {
         this.id = id;
+        this.ownerId = ownerId;
         this.createdAt = createdAt;
         this.lastModified = lastModified;
         this.isPublic = isPublic;
