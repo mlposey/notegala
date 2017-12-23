@@ -1,7 +1,7 @@
 'use strict';
 const { GraphQLError } = require('graphql');
 const Account = require('../model/account');
-const Note = require('../model/note/note');
+const NoteFactory = require('../model/note/note-factory');
 
 // Root resolver for all GraphQL queries and mutations
 module.exports.root = {
@@ -19,7 +19,7 @@ module.exports.root = {
     },
     createNote: async (root, {email}, context) => {
         const newNoteInput = context.variableValues.input;
-        try { return await Note.construct(email, newNoteInput); }
+        try { return await NoteFactory.construct(email, newNoteInput); }
         catch (e) { return new GraphQLError(e.message); }
     }
 };
