@@ -22,12 +22,16 @@ module.exports = class NoteFactory {
         const uid = users[0].id;
 
         const noteRows = await db('notes')
-            .insert({title: input.title, body: input.body})
+            .insert({
+                owner_id: uid,
+                title: input.title,
+                body: input.body
+            })
             .returning(['id', 'created_at', 'last_modified', 'is_public',
                        'title', 'body']);
 
         let row = noteRows[0];
-        const note = new Note(row.id, row.created_at, row.last_modified,
+        const note = new Note(row.id, uid, row.created_at, row.last_modified,
             row.is_public, row.title, row.body);
 
         if (input.tags) {
