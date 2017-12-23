@@ -24,7 +24,7 @@
             android:name=".SignInActivity"
             android:label="@string/sign_in_label"
             android:screenOrientation="portrait" />
-        <activity android:name=".NoteActivity" />
+        <activity android:name=".note.NoteActivity" />
     </application>
 
 </manifest>
