@@ -75,6 +75,41 @@ describe('NoteFactory', () => {
 });
 
 describe('Note', () => {
+    describe('#addTag(tag)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should add link the tag and note in the database', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note = await NoteFactory.construct(payload.email, {
+                body: 'test'
+            });
+
+            await note.addTag('test');
+
+            const rows = await db.select('id').table('note_tags');
+            rows.length.should.eql(1);
+        });
+    });
+
+    describe('#addWatcher(email, canEdit)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should add a user to the watchers list', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+
+            const newUserEmail = 'test' + payload.email;
+            const acct = await Account.construct(newUserEmail, payload.name);
+            await note.addWatcher(newUserEmail, false);
+
+            const uids = await db('note_watchers')
+                .select('user_id')
+                .map(row => { return row.user_id; });
+            uids.should.include.members([acct.id]);
+        });
+    });
+
     describe('#tags()', () => {
         beforeEach(async () => await clearDB());
 
