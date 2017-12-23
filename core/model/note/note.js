@@ -32,6 +32,10 @@ module.exports = class Note {
      * @param {string} tag 
      */
     async addTag(tag) {
+        // Regarding the DO NOTHING on the note_tags insert:
+        // note_tags has a unique constraint on (note_id, tag_id) in
+        // order to prevent duplicate tags. Here, we can assume it's
+        // okay to ignore a duplicate insert since the tag is there anyways.
         await db.raw(`
             WITH tag AS (
                 INSERT INTO tags (label) VALUES (?)
@@ -40,7 +44,8 @@ module.exports = class Note {
                 RETURNING id
             )
             INSERT INTO note_tags (note_id, tag_id)
-            VALUES (?, (SELECT id FROM tag));
+            VALUES (?, (SELECT id FROM tag))
+            ON CONFLICT DO NOTHING
         `, [tag, this.id]);
     }
 
