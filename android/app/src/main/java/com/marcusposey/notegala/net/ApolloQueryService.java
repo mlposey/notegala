@@ -52,7 +52,6 @@ public class ApolloQueryService extends QueryService {
      */
     @Override
     public void getAccount(Listener<GetAccountQuery.Account> listener) {
-        // TODO: Perform an account query.
         mApolloClient.query(GetAccountQuery.builder().build()).enqueue(new ApolloCall.Callback<GetAccountQuery.Data>() {
             @Override
             public void onResponse(@Nonnull Response<GetAccountQuery.Data> response) {
