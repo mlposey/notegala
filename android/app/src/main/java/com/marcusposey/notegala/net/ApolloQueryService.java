@@ -4,7 +4,9 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.NewNoteInput;
 
 import javax.annotation.Nonnull;
 
@@ -65,6 +67,30 @@ public class ApolloQueryService extends QueryService {
             public void onFailure(@Nonnull ApolloException e) {
                 listener.onResult(e, null);
             }
+        });
+    }
+
+    /**
+     * Uploads a new note to the server
+     *
+     * This method corresponds to the 'createNote' mutation in the core API's
+     * GraphQL spec.
+     */
+    @Override
+    public void createNote(NewNoteInput input, Listener<CreateNoteMutation.Note> listener) {
+        mApolloClient.mutate(CreateNoteMutation.builder().input(input).build())
+                .enqueue(new ApolloCall.Callback<CreateNoteMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull Response<CreateNoteMutation.Data> response) {
+                if (response.data() == null) {
+                    listener.onResult(new Exception("could not upload note"), null);
+                } else {
+                    listener.onResult(null, response.data().note());
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
         });
     }
 }
