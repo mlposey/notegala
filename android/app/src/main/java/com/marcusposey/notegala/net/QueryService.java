@@ -1,6 +1,8 @@
 package com.marcusposey.notegala.net;
 
+import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.NewNoteInput;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,4 +60,5 @@ public abstract class QueryService {
     }
 
     public abstract void getAccount(Listener<GetAccountQuery.Account> listener);
+    public abstract void createNote(NewNoteInput input, Listener<CreateNoteMutation.Note> listener);
 }
