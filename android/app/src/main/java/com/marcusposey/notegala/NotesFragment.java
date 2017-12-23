@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
@@ -37,6 +38,7 @@ public class NotesFragment extends Fragment {
 
         FloatingActionButton newNotebookButton = rootView.findViewById(R.id.fab_notebook);
         newNotebookButton.setOnClickListener(view -> {
+            Toast.makeText(getContext(), "not yet implemented", Toast.LENGTH_SHORT).show();
             menu.close(true);
         });
     }
