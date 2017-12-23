@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.note.MyNotesFragment;
 
 /** Processes events related to the left navigation drawer */
 public class SidePane extends NavigationView {

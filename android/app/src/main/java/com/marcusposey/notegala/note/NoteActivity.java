@@ -1,4 +1,4 @@
-package com.marcusposey.notegala;
+package com.marcusposey.notegala.note;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
 

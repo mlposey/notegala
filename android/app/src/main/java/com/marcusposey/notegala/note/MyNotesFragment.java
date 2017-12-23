@@ -1,4 +1,4 @@
-package com.marcusposey.notegala;
+package com.marcusposey.notegala.note;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.marcusposey.notegala.R;
 
 /** Handles notes that the user owns */
 public class MyNotesFragment extends Fragment {
