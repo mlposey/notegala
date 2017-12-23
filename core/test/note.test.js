@@ -132,4 +132,17 @@ describe('Note', () => {
             tags.should.be.a('array').that.has.length(payload.input.tags.length);
         });
     });
+
+    describe('#watchers()', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should return at least one watcher', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+            const watchers = await note.watchers();
+
+            watchers.length.should.eql(1);
+        });
+    });
 });
