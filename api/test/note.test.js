@@ -47,6 +47,33 @@ describe('Note', () => {
         });
     });
 
+    describe('#replaceTags(newList)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should replace this old tag list with the new one', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+
+            const newList = ['Brand New Tag'];
+            await note.replaceTags(newList);
+
+            const tags = await note.tags();
+            tags.length.should.eql(1);
+            tags[0].should.eql('Brand New Tag');
+        });
+
+        it('should clear the list if given an empty array', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+            
+            await note.replaceTags([]);
+            const tags = await note.tags();
+            tags.length.should.eql(0);
+        });
+    });
+
     describe('#addWatcher(email, canEdit)', () => {
         beforeEach(async () => await clearDB());
 
