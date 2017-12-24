@@ -43,6 +43,24 @@ CREATE TRIGGER title_body_tsvupdate BEFORE INSERT OR UPDATE
 ON notes FOR EACH ROW EXECUTE PROCEDURE
 tsvector_update_trigger(title_body_tsv, 'pg_catalog.english', title, body);
 
+-- Updates the system state when a note is modified in the notes table
+CREATE FUNCTION on_note_modified() RETURNS trigger AS $$
+BEGIN
+    UPDATE notes
+    SET last_modified = NOW()
+    WHERE id = NEW.id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER note_modified AFTER UPDATE
+ON notes FOR EACH ROW WHEN (OLD.is_public IS DISTINCT FROM NEW.is_public OR
+                            OLD.owner_id  IS DISTINCT FROM NEW.owner_id  OR
+                            OLD.title     IS DISTINCT FROM NEW.title     OR
+                            OLD.body      IS DISTINCT FROM NEW.BODY)
+EXECUTE PROCEDURE on_note_modified();
+
 CREATE TABLE note_watchers (
     id serial PRIMARY KEY,
     note_id integer NOT NULL REFERENCES notes(id),
@@ -58,3 +76,30 @@ CREATE TABLE note_tags (
     tag_id integer NOT NULL REFERENCES tags(id),
     UNIQUE (note_id, tag_id)
 );
+
+-- TODO: There has to be a way to handle insertion/deletion
+-- of note_tags with one function.
+
+-- Updates the system state when a note gets new tags in
+-- the note_tags table
+CREATE FUNCTION on_note_tag_inserted() RETURNS trigger AS $$
+BEGIN
+    UPDATE notes SET last_modified = NOW() WHERE id = NEW.note_id;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Updates the system state when a note loses tags in
+-- the note_tags table
+CREATE FUNCTION on_note_tag_deleted() RETURNS trigger AS $$
+BEGIN
+    UPDATE notes SET last_modified = NOW() WHERE id = OLD.note_id;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER note_tag_inserted AFTER INSERT
+ON note_tags FOR EACH ROW EXECUTE PROCEDURE on_note_tag_inserted();
+
+CREATE TRIGGER note_tag_deleted AFTER DELETE
+ON note_tags FOR EACH ROW EXECUTE PROCEDURE on_note_tag_deleted();
