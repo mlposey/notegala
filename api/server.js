@@ -21,7 +21,7 @@ if (process.env.NODE_ENV != 'test') {
         auth.storeClaims(req, {
             email: 'janedoe@example.com',
             name: 'Jane Doe'
-        })
+        });
         next();
     });
 }
