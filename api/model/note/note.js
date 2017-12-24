@@ -28,7 +28,7 @@ module.exports = class Note {
     }
 
     /**
-     * Adds a tag to the note
+     * Adds a tag to the note if it is not already there
      * Tags are single words or phrases that aid in note categorization.
      * @param {string} tag 
      */
@@ -48,6 +48,21 @@ module.exports = class Note {
             VALUES (?, (SELECT id FROM tag))
             ON CONFLICT DO NOTHING
         `, [tag, this.id]);
+    }
+
+    /**
+     * Replaces the old tag list with a new list
+     * @param {Array.<string>} newList The new tag list. An empty array
+     *                                 will clear all tags.
+     */
+    async replaceTags(newList) {
+        await db('note_tags')
+            .where({note_id: this.id})
+            .del();
+        
+        for (const tag of newList) {
+            await this.addTag(tag);
+        }
     }
 
     /**
