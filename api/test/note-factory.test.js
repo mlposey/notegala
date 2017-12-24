@@ -107,4 +107,28 @@ describe('NoteFactory', () => {
             notes.length.should.eql(max);
         });
     });
+
+    describe('#fromId(id)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should retrieve the note if it exists', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note = 
+                await NoteFactory.construct(payload.email, payload.input);
+
+            const sameOl = await NoteFactory.fromId(note.id);
+            sameOl.body.should.eql(note.body);
+        });
+
+        it('should throw an exception if the note does not exist', async () => {
+            await Account.construct(payload.email, payload.name);            
+            let wasThrown = false;
+            try {
+                await NoteFactory.fromId(0);
+            } catch (err) {
+                wasThrown = true;
+            }
+            wasThrown.should.eql(true);
+        })
+    });
 });

@@ -60,4 +60,22 @@ module.exports = class NoteFactory {
                     row.last_modified, row.is_public, row.title, row.body);
             });
     }
+
+    /**
+     * Gets a Note from the persistence layer
+     * @param {number} id The table id of the note
+     * @throws {Error} If the id is not recognized
+     */
+    static async fromId(id) {
+        const rows = await db('notes')
+            .select(['owner_id', 'created_at', 'last_modified', 'is_public',
+                     'title', 'body'])
+            .where({id: id});
+
+        if (rows.length == 0) throw new Error('note not found');
+        const row = rows[0];
+
+        return new Note(id, row.owner_id, row.created_at, row.last_modified,
+            row.is_public, row.title, row.body);
+    }
 };
