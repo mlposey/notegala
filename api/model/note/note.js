@@ -66,6 +66,33 @@ module.exports = class Note {
     }
 
     /**
+     * Edits the contents of a note
+     * 
+     * @param {string} title The new title or null to keep the existing one     
+     * @param {string} body The new body or null to keep the existing one
+     * @param {Array.<string>} tags The new tags or null to keep the existing ones
+     */
+    async editNote(title, body, tags) {
+        if (title) {
+            await db('notes').update({title: title}).where({id: this.id});
+            this.title = title;
+        }
+        if (body) {
+            await db('notes').update({body: body}).where({id: this.id});
+            this.body = body;
+        }
+        if (tags) {
+            await this.replaceTags(tags);
+        }
+
+        const rows = await db('notes')
+            .select('last_modified')
+            .where({id: this.id});
+        // Database triggers should have changed the value.
+        this.lastModified = rows[0].last_modified;
+    }
+
+    /**
      * Resolves the tags field
      * @returns {Promise.<Array.<string>>}
      */
