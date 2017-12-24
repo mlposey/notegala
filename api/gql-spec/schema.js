@@ -18,9 +18,13 @@ module.exports.schema = buildSchema(`
     }
 
     type Mutation {
-        # Creates a new note, returning the full
-        # definition.
+        # Creates a new note and returns its
+        # full definition.
         createNote(input: NewNoteInput!): Note!
+
+        # Modifies the contents of an existing note
+        # and returns its new representation
+        editNote(input: EditNoteInput!): Note!
     }
 
     # Describes a user account
@@ -54,6 +58,26 @@ module.exports.schema = buildSchema(`
 
         # Tags used to categorize the note
         # Notes can be tagless.
+        tags: [String!]
+    }
+
+    # Used to change the content of an existing note
+    input EditNoteInput {
+        # The id of the existing note to change
+        id: ID!
+
+        # The new note title
+        # If null, the old value is kept.
+        # If an empty string, the title is erased.
+        title: String
+
+        # The new note body
+        # If null or empty, the old value is kept
+        body: String
+
+        # The new note tag list
+        # If null, the old value is kept.
+        # If empty, the old tags are removed.
         tags: [String!]
     }
 
