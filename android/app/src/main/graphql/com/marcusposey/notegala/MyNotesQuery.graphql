@@ -1,6 +1,7 @@
 query MyNotes {
     notes: myNotes {
         id
+        lastModified
         title
         body
         tags

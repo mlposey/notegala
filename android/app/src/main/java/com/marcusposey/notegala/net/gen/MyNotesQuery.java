@@ -24,6 +24,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
       + "  notes: myNotes {\n"
       + "    __typename\n"
       + "    id\n"
+      + "    lastModified\n"
       + "    title\n"
       + "    body\n"
       + "    tags\n"
@@ -47,7 +48,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
   @Override
   public String operationId() {
-    return "c07ac154b5bb6f877c05ab7eb223264191bd7871f2011f4ce863630a5efbd280";
+    return "b70aa39b05101a46b91e980bf970217f22a52b3c4b87c6c4e5e3778f56d45230";
   }
 
   @Override
@@ -182,6 +183,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
     static final ResponseField[] $responseFields = {
       ResponseField.forString("__typename", "__typename", null, false, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forCustomType("id", "id", null, false, CustomType.ID, Collections.<ResponseField.Condition>emptyList()),
+      ResponseField.forString("lastModified", "lastModified", null, false, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forString("title", "title", null, true, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forString("body", "body", null, false, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forList("tags", "tags", null, false, Collections.<ResponseField.Condition>emptyList())
@@ -190,6 +192,8 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
     final @Nonnull String __typename;
 
     final @Nonnull String id;
+
+    final @Nonnull String lastModified;
 
     final @Nullable String title;
 
@@ -203,10 +207,11 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
     private volatile boolean $hashCodeMemoized;
 
-    public Note(@Nonnull String __typename, @Nonnull String id, @Nullable String title,
-        @Nonnull String body, @Nonnull List<String> tags) {
+    public Note(@Nonnull String __typename, @Nonnull String id, @Nonnull String lastModified,
+        @Nullable String title, @Nonnull String body, @Nonnull List<String> tags) {
       this.__typename = Utils.checkNotNull(__typename, "__typename == null");
       this.id = Utils.checkNotNull(id, "id == null");
+      this.lastModified = Utils.checkNotNull(lastModified, "lastModified == null");
       this.title = title;
       this.body = Utils.checkNotNull(body, "body == null");
       this.tags = Utils.checkNotNull(tags, "tags == null");
@@ -218,6 +223,10 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
     public @Nonnull String id() {
       return this.id;
+    }
+
+    public @Nonnull String lastModified() {
+      return this.lastModified;
     }
 
     public @Nullable String title() {
@@ -238,9 +247,10 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
         public void marshal(ResponseWriter writer) {
           writer.writeString($responseFields[0], __typename);
           writer.writeCustom((ResponseField.CustomTypeField) $responseFields[1], id);
-          writer.writeString($responseFields[2], title);
-          writer.writeString($responseFields[3], body);
-          writer.writeList($responseFields[4], tags, new ResponseWriter.ListWriter() {
+          writer.writeString($responseFields[2], lastModified);
+          writer.writeString($responseFields[3], title);
+          writer.writeString($responseFields[4], body);
+          writer.writeList($responseFields[5], tags, new ResponseWriter.ListWriter() {
             @Override
             public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
               listItemWriter.writeString(value);
@@ -256,6 +266,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
         $toString = "Note{"
           + "__typename=" + __typename + ", "
           + "id=" + id + ", "
+          + "lastModified=" + lastModified + ", "
           + "title=" + title + ", "
           + "body=" + body + ", "
           + "tags=" + tags
@@ -273,6 +284,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
         Note that = (Note) o;
         return this.__typename.equals(that.__typename)
          && this.id.equals(that.id)
+         && this.lastModified.equals(that.lastModified)
          && ((this.title == null) ? (that.title == null) : this.title.equals(that.title))
          && this.body.equals(that.body)
          && this.tags.equals(that.tags);
@@ -288,6 +300,8 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
         h ^= __typename.hashCode();
         h *= 1000003;
         h ^= id.hashCode();
+        h *= 1000003;
+        h ^= lastModified.hashCode();
         h *= 1000003;
         h ^= (title == null) ? 0 : title.hashCode();
         h *= 1000003;
@@ -305,15 +319,16 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
       public Note map(ResponseReader reader) {
         final String __typename = reader.readString($responseFields[0]);
         final String id = reader.readCustomType((ResponseField.CustomTypeField) $responseFields[1]);
-        final String title = reader.readString($responseFields[2]);
-        final String body = reader.readString($responseFields[3]);
-        final List<String> tags = reader.readList($responseFields[4], new ResponseReader.ListReader<String>() {
+        final String lastModified = reader.readString($responseFields[2]);
+        final String title = reader.readString($responseFields[3]);
+        final String body = reader.readString($responseFields[4]);
+        final List<String> tags = reader.readList($responseFields[5], new ResponseReader.ListReader<String>() {
           @Override
           public String read(ResponseReader.ListItemReader listItemReader) {
             return listItemReader.readString();
           }
         });
-        return new Note(__typename, id, title, body, tags);
+        return new Note(__typename, id, lastModified, title, body, tags);
       }
     }
   }
