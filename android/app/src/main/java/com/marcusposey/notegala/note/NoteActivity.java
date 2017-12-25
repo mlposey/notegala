@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
+import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
 
 /**
@@ -15,9 +16,10 @@ import com.marcusposey.notegala.net.gen.NewNoteInput;
  *
  * This activity can be used to edit and create notes. If editing
  * a note, the intent used to create this activity should
- * be supplied at least one of the following extras:
- *      TITLE_EXTRA
- *      BODY_EXTRA
+ * be supplied these extras:
+ *      ID_EXTRA      - String extra  - required
+ *      TITLE_EXTRA   - String extra  - optional
+ *      BODY_EXTRA    - String extra  - optional
  */
 public class NoteActivity extends AppCompatActivity {
 
@@ -31,6 +33,8 @@ public class NoteActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = NoteActivity.class.getSimpleName();
 
+    // Extra key for receiving a note's id from another fragment or activity
+    public static final String ID_EXTRA = "ID_EXTRA";
     // Extra key for receiving a title from another fragment or activity
     public static final String TITLE_EXTRA = "TITLE_EXTRA";
     // Extra key for receiving a body from another fragment or activity
@@ -52,15 +56,14 @@ public class NoteActivity extends AppCompatActivity {
      * if an existing one is being edited.
      */
     private void establishContext() {
-        String titleExtra = getIntent().getStringExtra(TITLE_EXTRA);
-        String bodyExtra = getIntent().getStringExtra(BODY_EXTRA);
-        mCtx = (titleExtra == null && bodyExtra == null) ? Context.CREATE : Context.UPDATE;
+        String idExtra = getIntent().getStringExtra(ID_EXTRA);
+        mCtx = (idExtra == null) ? Context.CREATE : Context.UPDATE;
 
         if (mCtx == Context.UPDATE) {
             EditText title = findViewById(R.id.edit_note_title);
-            title.setText(titleExtra);
+            title.setText(getIntent().getStringExtra(TITLE_EXTRA));
             EditText body = findViewById(R.id.edit_note_body);
-            body.setText(bodyExtra);
+            body.setText(getIntent().getStringExtra(BODY_EXTRA));
         }
     }
 
@@ -116,6 +119,27 @@ public class NoteActivity extends AppCompatActivity {
 
     /** Publishes the updated version of a note to the API */
     private void updateNote(NewNoteInput note, QueryService service) {
-        // TODO: NoteActivity.updateNote
+        // TODO: Do nothing if they didn't change the note.
+        String noteId = getIntent().getStringExtra(ID_EXTRA);
+        EditNoteInput.Builder builder = EditNoteInput.builder().id(noteId);
+
+        if (note.title() != null) builder = builder.title(note.title());
+        if (note.body() != null) builder = builder.body(note.body());
+
+        service.editNote(builder.build(), (e, response) -> {
+            runOnUiThread(() -> {
+                if (e != null) {
+                    Log.e(LOG_TAG, e.getMessage());
+                    Toast.makeText(getApplicationContext(), "network error",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Log.i(LOG_TAG, "note updated");
+                    Toast.makeText(getApplicationContext(), "note updated",
+                            Toast.LENGTH_SHORT).show();
+
+                    finish();
+                }
+            });
+        });
     }
 }
