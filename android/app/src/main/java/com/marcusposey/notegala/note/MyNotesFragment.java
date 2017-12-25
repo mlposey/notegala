@@ -21,6 +21,13 @@ import java.util.List;
 public class MyNotesFragment extends ListFragment {
     private static final String LOG_TAG = MyNotesFragment.class.getSimpleName();
 
+    // Initial app startup loads this fragment twice. We don't
+    // want to perform the network call the second time, i.e.,
+    // when this equals 1;
+    private static int sLoadCount = 0;
+
+    private MyNoteAdapter myNoteAdapter;
+
     public MyNotesFragment() {
         // Required empty public constructor
     }
@@ -31,7 +38,6 @@ public class MyNotesFragment extends ListFragment {
         View root = inflater.inflate(R.layout.fragment_my_notes, container, false);
 
         configureFloatingActionButtons(root);
-        QueryService.awaitInstance(service -> service.getMyNotes(this::onNotesNetworkResponse));
         return root;
     }
 
@@ -62,9 +68,23 @@ public class MyNotesFragment extends ListFragment {
                 Toast.makeText(getActivity(), "network error", Toast.LENGTH_LONG).show();
             } else {
                 Log.i(LOG_TAG, String.format("fetched %d notes", notes.size()));
-                setListAdapter(new MyNoteAdapter(getActivity(), getFragmentManager(),
-                        notes.toArray(new MyNotesQuery.Note[0])));
+
+                MyNotesQuery.Note[] aNotes = notes.toArray(new MyNotesQuery.Note[0]);
+                if (myNoteAdapter == null) {
+                    myNoteAdapter = new MyNoteAdapter(getActivity(), getFragmentManager(), aNotes);
+                    setListAdapter(myNoteAdapter);
+                } else {
+                    myNoteAdapter.refresh(aNotes);
+                }
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (sLoadCount++ != 1) {
+            QueryService.awaitInstance(service -> service.getMyNotes(this::onNotesNetworkResponse));
+        }
     }
 }
