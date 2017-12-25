@@ -23,6 +23,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
   public static final String OPERATION_DEFINITION = "query MyNotes {\n"
       + "  notes: myNotes {\n"
       + "    __typename\n"
+      + "    id\n"
       + "    title\n"
       + "    body\n"
       + "    tags\n"
@@ -46,7 +47,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
   @Override
   public String operationId() {
-    return "2008210837cff5b998d35dd0fdaa704cf4fb8eb2b60bdedb26a8e11dd7120295";
+    return "c07ac154b5bb6f877c05ab7eb223264191bd7871f2011f4ce863630a5efbd280";
   }
 
   @Override
@@ -180,12 +181,15 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
   public static class Note {
     static final ResponseField[] $responseFields = {
       ResponseField.forString("__typename", "__typename", null, false, Collections.<ResponseField.Condition>emptyList()),
+      ResponseField.forCustomType("id", "id", null, false, CustomType.ID, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forString("title", "title", null, true, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forString("body", "body", null, false, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forList("tags", "tags", null, false, Collections.<ResponseField.Condition>emptyList())
     };
 
     final @Nonnull String __typename;
+
+    final @Nonnull String id;
 
     final @Nullable String title;
 
@@ -199,9 +203,10 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
     private volatile boolean $hashCodeMemoized;
 
-    public Note(@Nonnull String __typename, @Nullable String title, @Nonnull String body,
-        @Nonnull List<String> tags) {
+    public Note(@Nonnull String __typename, @Nonnull String id, @Nullable String title,
+        @Nonnull String body, @Nonnull List<String> tags) {
       this.__typename = Utils.checkNotNull(__typename, "__typename == null");
+      this.id = Utils.checkNotNull(id, "id == null");
       this.title = title;
       this.body = Utils.checkNotNull(body, "body == null");
       this.tags = Utils.checkNotNull(tags, "tags == null");
@@ -209,6 +214,10 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
     public @Nonnull String __typename() {
       return this.__typename;
+    }
+
+    public @Nonnull String id() {
+      return this.id;
     }
 
     public @Nullable String title() {
@@ -228,9 +237,10 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
         @Override
         public void marshal(ResponseWriter writer) {
           writer.writeString($responseFields[0], __typename);
-          writer.writeString($responseFields[1], title);
-          writer.writeString($responseFields[2], body);
-          writer.writeList($responseFields[3], tags, new ResponseWriter.ListWriter() {
+          writer.writeCustom((ResponseField.CustomTypeField) $responseFields[1], id);
+          writer.writeString($responseFields[2], title);
+          writer.writeString($responseFields[3], body);
+          writer.writeList($responseFields[4], tags, new ResponseWriter.ListWriter() {
             @Override
             public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
               listItemWriter.writeString(value);
@@ -245,6 +255,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
       if ($toString == null) {
         $toString = "Note{"
           + "__typename=" + __typename + ", "
+          + "id=" + id + ", "
           + "title=" + title + ", "
           + "body=" + body + ", "
           + "tags=" + tags
@@ -261,6 +272,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
       if (o instanceof Note) {
         Note that = (Note) o;
         return this.__typename.equals(that.__typename)
+         && this.id.equals(that.id)
          && ((this.title == null) ? (that.title == null) : this.title.equals(that.title))
          && this.body.equals(that.body)
          && this.tags.equals(that.tags);
@@ -274,6 +286,8 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
         int h = 1;
         h *= 1000003;
         h ^= __typename.hashCode();
+        h *= 1000003;
+        h ^= id.hashCode();
         h *= 1000003;
         h ^= (title == null) ? 0 : title.hashCode();
         h *= 1000003;
@@ -290,15 +304,16 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
       @Override
       public Note map(ResponseReader reader) {
         final String __typename = reader.readString($responseFields[0]);
-        final String title = reader.readString($responseFields[1]);
-        final String body = reader.readString($responseFields[2]);
-        final List<String> tags = reader.readList($responseFields[3], new ResponseReader.ListReader<String>() {
+        final String id = reader.readCustomType((ResponseField.CustomTypeField) $responseFields[1]);
+        final String title = reader.readString($responseFields[2]);
+        final String body = reader.readString($responseFields[3]);
+        final List<String> tags = reader.readList($responseFields[4], new ResponseReader.ListReader<String>() {
           @Override
           public String read(ResponseReader.ListItemReader listItemReader) {
             return listItemReader.readString();
           }
         });
-        return new Note(__typename, title, body, tags);
+        return new Note(__typename, id, title, body, tags);
       }
     }
   }

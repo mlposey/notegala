@@ -1,5 +1,6 @@
 query MyNotes {
     notes: myNotes {
+        id
         title
         body
         tags
