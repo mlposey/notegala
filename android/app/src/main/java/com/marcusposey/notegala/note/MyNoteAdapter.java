@@ -24,9 +24,6 @@ public class MyNoteAdapter extends ArrayAdapter<MyNotesQuery.Note> {
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
-        // Show new notes first.
-        pos = mNotes.length - 1 - pos;
-
         LayoutInflater inflater =
                 (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.content_my_note, parent, false);
