@@ -93,6 +93,7 @@ public class MyNotesFragment extends ListFragment {
         Intent intent = new Intent(getContext(), NoteActivity.class);
         intent.putExtra(NoteActivity.TITLE_EXTRA, note.title());
         intent.putExtra(NoteActivity.BODY_EXTRA, note.body());
+        intent.putExtra(NoteActivity.ID_EXTRA, note.id());
         startActivity(intent);
     }
 }
