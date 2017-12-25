@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
+import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
 
 /** Handles the note creation interface and operations */
@@ -26,26 +27,15 @@ public class NoteActivity extends AppCompatActivity {
         NewNoteInput note = serializeContent();
         if (note == null) {
             Log.i(LOG_TAG, "skipped upload of note with empty body");
-            super.onBackPressed();
-            return;
-        }
-
-        QueryService.awaitInstance(service -> {
-            service.createNote(note, (e, response) -> {
-                runOnUiThread(() -> {
-                    if (e != null) {
-                        Log.e(LOG_TAG, e.getMessage());
-                        Toast.makeText(getApplicationContext(), "network error",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Log.i(LOG_TAG, "note created");
-                        Toast.makeText(getApplicationContext(), "note created",
-                                Toast.LENGTH_SHORT).show();
-                        finish();
-                    }
+        } else {
+            QueryService.awaitInstance(service -> {
+                service.createNote(note, (e, response) -> {
+                    runOnUiThread(() -> {
+                        onNetworkResponse(e, response);
+                    });
                 });
             });
-        });
+        }
 
         super.onBackPressed();
     }
@@ -58,5 +48,19 @@ public class NoteActivity extends AppCompatActivity {
         // TODO: Serialize note tags.
 
         return NewNoteInput.builder().title(title).body(body).build();
+    }
+
+    private void onNetworkResponse(Exception e, CreateNoteMutation.Note note) {
+        if (e != null) {
+            Log.e(LOG_TAG, e.getMessage());
+            Toast.makeText(getApplicationContext(), "network error",
+                    Toast.LENGTH_LONG).show();
+        } else {
+            Log.i(LOG_TAG, "note created");
+            Toast.makeText(getApplicationContext(), "note created",
+                    Toast.LENGTH_SHORT).show();
+
+            finish();
+        }
     }
 }
