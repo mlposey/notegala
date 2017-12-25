@@ -5,6 +5,8 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.marcusposey.notegala.net.gen.CreateNoteMutation;
+import com.marcusposey.notegala.net.gen.EditNoteInput;
+import com.marcusposey.notegala.net.gen.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
@@ -109,6 +111,30 @@ public class ApolloQueryService extends QueryService {
             public void onResponse(@Nonnull Response<CreateNoteMutation.Data> response) {
                 if (response.data() == null) {
                     listener.onResult(new Exception("could not upload note"), null);
+                } else {
+                    listener.onResult(null, response.data().note());
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+        });
+    }
+
+    /**
+     * Uploads modified note content to the server
+     *
+     * This method corresponds to the 'editNote' mutation in the core API's
+     * GraphQL spec.
+     */
+    @Override
+    public void editNote(EditNoteInput input, Listener<EditNoteMutation.Note> listener) {
+        mApolloClient.mutate(EditNoteMutation.builder().input(input).build())
+                .enqueue(new ApolloCall.Callback<EditNoteMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull Response<EditNoteMutation.Data> response) {
+                if (response.data() == null) {
+                    listener.onResult(new Exception("could not upload edited note"), null);
                 } else {
                     listener.onResult(null, response.data().note());
                 }
