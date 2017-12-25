@@ -14,13 +14,11 @@ import com.marcusposey.notegala.net.gen.MyNotesQuery;
 /** Maps owned notes to cards that display summaries of content */
 public class MyNoteAdapter extends ArrayAdapter<MyNotesQuery.Note> {
     private final Context mContext;
-    private final FragmentManager mFragmentManager;
     private MyNotesQuery.Note[] mNotes;
 
     public MyNoteAdapter(Context context, FragmentManager manager, MyNotesQuery.Note[] notes) {
         super(context, -1, notes);
         mContext = context;
-        mFragmentManager = manager;
         mNotes = notes;
     }
 
