@@ -15,7 +15,7 @@ import com.marcusposey.notegala.net.gen.MyNotesQuery;
 public class MyNoteAdapter extends ArrayAdapter<MyNotesQuery.Note> {
     private final Context mContext;
     private final FragmentManager mFragmentManager;
-    private final MyNotesQuery.Note[] mNotes;
+    private MyNotesQuery.Note[] mNotes;
 
     public MyNoteAdapter(Context context, FragmentManager manager, MyNotesQuery.Note[] notes) {
         super(context, -1, notes);
@@ -37,5 +37,11 @@ public class MyNoteAdapter extends ArrayAdapter<MyNotesQuery.Note> {
         ((TextView) row.findViewById(R.id.my_note_body)).setText(mNotes[pos].body());
 
         return row;
+    }
+
+    /** Repopulates the adapter with a new set of notes */
+    public void refresh(MyNotesQuery.Note[] notes) {
+        mNotes = notes;
+        notifyDataSetChanged();
     }
 }
