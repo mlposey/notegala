@@ -56,6 +56,12 @@ module.exports = class Note {
      *                                 will clear all tags.
      */
     async replaceTags(newList) {
+        const oldList = await this.tags();
+        if (oldList.length == newList.length &&
+            oldList.filter(tag => !newList.includes(tag)).length == 0) {
+            return;
+        }
+
         await db('note_tags')
             .where({note_id: this.id})
             .del();
