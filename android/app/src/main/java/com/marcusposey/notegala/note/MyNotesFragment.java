@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -25,8 +26,6 @@ public class MyNotesFragment extends ListFragment {
     // want to perform the network call the second time, i.e.,
     // when this equals 1;
     private static int sLoadCount = 0;
-
-    private MyNoteAdapter myNoteAdapter;
 
     public MyNotesFragment() {
         // Required empty public constructor
@@ -70,12 +69,9 @@ public class MyNotesFragment extends ListFragment {
                 Log.i(LOG_TAG, String.format("fetched %d notes", notes.size()));
 
                 MyNotesQuery.Note[] aNotes = notes.toArray(new MyNotesQuery.Note[0]);
-                if (myNoteAdapter == null) {
-                    myNoteAdapter = new MyNoteAdapter(getActivity(), getFragmentManager(), aNotes);
-                    setListAdapter(myNoteAdapter);
-                } else {
-                    myNoteAdapter.refresh(aNotes);
-                }
+                MyNoteAdapter adapter = new MyNoteAdapter(getActivity(), getFragmentManager(), aNotes);
+                getListView().setOnItemClickListener(this::onNoteClicked);
+                setListAdapter(adapter);
             }
         });
     }
@@ -86,5 +82,17 @@ public class MyNotesFragment extends ListFragment {
         if (sLoadCount++ != 1) {
             QueryService.awaitInstance(service -> service.getMyNotes(this::onNotesNetworkResponse));
         }
+    }
+
+    /** Handles clicks/presses of the note cards in the list */
+    private void onNoteClicked(AdapterView<?> parent, View view, int position, long id) {
+        // Instead of reversing the array, we just access items in reverse.
+        position = parent.getCount() - position - 1;
+        MyNotesQuery.Note note = (MyNotesQuery.Note) parent.getItemAtPosition(position);
+
+        Intent intent = new Intent(getContext(), NoteActivity.class);
+        intent.putExtra(NoteActivity.TITLE_EXTRA, note.title());
+        intent.putExtra(NoteActivity.BODY_EXTRA, note.body());
+        startActivity(intent);
     }
 }

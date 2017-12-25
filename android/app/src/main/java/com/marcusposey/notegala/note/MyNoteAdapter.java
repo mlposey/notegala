@@ -36,10 +36,4 @@ public class MyNoteAdapter extends ArrayAdapter<MyNotesQuery.Note> {
 
         return row;
     }
-
-    /** Repopulates the adapter with a new set of notes */
-    public void refresh(MyNotesQuery.Note[] notes) {
-        mNotes = notes;
-        notifyDataSetChanged();
-    }
 }
