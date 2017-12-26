@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.marcusposey.notegala.R;
@@ -28,9 +29,34 @@ public class MyNoteAdapter extends ArrayAdapter<MyNotesQuery.Note> {
                 (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.content_my_note, parent, false);
 
-        ((TextView) row.findViewById(R.id.my_note_title)).setText(mNotes[pos].title());
-        ((TextView) row.findViewById(R.id.my_note_body)).setText(mNotes[pos].body());
+        MyNotesQuery.Note note = mNotes[pos];
+        TextView body = row.findViewById(R.id.my_note_body);
+        body.setText(note.body());
+
+        TextView title = row.findViewById(R.id.my_note_title);
+        if (note.title() == null || note.title().isEmpty()) {
+            ((ViewGroup) title.getParent()).removeView(title);
+            expandTopBottomMargins(body, 30);
+        } else {
+            title.setText(note.title());
+        }
 
         return row;
+    }
+
+    /**
+     * Expands the top and bottom margins of the view
+     * @param amount The margin space (in dp) to add to the current state
+     */
+    private void expandTopBottomMargins(View view, int amount) {
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+
+        params.setMargins(
+                params.leftMargin,
+                params.topMargin + amount,
+                params.rightMargin,
+                params.bottomMargin + amount
+        );
+        view.setLayoutParams(params);
     }
 }
