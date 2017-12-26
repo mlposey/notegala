@@ -43,6 +43,11 @@ public class NoteActivity extends AppCompatActivity {
     // The context of this activity
     private Context mCtx;
 
+    // The original title of the note when the activity was created
+    private String mOriginalTitle;
+    // The original body of the note when the activity was created
+    private String mOriginalBody;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +67,11 @@ public class NoteActivity extends AppCompatActivity {
         if (mCtx == Context.UPDATE) {
             EditText title = findViewById(R.id.edit_note_title);
             title.setText(getIntent().getStringExtra(TITLE_EXTRA));
+            mOriginalTitle = title.getText().toString();
+
             EditText body = findViewById(R.id.edit_note_body);
             body.setText(getIntent().getStringExtra(BODY_EXTRA));
+            mOriginalBody = body.getText().toString();
         }
     }
 
@@ -119,12 +127,15 @@ public class NoteActivity extends AppCompatActivity {
 
     /** Publishes the updated version of a note to the API */
     private void updateNote(NewNoteInput note, QueryService service) {
-        // TODO: Do nothing if they didn't change the note.
-        String noteId = getIntent().getStringExtra(ID_EXTRA);
-        EditNoteInput.Builder builder = EditNoteInput.builder().id(noteId);
+        if (note.body().equals(mOriginalBody) && note.title().equals(mOriginalTitle)) {
+            Log.i(LOG_TAG, "skipped update of unchanged note");
+            return;
+        }
 
-        if (note.title() != null) builder = builder.title(note.title());
-        if (note.body() != null) builder = builder.body(note.body());
+        EditNoteInput.Builder builder = EditNoteInput.builder()
+                .id(getIntent().getStringExtra(ID_EXTRA))
+                .title(note.title())
+                .body(note.body());
 
         service.editNote(builder.build(), (e, response) -> {
             runOnUiThread(() -> {
