@@ -80,7 +80,12 @@ public class MyNotesFragment extends ListFragment {
         });
     }
 
-    /** Handles the network response for a notes request */
+    /**
+     * Handles the network response for a notes request
+     *
+     * Successful requests result in the note list being updated
+     * to reflect the current global state of the user's notes.
+     */
     private void onNotesNetworkResponse(Exception e, List<MyNotesQuery.Note> notes) {
         getActivity().runOnUiThread(() -> {
             Log.i(LOG_TAG, "got notes network response");
@@ -100,6 +105,7 @@ public class MyNotesFragment extends ListFragment {
         });
     }
 
+    /** Refreshes the note list with updated content from the server */
     @Override
     public void onResume() {
         super.onResume();
