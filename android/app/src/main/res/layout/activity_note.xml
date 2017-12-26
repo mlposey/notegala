@@ -7,27 +7,22 @@
     tools:context="com.marcusposey.notegala.note.NoteActivity"
     tools:layout_editor_absoluteY="81dp">
 
-    <EditText
+
+    <android.support.design.widget.TextInputEditText
         android:id="@+id/edit_note_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
-        android:ems="10"
-        android:gravity="center"
-        android:inputType="text"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:text="A Wonderful Title"
+        android:background="@null"
+        android:hint="@string/default_note_title"
         android:textAlignment="center"
-        android:textSize="30sp"
-        android:textStyle="italic"
-        android:textColorHighlight="#cfcfcf"
+        android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 
     <EditText
         android:id="@+id/edit_note_body"
@@ -42,8 +37,8 @@
         android:ems="10"
         android:gravity="top"
         android:inputType="textMultiLine"
-        android:textSize="20sp"
         android:textColorHighlight="@android:color/darker_gray"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
