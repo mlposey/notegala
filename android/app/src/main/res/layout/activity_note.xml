@@ -38,7 +38,7 @@
         android:gravity="top"
         android:inputType="textMultiLine"
         android:textColorHighlight="@android:color/darker_gray"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
