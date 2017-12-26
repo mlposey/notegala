@@ -13,7 +13,12 @@ import android.widget.TextView;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.note.MyNotesFragment;
 
-/** Processes events related to the left navigation drawer */
+/**
+ * Processes events related to the left navigation drawer
+ *
+ * The drawer acts as an entry-point to major application components
+ * such as personal notes, notebooks, or the explore feature.
+ */
 public class SidePane extends NavigationView {
     private MainActivity mParent;
     private DrawerLayout mDrawer;
@@ -58,6 +63,7 @@ public class SidePane extends NavigationView {
         email.setText(account.email());
     }
 
+    /** Loads a component's state into the main content frame once pressed */
     private boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
