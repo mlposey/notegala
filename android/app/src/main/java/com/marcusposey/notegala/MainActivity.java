@@ -15,16 +15,19 @@ import android.widget.Toast;
 import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
 
+/** Manages the root app state and initial Google token acquisition through SignInActivity */
 public class MainActivity extends AppCompatActivity {
-
+    
     // Tag used for logging with android.util.Log
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     // Request code for starting SignInActivity for a result
     private static final int SIGN_IN_REQUEST = 1;
 
+    // The side navigation bar that manages major app components
     private SidePane mSidePane;
 
+    /** Configures the side pane and starts an asynchronous SignInActivity request */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         mSidePane.attach(this);
     }
 
+    /** Closes the side pane if it is open */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -63,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Uses the token result from SignInActivity to build a QueryService used to
+     * request the user's account information.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SIGN_IN_REQUEST && resultCode == Activity.RESULT_OK) {
