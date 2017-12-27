@@ -29,6 +29,7 @@ pipeline {
             }
         }
         stage('Build Deployment Images') {
+            when { branch 'master' }
             environment {
                 DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
             }
@@ -41,6 +42,7 @@ pipeline {
             }
         }
         stage('Stage') {
+            when { branch 'master' }
             environment {
                 SQL_HOST = credentials('STAGE_SQL_HOST')
                 SQL_DATABASE = credentials('STAGE_SQL_DATABASE')
@@ -67,6 +69,7 @@ pipeline {
             }
         }
         stage('Deploy') {
+            when { branch 'master' }
             environment {
                 DEPLOY_USER = credentials('DEPLOY_USER')
                 DEPLOY_SRV = credentials('DEPLOY_SRV')
