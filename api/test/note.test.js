@@ -93,6 +93,39 @@ describe('Note', () => {
         });
     });
 
+    describe('#remove(email)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should delete the note if their was only one watcher', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+            
+            const res = await note.remove(payload.email);
+            res.should.eql(true);
+
+            const rows = await db('notes').select();
+            rows.length.should.eql(0);
+        });
+
+        it('should give ownership to earliest watcher', async () => {
+            await Account.construct(payload.email, payload.name);
+            const note =
+                await NoteFactory.construct(payload.email, payload.input);
+
+            await Account.construct('a' + payload.email, 'b' + payload.name);
+            await note.addWatcher('a' + payload.email, false);
+
+            const res = await note.remove(payload.email);
+            res.should.eql(true);
+
+            let rows = await db('notes').select();
+            rows.length.should.eql(1);
+            rows = await db('note_watchers').select();
+            rows.length.should.eql(1);
+        });
+    });
+
     describe('#tags()', () => {
         beforeEach(async () => await clearDB());
 
