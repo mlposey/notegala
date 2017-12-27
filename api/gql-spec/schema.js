@@ -25,6 +25,16 @@ module.exports.schema = buildSchema(`
         # Modifies the contents of an existing note
         # and returns its new representation
         editNote(input: EditNoteInput!): Note!
+
+        # Removes the note from the user's collection
+        #
+        # If the requester is also the owner of this
+        # note, the oldest watcher will become the new
+        # owner.
+        #
+        # Returns true if the note was removed; false
+        # otherwise
+        removeNote(id: ID!): Boolean!
     }
 
     # Describes a user account
