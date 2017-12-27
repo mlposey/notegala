@@ -99,6 +99,45 @@ module.exports = class Note {
     }
 
     /**
+     * Removes the note from the user's collection
+     * 
+     * If the user indicated by the email was also the note
+     * owner, the oldest watcher will become the new owner.
+     * 
+     * @returns {boolean} True if the process succeeds; false otherwise
+     */
+    async remove(email) {
+        // Stop watching the note.
+        const ids = await db('note_watchers')
+            .where({
+                user_id: db('users').select('id').where({email: email}),
+                note_id: this.id
+            }).del().returning('user_id');
+        if (ids.length == 0) return false;
+
+        const watchers = await this.watchers();
+        // Completely delete it if they were the only watcher.
+        if (watchers.length == 0) {
+            await db('note_tags').where({note_id: this.id}).del();
+            await db('notes').where({id: this.id}).del();
+            return true;
+        }
+
+        // Give the note a new owner.
+        if (this.ownerId == ids[0]) {
+            const old = NoteWatcher.earliest(watchers);
+            // TODO: This task could be turned into a database trigger.
+            // I.e., On owner_id column update, set note_watcher can_edit = true
+            if (!old.canEdit) await old.changeEditPerm(true);
+
+            await db('notes')
+                .update({owner_id: old.id})
+                .where({id: this.id});
+        }
+        return true;
+    }
+
+    /**
      * Resolves the tags field
      * @returns {Promise.<Array.<string>>}
      */
