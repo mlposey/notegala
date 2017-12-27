@@ -30,7 +30,7 @@ module.exports.root = {
         const input = context.variableValues.input;
         try {
             let note = await NoteFactory.fromId(input.id);
-            await note.editNote(input.title, input.body, input.tags);
+            await note.edit(input.title, input.body, input.tags);
             return note;
         }
         catch (e) { return new GraphQLError(e.message); }
