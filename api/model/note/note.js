@@ -118,10 +118,12 @@ module.exports = class Note {
     async watchers() {
         return await db('note_watchers')
             .join('users', 'note_watchers.user_id', 'users.id')
-            .select(['users.id', 'users.name', 'note_watchers.can_edit'])
+            .select(['users.id', 'users.name', 'note_watchers.can_edit',
+                     'note_watchers.since'])
             .where({ note_id: this.id })
             .map(row => {
-                return new NoteWatcher(row.id, row.name, row.can_edit);
+                return new NoteWatcher(row.id, this.id, row.name, row.since,
+                    row.can_edit);
             });
     }
 };
