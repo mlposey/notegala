@@ -20,7 +20,7 @@ if (process.env.NODE_ENV != 'test') {
     app.use((req, res, next) => {
         auth.storeClaims(req, {
             email: 'janedoe@example.com',
-            name: 'Jane Doee'
+            name: 'Jane Doeee'
         });
         next();
     });
