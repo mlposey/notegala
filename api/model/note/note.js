@@ -78,7 +78,7 @@ module.exports = class Note {
      * @param {string} body The new body or null to keep the existing one
      * @param {Array.<string>} tags The new tags or null to keep the existing ones
      */
-    async editNote(title, body, tags) {
+    async edit(title, body, tags) {
         if (title) {
             await db('notes').update({title: title}).where({id: this.id});
             this.title = title;
