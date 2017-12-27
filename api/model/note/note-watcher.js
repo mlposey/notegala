@@ -1,4 +1,5 @@
 'use strict';
+const { db } = require('../../service/database');
 
 /**
  * Represents the NoteWatcher GraphQL type
@@ -16,5 +17,16 @@ module.exports = class NoteWatcher {
         // Not displayed in the NoteWatcher type
         this.since = since;
         this.canEdit = canEdit;
+    }
+
+    /** Changes the watcher's edit permissions */
+    async changeEditPerm(canEdit) {
+        await db('note_watchers')
+            .where({
+                note_id: this.noteId,
+                user_id: this.id
+            })
+            .update({can_edit: canEdit});
+        this.canEdit = true;
     }
 };
