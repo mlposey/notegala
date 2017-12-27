@@ -29,4 +29,25 @@ module.exports = class NoteWatcher {
             .update({can_edit: canEdit});
         this.canEdit = true;
     }
+
+    /**
+     * Returns the watcher that has the earliest since timestamp
+     * @param {Array.<NoteWatcher>} watchers 
+     * @return The earliest NoteWatcher or null if watchers is empty or falsy
+     */
+    static earliest(watchers) {
+        if (!watchers || watchers.length == 0) return null;
+
+        let earliest = 0;
+        let earliestTz = Date.parse(watchers[0].since);
+
+        for (let i = 1; i < watchers.length; i++) {
+            let tz = Date.parse(watchers[i].since);
+            if (tz < earliestTz) {
+                earliest = i;
+                earliestTz = tz;
+            }
+        }
+        return watchers[earliest];
+    }
 };

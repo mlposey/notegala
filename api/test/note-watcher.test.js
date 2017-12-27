@@ -43,4 +43,32 @@ describe('NoteWatcher', () => {
             expectedChange.canEdit.should.eql(true);
         });
     });
+
+    describe('#earliest(watchers)', () => {
+        beforeEach(async () => await clearDB());
+        
+        it('should return the earliest watcher', async () => {
+            await Account.construct(users[0].email, users[0].name);
+            await Account.construct(users[1].email, users[1].name);
+
+            const note =
+                await NoteFactory.construct(users[0].email, newNoteInput);
+            await note.addWatcher(users[1].email, false);
+
+            const earliest = await NoteWatcher
+                .earliest(await note.watchers());
+            earliest.name.should.eql(users[0].name);
+        });
+
+        it('should return null if the arg contains no watchers', () => {
+            Promise.all([
+                NoteWatcher.earliest(undefined),
+                NoteWatcher.earliest(null),
+                NoteWatcher.earliest([])
+            ])
+            .then(values => {
+                values.filter(val => val != null).length.should.eql(0);
+            });
+        });
+    });
 });
