@@ -34,5 +34,14 @@ module.exports.root = {
             return note;
         }
         catch (e) { return new GraphQLError(e.message); }
+    },
+    removeNote: async (root, {email}, context) => {
+        const noteId = context.variableValues.id;
+        try {
+            const note = await NoteFactory.fromId(noteId);
+            return await note.remove(email);
+        } catch (err) {
+            return false;
+        }
     }
 };
