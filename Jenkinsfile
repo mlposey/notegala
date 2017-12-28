@@ -6,25 +6,15 @@ pipeline {
     }
     stages {
         stage('Test') {
-            environment {
-                SQL_HOST = credentials('TEST_SQL_HOST')
-                SQL_DATABASE = credentials('TEST_SQL_DATABASE')
-                SQL_USER = credentials('TEST_SQL_USER')
-                SQL_PASSWORD = credentials('TEST_SQL_PASSWORD')
-            }
             steps {
                 dir('api') {
-                    sh 'docker build -f Dockerfile.test -t ng_core_test .'
                     sh '''
-                        docker run \
-                            --rm \
-                            -e SQL_HOST \
-                            -e SQL_DATABASE \
-                            -e SQL_USER \
-                            -e SQL_PASSWORD \
-                            -e CLIENT_ID \
-                            ng_core_test
+                        docker-compose \
+                            -f docker-compose.test.yaml \
+                            up \
+                            --build --abort-on-container-exit
                     '''
+                    sh 'docker-compose -f docker-compose.test.yaml down -v'
                 }
             }
         }
