@@ -1,9 +1,11 @@
 package com.marcusposey.notegala.note;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -64,10 +66,33 @@ public class NoteActivity extends AppCompatActivity {
         return true;
     }
 
-    /**
-     * Performs initial setup based on whether a new note should be created or
-     * if an existing one is being edited.
-     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.note_menu_delete) {
+            handleDeletePressed();
+        }
+        return true;
+    }
+
+    /** Deletes the note if it was being edited and returns to the previous activity */
+    private void handleDeletePressed() {
+        if (mCtx == Context.UPDATE) {
+            new AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.delete_title))
+                    .setMessage(getString(R.string.delete_message))
+                    .setPositiveButton(android.R.string.yes, (dialog, btn) -> {
+                        // TODO: Submit delete network request.
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .show();
+        }
+        finish();
+    }
+
+        /**
+         * Performs initial setup based on whether a new note should be created or
+         * if an existing one is being edited.
+         */
     private void establishContext() {
         String idExtra = getIntent().getStringExtra(ID_EXTRA);
         mCtx = (idExtra == null) ? Context.CREATE : Context.UPDATE;
