@@ -3,6 +3,7 @@ package com.marcusposey.notegala.note;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -52,8 +53,15 @@ public class NoteActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note);
+        setSupportActionBar(findViewById(R.id.note_toolbar));
 
         establishContext();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.note, menu);
+        return true;
     }
 
     /**
