@@ -6,10 +6,10 @@ import com.marcusposey.notegala.net.gen.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
-import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,8 +22,10 @@ import javax.annotation.Nullable;
  * to:
  * - simplify mock creation for testing
  * - synchronize instances
+ *
+ * @see ApolloQueryService for method implementations
  */
-public abstract class QueryService {
+public abstract class QueryService extends Observable {
 
     /** Waits for the QueryService to become configured */
     @FunctionalInterface

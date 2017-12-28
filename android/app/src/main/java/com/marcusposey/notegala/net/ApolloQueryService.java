@@ -99,7 +99,7 @@ public class ApolloQueryService extends QueryService {
     }
 
     /**
-     * Uploads a new note to the server
+     * Uploads a new note to the server and notifies observers if the request succeeds
      *
      * This method corresponds to the 'createNote' mutation in the core API's
      * GraphQL spec.
@@ -114,6 +114,8 @@ public class ApolloQueryService extends QueryService {
                     listener.onResult(new Exception("could not upload note"), null);
                 } else {
                     listener.onResult(null, response.data().note());
+                    setChanged();
+                    notifyObservers();
                 }
             }
 
@@ -123,7 +125,7 @@ public class ApolloQueryService extends QueryService {
     }
 
     /**
-     * Uploads modified note content to the server
+     * Uploads modified note content to the server and notifies observers if the request succeeds
      *
      * This method corresponds to the 'editNote' mutation in the core API's
      * GraphQL spec.
@@ -138,6 +140,8 @@ public class ApolloQueryService extends QueryService {
                     listener.onResult(new Exception("could not upload edited note"), null);
                 } else {
                     listener.onResult(null, response.data().note());
+                    setChanged();
+                    notifyObservers();
                 }
             }
 
@@ -147,7 +151,7 @@ public class ApolloQueryService extends QueryService {
     }
 
     /**
-     * Removes the note from the user's collection
+     * Removes the note from the user's collection and notifies observers if the request succeeds
      *
      * This method corresponds to the 'removeNote' mutation in the core API's
      * GraphQL spec.
@@ -163,6 +167,8 @@ public class ApolloQueryService extends QueryService {
                     listener.onResult(new Exception("could not delete note"), null);
                 } else {
                     listener.onResult(null, response.data().removeNote());
+                    setChanged();
+                    notifyObservers();
                 }
             }
 
