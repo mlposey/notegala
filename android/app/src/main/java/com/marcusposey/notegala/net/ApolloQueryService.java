@@ -4,6 +4,11 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.marcusposey.notegala.SignInActivity;
 import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.EditNoteMutation;
@@ -13,6 +18,8 @@ import com.marcusposey.notegala.net.gen.NewNoteInput;
 import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.annotation.Nonnull;
 
@@ -23,13 +30,29 @@ import okhttp3.Request;
 public class ApolloQueryService extends QueryService {
     private static final String SERVER_URL = "http://api.marcusposey.com:9002/graphql";
 
-    private final ApolloClient mApolloClient;
+    private ApolloClient mApolloClient;
+
+    private final ExecutorService mService = Executors.newCachedThreadPool();
+
+    // The time in milliseconds that a Google Id token lasts
+    private static final long TOKEN_DURATION = 1000 * 3600;
+
+    // The time at which the Google Id token in use will expire
+    private long mTokenExpiration;
 
     /**
      * Configures the service to make authenticated requests against the API
      * @param idToken A Google Id token to pass using bearer authentication
      */
     public ApolloQueryService(String idToken) {
+        mTokenExpiration = System.currentTimeMillis() + TOKEN_DURATION;
+        buildApolloClient(idToken);
+
+        // Start providing this object to callers of super.awaitInstance(...).
+        emitInstance();
+    }
+
+    private void buildApolloClient(String idToken) {
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .addInterceptor(chain -> {
                     Request original = chain.request();
@@ -44,11 +67,34 @@ public class ApolloQueryService extends QueryService {
                 .serverUrl(SERVER_URL)
                 .okHttpClient(httpClient)
                 .build();
-
-        // Start providing this object to callers of super.awaitInstance(...).
-        emitInstance();
     }
 
+    /**
+     * Ensures the Google Id token is still valid and refreshes it if needed
+     * 
+     * If the token must be refreshed, it is done on a separate thread where
+     * after will also be executed.
+     *
+     * @param after Called after the check, even if refresh fails
+     */
+    private void checkTokenThen(Runnable after) {
+        if (System.currentTimeMillis() < mTokenExpiration) {
+            after.run();
+            return;
+        }
+
+        mService.submit(() -> {
+            GoogleApiClient client = SignInActivity.getApiClient();
+            ConnectionResult conResult = client.blockingConnect();
+
+            if (conResult.isSuccess()) {
+                GoogleSignInResult signInResult = Auth.GoogleSignInApi.silentSignIn(client).await();
+                buildApolloClient(signInResult.getSignInAccount().getIdToken());
+                mTokenExpiration = System.currentTimeMillis() + TOKEN_DURATION;
+            }
+            after.run();
+        });
+    }
 
     /**
      * Fetches data relating to the user account
@@ -58,20 +104,23 @@ public class ApolloQueryService extends QueryService {
      */
     @Override
     public void getAccount(Listener<GetAccountQuery.Account> listener) {
-        mApolloClient.query(GetAccountQuery.builder().build()).enqueue(new ApolloCall.Callback<GetAccountQuery.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<GetAccountQuery.Data> response) {
-                if (response.data() == null) {
-                    listener.onResult(new Exception("missing account data"), null);
-                } else {
-                    listener.onResult(null, response.data().account());
+        checkTokenThen(() -> {
+            mApolloClient.query(GetAccountQuery.builder().build())
+                    .enqueue(new ApolloCall.Callback<GetAccountQuery.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<GetAccountQuery.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(new Exception("missing account data"), null);
+                    } else {
+                        listener.onResult(null, response.data().account());
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@Nonnull ApolloException e) {
-                listener.onResult(e, null);
-            }
+                @Override
+                public void onFailure(@Nonnull ApolloException e) {
+                    listener.onResult(e, null);
+                }
+            });
         });
     }
 
@@ -83,18 +132,23 @@ public class ApolloQueryService extends QueryService {
      */
     @Override
     public void getMyNotes(Listener<List<MyNotesQuery.Note>> listener) {
-        mApolloClient.query(MyNotesQuery.builder().build()).enqueue(new ApolloCall.Callback<MyNotesQuery.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<MyNotesQuery.Data> response) {
-                if (response.data() == null) {
-                    listener.onResult(new Exception("failed to retrieve notes"), null);
-                } else {
-                    listener.onResult(null, response.data().notes());
+        checkTokenThen(() -> {
+            mApolloClient.query(MyNotesQuery.builder().build())
+                    .enqueue(new ApolloCall.Callback<MyNotesQuery.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<MyNotesQuery.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(new Exception("failed to retrieve notes"), null);
+                    } else {
+                        listener.onResult(null, response.data().notes());
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+                @Override
+                public void onFailure(@Nonnull ApolloException e) {
+                    listener.onResult(e, null);
+                }
+            });
         });
     }
 
@@ -106,21 +160,25 @@ public class ApolloQueryService extends QueryService {
      */
     @Override
     public void createNote(NewNoteInput input, Listener<CreateNoteMutation.Note> listener) {
-        mApolloClient.mutate(CreateNoteMutation.builder().input(input).build())
-                .enqueue(new ApolloCall.Callback<CreateNoteMutation.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<CreateNoteMutation.Data> response) {
-                if (response.data() == null) {
-                    listener.onResult(new Exception("could not upload note"), null);
-                } else {
-                    listener.onResult(null, response.data().note());
-                    setChanged();
-                    notifyObservers();
+        checkTokenThen(() -> {
+            mApolloClient.mutate(CreateNoteMutation.builder().input(input).build())
+                    .enqueue(new ApolloCall.Callback<CreateNoteMutation.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<CreateNoteMutation.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(new Exception("could not upload note"), null);
+                    } else {
+                        listener.onResult(null, response.data().note());
+                        setChanged();
+                        notifyObservers();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+                @Override
+                public void onFailure(@Nonnull ApolloException e) {
+                    listener.onResult(e, null);
+                }
+            });
         });
     }
 
@@ -132,21 +190,25 @@ public class ApolloQueryService extends QueryService {
      */
     @Override
     public void editNote(EditNoteInput input, Listener<EditNoteMutation.Note> listener) {
-        mApolloClient.mutate(EditNoteMutation.builder().input(input).build())
-                .enqueue(new ApolloCall.Callback<EditNoteMutation.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<EditNoteMutation.Data> response) {
-                if (response.data() == null) {
-                    listener.onResult(new Exception("could not upload edited note"), null);
-                } else {
-                    listener.onResult(null, response.data().note());
-                    setChanged();
-                    notifyObservers();
+        checkTokenThen(() -> {
+            mApolloClient.mutate(EditNoteMutation.builder().input(input).build())
+                    .enqueue(new ApolloCall.Callback<EditNoteMutation.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<EditNoteMutation.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(new Exception("could not upload edited note"), null);
+                    } else {
+                        listener.onResult(null, response.data().note());
+                        setChanged();
+                        notifyObservers();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+                @Override
+                public void onFailure(@Nonnull ApolloException e) {
+                    listener.onResult(e, null);
+                }
+            });
         });
     }
 
@@ -159,21 +221,25 @@ public class ApolloQueryService extends QueryService {
      */
     @Override
     public void removeNote(String id, Listener<Boolean> listener) {
-        mApolloClient.mutate(RemoveNoteMutation.builder().id(id).build())
-                .enqueue(new ApolloCall.Callback<RemoveNoteMutation.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<RemoveNoteMutation.Data> response) {
-                if (response.data() == null) {
-                    listener.onResult(new Exception("could not delete note"), null);
-                } else {
-                    listener.onResult(null, response.data().removeNote());
-                    setChanged();
-                    notifyObservers();
+        checkTokenThen(() -> {
+            mApolloClient.mutate(RemoveNoteMutation.builder().id(id).build())
+                    .enqueue(new ApolloCall.Callback<RemoveNoteMutation.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<RemoveNoteMutation.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(new Exception("could not delete note"), null);
+                    } else {
+                        listener.onResult(null, response.data().removeNote());
+                        setChanged();
+                        notifyObservers();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+                @Override
+                public void onFailure(@Nonnull ApolloException e) {
+                    listener.onResult(e, null);
+                }
+            });
         });
     }
 }
