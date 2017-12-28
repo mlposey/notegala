@@ -74,7 +74,13 @@ public class NoteActivity extends AppCompatActivity {
         return true;
     }
 
-    /** Deletes the note if it was being edited and returns to the previous activity */
+    /**
+     * Creates a dialog to confirm that the note should be deleted
+     *
+     * Confirmation results in deletion and activity finish if the activity
+     * context is Context.UPDATE. If it is Context.CREATE, the activity
+     * is simply finished.
+     */
     private void handleDeletePressed() {
         if (mCtx == Context.CREATE) {
             finish();
@@ -85,11 +91,27 @@ public class NoteActivity extends AppCompatActivity {
                 .setTitle(getString(R.string.delete_title))
                 .setMessage(getString(R.string.delete_message))
                 .setPositiveButton(android.R.string.yes, (dialog, btn) -> {
-                    // TODO: Submit delete network request.
-                    finish();
+                    String noteId = getIntent().getStringExtra(ID_EXTRA);
+                    QueryService.awaitInstance(service -> deleteNote(service, noteId));
                 })
                 .setNegativeButton(android.R.string.no, null)
                 .show();
+    }
+
+    /** Uses the QueryService to trigger note deletion */
+    private void deleteNote(QueryService service, String noteId) {
+        service.removeNote(noteId, (e, didSucceed) -> {
+            runOnUiThread(() -> {
+                if (e != null || didSucceed == null || !didSucceed) {
+                    Toast.makeText(getApplicationContext(), "could not delete note",
+                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "note deleted",
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            });
+        });
     }
 
     /**
