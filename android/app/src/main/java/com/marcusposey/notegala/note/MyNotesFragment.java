@@ -21,6 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Handles a visual list of all notes that the user owns
@@ -30,7 +32,7 @@ import java.util.List;
  * essentially means that, in addition to edit privileges, you can change the access
  * privileges of other watchers.
  */
-public class MyNotesFragment extends ListFragment {
+public class MyNotesFragment extends ListFragment implements Observer {
     private static final String LOG_TAG = MyNotesFragment.class.getSimpleName();
 
     /**
@@ -51,10 +53,20 @@ public class MyNotesFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_my_notes, container, false);
-        QueryService.awaitInstance(service -> service.getMyNotes(this::onNotesNetworkResponse));
+
+        QueryService.awaitInstance(service -> {
+            service.getMyNotes(this::onNotesNetworkResponse);
+            service.addObserver(this);
+        });
 
         configureFloatingActionButtons(root);
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        QueryService.awaitInstance(service -> service.deleteObserver(this));
     }
 
     private void configureFloatingActionButtons(View rootView) {
@@ -82,8 +94,6 @@ public class MyNotesFragment extends ListFragment {
      */
     private void onNotesNetworkResponse(Exception e, List<MyNotesQuery.Note> notes) {
         getActivity().runOnUiThread(() -> {
-            Log.i(LOG_TAG, "got notes network response");
-
             if (e != null) {
                 Log.e(LOG_TAG, e.getMessage());
                 Toast.makeText(getActivity(), "network error", Toast.LENGTH_LONG).show();
@@ -131,5 +141,18 @@ public class MyNotesFragment extends ListFragment {
                 return 0;
             }
         });
+    }
+
+    /**
+     * Updates the note list when network requests are completed
+     *
+     * This is a hack around Android's startActivityForResult nonsense that doesn't
+     * even work and has left me grieving. Grieving, I say!
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof QueryService) {
+            ((QueryService) o).getMyNotes(this::onNotesNetworkResponse);
+        }
     }
 }
