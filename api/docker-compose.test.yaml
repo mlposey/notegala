@@ -1,0 +1,20 @@
+version: '3'
+services:
+  database:
+    build: ../database
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_DB: test
+      POSTGRES_PASSWORD: test
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      - database
+    environment:
+      SQL_HOST: database
+      SQL_DATABASE: test
+      SQL_USER: test
+      SQL_PASSWORD: test
