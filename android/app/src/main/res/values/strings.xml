@@ -17,7 +17,10 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
+    <!-- Begin overflow menu labels -->
     <string name="action_settings">Settings</string>
+    <string name="note_delete">Delete</string>
+    <!-- End overflow menu labels -->
 
     <string name="default_note_title">A Wonderful Title</string>
 </resources>
