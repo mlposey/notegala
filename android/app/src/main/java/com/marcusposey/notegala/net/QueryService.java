@@ -6,6 +6,7 @@ import com.marcusposey.notegala.net.gen.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
+import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,4 +67,5 @@ public abstract class QueryService {
     public abstract void getMyNotes(Listener<List<MyNotesQuery.Note>> listener);
     public abstract void createNote(NewNoteInput input, Listener<CreateNoteMutation.Note> listener);
     public abstract void editNote(EditNoteInput input, Listener<EditNoteMutation.Note> listener);
+    public abstract void removeNote(String id, Listener<Boolean> listener);
 }
