@@ -43,13 +43,6 @@ public class MyNotesFragment extends ListFragment {
     private static final SimpleDateFormat mDateFormat =
             new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss");
 
-    /**
-     * Initial app startup loads this fragment twice. We don't
-     * want to perform the network call the second time, i.e.,
-     * when this equals 1;
-     */
-    private static int sLoadCount = 0;
-
     public MyNotesFragment() {
         // Required empty public constructor
     }
@@ -58,6 +51,7 @@ public class MyNotesFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_my_notes, container, false);
+        QueryService.awaitInstance(service -> service.getMyNotes(this::onNotesNetworkResponse));
 
         configureFloatingActionButtons(root);
         return root;
@@ -103,15 +97,6 @@ public class MyNotesFragment extends ListFragment {
                 setListAdapter(adapter);
             }
         });
-    }
-
-    /** Refreshes the note list with updated content from the server */
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (sLoadCount++ != 1) {
-            QueryService.awaitInstance(service -> service.getMyNotes(this::onNotesNetworkResponse));
-        }
     }
 
     /** Handles clicks/presses of the note cards in the list */
