@@ -107,7 +107,7 @@ public class NoteActivity extends AppCompatActivity {
                             Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "note deleted",
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_SHORT).show();
                     finish();
                 }
             });
