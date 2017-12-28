@@ -89,10 +89,10 @@ public class NoteActivity extends AppCompatActivity {
         finish();
     }
 
-        /**
-         * Performs initial setup based on whether a new note should be created or
-         * if an existing one is being edited.
-         */
+    /**
+     * Performs initial setup based on whether a new note should be created or
+     * if an existing one is being edited.
+     */
     private void establishContext() {
         String idExtra = getIntent().getStringExtra(ID_EXTRA);
         mCtx = (idExtra == null) ? Context.CREATE : Context.UPDATE;
