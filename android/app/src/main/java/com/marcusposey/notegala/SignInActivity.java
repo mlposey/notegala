@@ -41,14 +41,16 @@ public class SignInActivity extends AppCompatActivity implements
     // Request code for a Google Sign-In activity result
     private static final int RC_SIGN_IN = 9001;
 
-    private GoogleApiClient mGoogleApiClient;
+    private static GoogleApiClient sGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-        mGoogleApiClient = createApiClient();
+        if (sGoogleApiClient == null) {
+            sGoogleApiClient = createApiClient();
+        }
         signIn(Method.SILENT);
     }
 
@@ -64,7 +66,7 @@ public class SignInActivity extends AppCompatActivity implements
      */
     private void signIn(final Method context) {
         OptionalPendingResult<GoogleSignInResult> opr =
-                Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+                Auth.GoogleSignInApi.silentSignIn(sGoogleApiClient);
 
         if (opr != null && context == Method.SILENT) {
             // Try silent sign in.
@@ -72,7 +74,7 @@ public class SignInActivity extends AppCompatActivity implements
         }
         else {
             // Try explicit sign in.
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(sGoogleApiClient);
             startActivityForResult(signInIntent, RC_SIGN_IN);
         }
     }
@@ -144,7 +146,7 @@ public class SignInActivity extends AppCompatActivity implements
                 .build();
     }
 
-    /** Called if mGoogleApiClient cannot establish a connection */
+    /** Called if sGoogleApiClient cannot establish a connection */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(getApplicationContext(), "no connection", Toast.LENGTH_SHORT).show();
@@ -152,4 +154,9 @@ public class SignInActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed() {}
+
+    /** Returns the Google API Client used to complete sign in */
+    public static GoogleApiClient getApiClient() {
+        return sGoogleApiClient;
+    }
 }
