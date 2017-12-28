@@ -76,17 +76,20 @@ public class NoteActivity extends AppCompatActivity {
 
     /** Deletes the note if it was being edited and returns to the previous activity */
     private void handleDeletePressed() {
-        if (mCtx == Context.UPDATE) {
-            new AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.delete_title))
-                    .setMessage(getString(R.string.delete_message))
-                    .setPositiveButton(android.R.string.yes, (dialog, btn) -> {
-                        // TODO: Submit delete network request.
-                    })
-                    .setNegativeButton(android.R.string.no, null)
-                    .show();
+        if (mCtx == Context.CREATE) {
+            finish();
+            return;
         }
-        finish();
+
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.delete_title))
+                .setMessage(getString(R.string.delete_message))
+                .setPositiveButton(android.R.string.yes, (dialog, btn) -> {
+                    // TODO: Submit delete network request.
+                    finish();
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     /**
