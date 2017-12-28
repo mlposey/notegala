@@ -10,6 +10,7 @@ import com.marcusposey.notegala.net.gen.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
+import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 
 import java.util.List;
 
@@ -137,6 +138,31 @@ public class ApolloQueryService extends QueryService {
                     listener.onResult(new Exception("could not upload edited note"), null);
                 } else {
                     listener.onResult(null, response.data().note());
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+        });
+    }
+
+    /**
+     * Removes the note from the user's collection
+     *
+     * This method corresponds to the 'removeNote' mutation in the core API's
+     * GraphQL spec.
+     * @param id The unique id of the note
+     */
+    @Override
+    public void removeNote(String id, Listener<Boolean> listener) {
+        mApolloClient.mutate(RemoveNoteMutation.builder().id(id).build())
+                .enqueue(new ApolloCall.Callback<RemoveNoteMutation.Data>() {
+            @Override
+            public void onResponse(@Nonnull Response<RemoveNoteMutation.Data> response) {
+                if (response.data() == null) {
+                    listener.onResult(new Exception("could not delete note"), null);
+                } else {
+                    listener.onResult(null, response.data().removeNote());
                 }
             }
 
