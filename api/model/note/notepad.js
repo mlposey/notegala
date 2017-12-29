@@ -127,6 +127,7 @@ class Notepad {
      * @param {string} title The new title or null to keep the existing one     
      * @param {string} body The new body or null to keep the existing one
      * @param {Array.<string>} tags The new tags or null to keep the existing ones
+     * @throws {PermissionError} If the user is not allowed to make this change
      */
     async edit(title, body, tags) {
         const canEdit = await this.canEdit();
