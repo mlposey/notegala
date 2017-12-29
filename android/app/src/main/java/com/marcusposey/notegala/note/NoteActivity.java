@@ -190,10 +190,12 @@ public class NoteActivity extends AppCompatActivity {
             return;
         }
 
+        // The single spaces are like clear commands. This is a hack around
+        // the express graphql implementation.
         EditNoteInput.Builder builder = EditNoteInput.builder()
                 .id(getIntent().getStringExtra(ID_EXTRA))
-                .title(note.title())
-                .body(note.body());
+                .title((note.title() == null || note.title().isEmpty()) && mOriginalTitle != null ? " " : note.title())
+                .body(note.body().isEmpty() && mOriginalBody != null ? " " : note.body());
 
         service.editNote(builder.build(), (e, response) -> {
             runOnUiThread(() -> {
