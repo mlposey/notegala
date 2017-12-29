@@ -34,13 +34,12 @@ describe('NoteFactory', () => {
             wasThrown.should.eql(true);
         });
 
-        it('should throw an exception if input lacks a body value', async () => {
+        it('should throw an exception if input lacks title and body values', async () => {
             await Account.construct(payload.email, payload.name);
 
             let wasThrown = false;
             try {
                 await NoteFactory.construct(payload.email, {
-                    title: 'Test',
                     tags: ['test']
                 });
             } catch (err) {
