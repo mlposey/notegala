@@ -1,6 +1,8 @@
 'use strict';
 const { db } = require('../../service/database');
 const Note = require('./note');
+const { Notepad } = require('./notepad');
+const Account = require('../account');
 
 /** Handles creation of Notes and Note accessories */
 module.exports = class NoteFactory {
@@ -12,18 +14,16 @@ module.exports = class NoteFactory {
      * @throws {Error} If the email does not belong to an account
      * @throws {Error} If the input file is missing a value for
      *                 the body key
-     * @returns {Promise.<Note>}
+     * @returns {Promise.<Notepad>}
      */
     static async construct(email, input) {
         if (!input.body) throw new Error('missing body field in input note');
-        
-        const users = await db('users').select('id').where({email: email});
-        if (users.length != 1) throw new Error('unrecognized email');
-        const uid = users[0].id;
+
+        let acct = await Account.fromEmail(email);
 
         const noteRows = await db('notes')
             .insert({
-                owner_id: uid,
+                owner_id: acct.id,
                 title: input.title,
                 body: input.body
             })
@@ -31,14 +31,16 @@ module.exports = class NoteFactory {
                        'title', 'body']);
 
         let row = noteRows[0];
-        const note = new Note(row.id, uid, row.created_at, row.last_modified,
-            row.is_public, row.title, row.body);
+        let note = new Note(row.id, acct.id, row.created_at,
+            row.last_modified, row.is_public, row.title, row.body);
 
+        let notepad = new Notepad(note, acct);
+
+        await note.addWatcher(email, true);        
         if (input.tags) {
-            for (let tag of input.tags) await note.addTag(tag);
+            for (let tag of input.tags) await notepad.addTag(tag);
         }
-        await note.addWatcher(email, true);
-        return note;
+        return notepad;
     }
 
     /**

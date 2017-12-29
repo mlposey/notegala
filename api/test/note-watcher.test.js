@@ -27,8 +27,9 @@ describe('NoteWatcher', () => {
             await Account.construct(users[0].email, users[0].name);
             await Account.construct(users[1].email, users[1].name);
 
-            const note =
+            const notepad =
                 await NoteFactory.construct(users[0].email, newNoteInput);
+            let note = notepad.note;
             await note.addWatcher(users[1].email, false);
 
             let watchers = await note.watchers();
@@ -51,8 +52,9 @@ describe('NoteWatcher', () => {
             await Account.construct(users[0].email, users[0].name);
             await Account.construct(users[1].email, users[1].name);
 
-            const note =
+            const notepad =
                 await NoteFactory.construct(users[0].email, newNoteInput);
+            const note = notepad.note;
             await note.addWatcher(users[1].email, false);
 
             const earliest = await NoteWatcher

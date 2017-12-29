@@ -51,15 +51,16 @@ describe('NoteFactory', () => {
 
         it('should return a valid note if no exception is thrown', async () => {
             await Account.construct(payload.email, payload.name);
-            let note = await NoteFactory.construct(payload.email, payload.input);
+            let np = await NoteFactory.construct(payload.email, payload.input);
 
-            note.body.should.eql(payload.input.body);
-            note.title.should.eql(payload.input.title);
+            np.note.body.should.eql(payload.input.body);
+            np.note.title.should.eql(payload.input.title);
         });
 
         it('should put created notes in the persistence layer', async () => {
             await Account.construct(payload.email, payload.name);
-            const note = await NoteFactory.construct(payload.email, payload.input);
+            const notepad =
+                await NoteFactory.construct(payload.email, payload.input);
 
             let rows = await db.select().table('notes');
             rows.length.should.not.be.eql(0);
@@ -68,7 +69,7 @@ describe('NoteFactory', () => {
             rows.length.should.eql(payload.input.tags.length);
             const extras = rows
                 .map(row => row.note_id)
-                .filter(noteId => {return noteId != note.id;});
+                .filter(noteId => {return noteId != notepad.note.id;});
             extras.length.should.be.eql(0);
         });
     });
@@ -113,11 +114,11 @@ describe('NoteFactory', () => {
 
         it('should retrieve the note if it exists', async () => {
             await Account.construct(payload.email, payload.name);
-            const note = 
+            const notepad = 
                 await NoteFactory.construct(payload.email, payload.input);
 
-            const sameOl = await NoteFactory.fromId(note.id);
-            sameOl.body.should.eql(note.body);
+            const sameOl = await NoteFactory.fromId(notepad.note.id);
+            sameOl.body.should.eql(notepad.note.body);
         });
 
         it('should throw an exception if the note does not exist', async () => {
