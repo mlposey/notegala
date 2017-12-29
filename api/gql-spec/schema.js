@@ -78,11 +78,12 @@ module.exports.schema = buildSchema(`
 
         # The new note title
         # If null, the old value is kept.
-        # If an empty string, the title is erased.
+        # If ' ', the title is erased.
         title: String
 
         # The new note body
-        # If null or empty, the old value is kept
+        # If null, the old value is kept
+        # If ' ', the title is erased.
         body: String
 
         # The new note tag list

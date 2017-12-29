@@ -132,26 +132,41 @@ class Notepad {
         const canEdit = await this.canEdit();
         if (!canEdit) throw new PermissionError();
 
-        // TODO: Build the title/body object and update in one call.
+        let payload = {};
+
         if (title) {
-            await db('notes').update({title: title})
-                .where({id: this.note.id});
-            this.note.title = title;
+            payload.title = title === ' ' ? '' : title;
+            this.note.title = payload.title;
         }
         if (body) {
-            await db('notes').update({body: body})
-                .where({id: this.note.id});
-            this.note.body = body;
+            payload.body = body === ' ' ? '' : body;
+            this.note.body = payload.body;
         }
-        if (tags) {
-            await this.replaceTags(tags);
+
+        if (payload.title || payload.body) {
+            await db('notes').update(payload).where({id: this.note.id});
         }
+
+        if (tags) await this.replaceTags(tags);
 
         const rows = await db('notes')
             .select('last_modified')
             .where({id: this.note.id});
-        // Database triggers should have changed the value.
+        // Database triggers may have changed the value.
         this.note.lastModified = rows[0].last_modified;
+    }
+
+    /**
+     * Returns the number of spaces in text
+     * @param {string} text 
+     * @return {number}
+     */
+    countSpaces(text) {
+        let count = 0;
+        for (let c of text) {
+            if (c === ' ') count++;
+        }
+        return count;
     }
 }
 
