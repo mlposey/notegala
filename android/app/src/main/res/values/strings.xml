@@ -31,6 +31,7 @@
 
     <!-- Begin toast messages -->
     <string name="network_err">network error</string>
+    <string name="todo">not yet implemented</string>
     <string name="activity_sign_in_failed">sign in failed</string>
     <string name="activity_sign_in_con_err">no connection</string>
     <string name="activity_note_ncreate">note created</string>
