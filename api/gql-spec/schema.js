@@ -57,17 +57,19 @@ module.exports.schema = buildSchema(`
     }
 
     # Used in the creation of new notes
+    #
+    # This object must have a value for at least one of
+    # title or body. I.e., they cannot both be blank.
+    #
     # See createNote for an example use case.
     input NewNoteInput {
         # The title of the note
-        # This is optional and not required to be unique.
         title: String
 
         # The main content of the note
-        body: String!
+        body: String
 
         # Tags used to categorize the note
-        # Notes can be tagless.
         tags: [String!]
     }
 

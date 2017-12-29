@@ -12,12 +12,13 @@ module.exports = class NoteFactory {
      * @param {string} email The email address of the note creator
      * @param {Object} input An object that models the NewNoteInput GraphQL type
      * @throws {Error} If the email does not belong to an account
-     * @throws {Error} If the input file is missing a value for
-     *                 the body key
+     * @throws {Error} If the input has falsy values for body and title
      * @returns {Promise.<Notepad>}
      */
     static async construct(email, input) {
-        if (!input.body) throw new Error('missing body field in input note');
+        if (!input.body && !input.title) {
+            throw new Error('missing input note content');
+        }
 
         let acct = await Account.fromEmail(email);
 
