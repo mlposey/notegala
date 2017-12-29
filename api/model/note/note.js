@@ -20,6 +20,7 @@ module.exports = class Note {
      * @param {boolean} canEdit Watchers with edit privileges can modify notes
      */
     async addWatcher(email, canEdit) {
+        // TODO: Make sure the email is the owner or the note is public.
         await db('note_watchers').insert({
             note_id: this.id,
             user_id: db('users').select('id').where({ email: email }),
