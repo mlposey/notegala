@@ -26,7 +26,7 @@ CREATE TABLE notes (
     owner_id integer NOT NULL REFERENCES users(id),
     title text NOT NULL DEFAULT '',
     title_tsv tsvector,
-    body text NOT NULL,
+    body text NOT NULL DEFAULT '',
     body_tsv tsvector,
     title_body_tsv tsvector
 );
