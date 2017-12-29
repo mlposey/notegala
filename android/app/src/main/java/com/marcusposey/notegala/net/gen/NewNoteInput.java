@@ -16,11 +16,11 @@ import javax.annotation.Nullable;
 public final class NewNoteInput {
   private final Input<String> title;
 
-  private final @Nonnull String body;
+  private final Input<String> body;
 
   private final Input<List<String>> tags;
 
-  public NewNoteInput(Input<String> title, @Nonnull String body, Input<List<String>> tags) {
+  NewNoteInput(Input<String> title, Input<String> body, Input<List<String>> tags) {
     this.title = title;
     this.body = body;
     this.tags = tags;
@@ -30,8 +30,8 @@ public final class NewNoteInput {
     return this.title.value;
   }
 
-  public @Nonnull String body() {
-    return this.body;
+  public @Nullable String body() {
+    return this.body.value;
   }
 
   public @Nullable List<String> tags() {
@@ -49,7 +49,9 @@ public final class NewNoteInput {
         if (title.defined) {
           writer.writeString("title", title.value);
         }
-        writer.writeString("body", body);
+        if (body.defined) {
+          writer.writeString("body", body.value);
+        }
         if (tags.defined) {
           writer.writeList("tags", tags.value != null ? new InputFieldWriter.ListWriter() {
             @Override
@@ -67,7 +69,7 @@ public final class NewNoteInput {
   public static final class Builder {
     private Input<String> title = Input.absent();
 
-    private @Nonnull String body;
+    private Input<String> body = Input.absent();
 
     private Input<List<String>> tags = Input.absent();
 
@@ -79,8 +81,8 @@ public final class NewNoteInput {
       return this;
     }
 
-    public Builder body(@Nonnull String body) {
-      this.body = body;
+    public Builder body(@Nullable String body) {
+      this.body = Input.fromNullable(body);
       return this;
     }
 
@@ -94,13 +96,17 @@ public final class NewNoteInput {
       return this;
     }
 
+    public Builder bodyInput(@Nonnull Input<String> body) {
+      this.body = Utils.checkNotNull(body, "body == null");
+      return this;
+    }
+
     public Builder tagsInput(@Nonnull Input<List<String>> tags) {
       this.tags = Utils.checkNotNull(tags, "tags == null");
       return this;
     }
 
     public NewNoteInput build() {
-      Utils.checkNotNull(body, "body == null");
       return new NewNoteInput(title, body, tags);
     }
   }

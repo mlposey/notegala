@@ -161,7 +161,8 @@ public class NoteActivity extends AppCompatActivity {
 
     /** Publishes a new note to the API */
     private void createNote(NewNoteInput note, QueryService service) {
-        if (note.body().isEmpty()) {
+        if ((note.body() == null || note.body().isEmpty()) &&
+            (note.title() == null || note.title().isEmpty())) {
             Log.i(LOG_TAG, "skipped upload of note with empty body");
             return;
         }
@@ -195,7 +196,7 @@ public class NoteActivity extends AppCompatActivity {
         EditNoteInput.Builder builder = EditNoteInput.builder()
                 .id(getIntent().getStringExtra(ID_EXTRA))
                 .title((note.title() == null || note.title().isEmpty()) && mOriginalTitle != null ? " " : note.title())
-                .body(note.body().isEmpty() && mOriginalBody != null ? " " : note.body());
+                .body((note.body() == null || note.body().isEmpty()) && mOriginalBody != null ? " " : note.body());
 
         service.editNote(builder.build(), (e, response) -> {
             runOnUiThread(() -> {
