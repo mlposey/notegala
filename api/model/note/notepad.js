@@ -40,7 +40,7 @@ class Notepad {
      * @param {Note} note The note to edit
      * @param {string} editorEmail The email of the user making the edit
      * @throws {EmailError} If the email is unrecognized
-     * @return {Notepad}
+     * @return {Promise.<Notepad>}
      */
     static async build(note, editorEmail) {
         let account;
@@ -53,7 +53,7 @@ class Notepad {
     /**
      * Determines if the editor has permissions to modify the note
      * 
-     * @return {Boolean} True if editing is possible; false otherwise
+     * @return {Promise.<Boolean>} True if editing is possible; false otherwise
      */
     async canEdit() {
         if (this._canEdit == undefined) {
@@ -154,19 +154,6 @@ class Notepad {
             .where({id: this.note.id});
         // Database triggers may have changed the value.
         this.note.lastModified = rows[0].last_modified;
-    }
-
-    /**
-     * Returns the number of spaces in text
-     * @param {string} text 
-     * @return {number}
-     */
-    countSpaces(text) {
-        let count = 0;
-        for (let c of text) {
-            if (c === ' ') count++;
-        }
-        return count;
     }
 }
 
