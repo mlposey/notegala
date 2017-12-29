@@ -104,3 +104,18 @@ ON note_tags FOR EACH ROW EXECUTE PROCEDURE on_note_tag_inserted();
 
 CREATE TRIGGER note_tag_deleted AFTER DELETE
 ON note_tags FOR EACH ROW EXECUTE PROCEDURE on_note_tag_deleted();
+
+CREATE TABLE notebooks (
+    id serial PRIMARY KEY,
+    created_at timestamptz NOT NULL DEFAULT NOW(),
+    owner_id integer NOT NULL REFERENCES users(id),
+    name text NOT NULL,
+    UNIQUE (owner_id, name)
+);
+
+CREATE TABLE notebook_notes (
+    id serial PRIMARY KEY,
+    notebook_id integer NOT NULL REFERENCES notebooks(id),
+    note_id integer NOT NULL REFERENCES notes(id),
+    UNIQUE (notebook_id, note_id)
+);
