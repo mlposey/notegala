@@ -30,8 +30,11 @@
     <string name="default_note_title">A Wonderful Title</string>
 
     <!-- Begin toast messages -->
+    <string name="network_err">network error</string>
     <string name="activity_sign_in_failed">sign in failed</string>
     <string name="activity_sign_in_con_err">no connection</string>
-    <string name="network_err">network error</string>
+    <string name="activity_note_ncreate">note created</string>
+    <string name="activity_note_nupdate">note updated</string>
+    <string name="activity_note_ndelete">note deleted</string>
     <!-- End toast messages -->
 </resources>
