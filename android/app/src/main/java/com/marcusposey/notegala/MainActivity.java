@@ -85,8 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         if (err != null) {
                             Log.e(LOG_TAG, err.getMessage());
                                 Toast.makeText(getApplicationContext(),
-                                        getText(R.string.activity_main_net_err),
-                                        Toast.LENGTH_LONG).show();
+                                        getText(R.string.network_err), Toast.LENGTH_LONG).show();
                         } else {
                             mSidePane.displayUserData(acct);
                         }
