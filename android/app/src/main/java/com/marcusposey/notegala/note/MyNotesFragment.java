@@ -81,7 +81,7 @@ public class MyNotesFragment extends ListFragment implements Observer {
 
         FloatingActionButton newNotebookButton = rootView.findViewById(R.id.fab_notebook);
         newNotebookButton.setOnClickListener(view -> {
-            Toast.makeText(getContext(), "not yet implemented", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.todo), Toast.LENGTH_SHORT).show();
             menu.close(true);
         });
     }
@@ -96,7 +96,8 @@ public class MyNotesFragment extends ListFragment implements Observer {
         getActivity().runOnUiThread(() -> {
             if (e != null) {
                 Log.e(LOG_TAG, e.getMessage());
-                Toast.makeText(getActivity(), "network error", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.network_err), Toast.LENGTH_LONG)
+                        .show();
             } else {
                 Log.i(LOG_TAG, String.format("fetched %d notes", notes.size()));
 
