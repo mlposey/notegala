@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         if (err != null) {
                             Log.e(LOG_TAG, err.getMessage());
-                                Toast.makeText(getApplicationContext(), "network error",
+                                Toast.makeText(getApplicationContext(),
+                                        getText(R.string.activity_main_net_err),
                                         Toast.LENGTH_LONG).show();
                         } else {
                             mSidePane.displayUserData(acct);
