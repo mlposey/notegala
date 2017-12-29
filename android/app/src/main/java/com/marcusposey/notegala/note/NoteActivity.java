@@ -106,7 +106,7 @@ public class NoteActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "could not delete note",
                             Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "note deleted",
+                    Toast.makeText(getApplicationContext(), getString(R.string.activity_note_ndelete),
                             Toast.LENGTH_SHORT).show();
                     finish();
                 }
@@ -170,11 +170,11 @@ public class NoteActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (e != null) {
                     Log.e(LOG_TAG, e.getMessage());
-                    Toast.makeText(getApplicationContext(), "network error",
+                    Toast.makeText(getApplicationContext(), getString(R.string.network_err),
                             Toast.LENGTH_LONG).show();
                 } else {
                     Log.i(LOG_TAG, "note created");
-                    Toast.makeText(getApplicationContext(), "note created",
+                    Toast.makeText(getApplicationContext(), getString(R.string.activity_note_ncreate),
                             Toast.LENGTH_SHORT).show();
 
                     finish();
@@ -199,11 +199,11 @@ public class NoteActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (e != null) {
                     Log.e(LOG_TAG, e.getMessage());
-                    Toast.makeText(getApplicationContext(), "network error",
+                    Toast.makeText(getApplicationContext(), getString(R.string.network_err),
                             Toast.LENGTH_LONG).show();
                 } else {
                     Log.i(LOG_TAG, "note updated");
-                    Toast.makeText(getApplicationContext(), "note updated",
+                    Toast.makeText(getApplicationContext(), getString(R.string.activity_note_nupdate),
                             Toast.LENGTH_SHORT).show();
 
                     finish();
