@@ -105,7 +105,7 @@ public class SignInActivity extends AppCompatActivity implements
         else {
             Log.e(LOG_TAG, "sign in failed; err " +
                     result.getStatus().getStatusCode());
-            Toast.makeText(getApplicationContext(), "sign in failed",
+            Toast.makeText(getApplicationContext(), getString(R.string.activity_sign_in_failed),
                     Toast.LENGTH_SHORT).show();
         }
     }
@@ -149,7 +149,8 @@ public class SignInActivity extends AppCompatActivity implements
     /** Called if sGoogleApiClient cannot establish a connection */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(getApplicationContext(), "no connection", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.activity_sign_in_con_err),
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override

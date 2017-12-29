@@ -28,4 +28,9 @@
     <!-- End dialog content -->
 
     <string name="default_note_title">A Wonderful Title</string>
+
+    <!-- Begin toast messages -->
+    <string name="activity_sign_in_failed">sign in failed</string>
+    <string name="activity_sign_in_con_err">no connection</string>
+    <!-- End toast messages -->
 </resources>
