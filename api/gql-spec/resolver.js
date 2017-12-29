@@ -2,6 +2,7 @@
 const { GraphQLError } = require('graphql');
 const Account = require('../model/account');
 const NoteFactory = require('../model/note/note-factory');
+const { Notepad } = require('../model/note/notepad');
 
 // Root resolver for all GraphQL queries and mutations
 module.exports.root = {
@@ -17,10 +18,15 @@ module.exports.root = {
                 return new GraphQLError(e.message);
             });
     },
-    createNote: async (root, {email}, context) => {
+    createNote: (root, {email}, context) => {
         const newNoteInput = context.variableValues.input;
-        try { return await NoteFactory.construct(email, newNoteInput); }
-        catch (e) { return new GraphQLError(e.message); }
+        return NoteFactory.construct(email, newNoteInput)
+            .then(notepad => {
+                return notepad.note;
+            })
+            .catch(e => {
+                return new GraphQLError(e.message);
+            });
     },
     myNotes: async (root, {email, first}, context) => {
         try { return await NoteFactory.getOwned(email, first); }
@@ -30,7 +36,8 @@ module.exports.root = {
         const input = context.variableValues.input;
         try {
             let note = await NoteFactory.fromId(input.id);
-            await note.edit(input.title, input.body, input.tags);
+            const notepad = await Notepad.build(note, email);
+            await notepad.edit(input.title, input.body, input.tags);
             return note;
         }
         catch (e) { return new GraphQLError(e.message); }
