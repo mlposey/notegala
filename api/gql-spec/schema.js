@@ -35,6 +35,12 @@ module.exports.schema = buildSchema(`
         # Returns true if the note was removed; false
         # otherwise
         removeNote(id: ID!): Boolean!
+
+        # Creates a new note with the specified name
+        #
+        # A user cannot have multiple notebooks with
+        # the same name.
+        createNotebook(title: String!): Notebook!
     }
 
     # Describes a user account
@@ -142,5 +148,24 @@ module.exports.schema = buildSchema(`
 
         # Indicates if the user can make changes to the note
         canEdit: Boolean!
+    }
+
+    # Describes a named collection of notes
+    type Notebook {
+        # The unique id of the notebook
+        id: ID!
+
+        # Indicates the timestamp with timezone when the
+        # notebook was created
+        createdAt: String!
+
+        # The id of the notebook owner
+        owner: ID!
+
+        # The name of the notebook
+        title: String!
+
+        # All notes contained in the notebook
+        notes: [Note!]!
     }
 `);
