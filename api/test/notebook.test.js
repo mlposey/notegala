@@ -8,6 +8,7 @@ const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const Account = require('../model/account');
 const Notebook = require('../model/notebook');
+const NoteFactory = require('../model/note/note-factory');
 
 // Sample data for notebook creation
 const payload = Object.freeze({
@@ -56,6 +57,27 @@ describe('Notebook', () => {
                 .then(acct => Notebook.build(payload.nbName, acct))
                 .then(notebook => notebook.notes())
                 .then(notes => notes.length.should.eql(0));
+        });
+    });
+
+    describe('#addNote(note)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should attach the note to the notebook', async () => {
+            const acct =
+                await Account.construct(payload.email, payload.userName)
+
+            const notebook = await Notebook.build(payload.nbName, acct);
+            let notes = await notebook.notes();
+            notes.length.should.eql(0);
+
+            const notepad = await NoteFactory.construct(payload.email, {
+                title: 'Test'
+            });
+            await notebook.addNote(notepad.note);
+
+            notes = await notebook.notes();
+            notes.length.should.eql(1);
         });
     });
 });

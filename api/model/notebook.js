@@ -1,5 +1,7 @@
 'use strict';
 const { db } = require('../service/database');
+const Notebook = require('./note/note');
+const Note = require('../model/note/note');
 
 /** Represents the Notebook GraphQL type */
 module.exports = class Notebook {
@@ -51,5 +53,17 @@ module.exports = class Notebook {
             .map(row => new Note(row.id, row.owner_id, row.created_at,
                                  row.last_modified, row.is_public,
                                  row.title, row.body));
+    }
+
+    /**
+     * Adds the note to the notebook
+     * @param {Note} note 
+     */
+    async addNote(note) {
+        // TODO: Permissions.
+        await db('notebook_notes').insert({
+            notebook_id: this.id,
+            note_id: note.id
+        });
     }
 };
