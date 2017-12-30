@@ -9,15 +9,8 @@ const Notebook = require('../model/notebook');
 module.exports.root = {
     account: (root, {email, name}, context) => {
         return Account.fromEmail(email)
-            .then(acct => {
-                return acct;
-            })
-            .catch(e => {
-                return Account.construct(email, name);
-            })
-            .catch(e => {
-                return new GraphQLError(e.message);
-            });
+            .catch(e => Account.construct(email, name))
+            .catch(e => new GraphQLError(e.message));
     },
     createNote: (root, {email}, context) => {
         const newNoteInput = context.variableValues.input;
@@ -25,9 +18,9 @@ module.exports.root = {
             .then(notepad => notepad.note)
             .catch(e => new GraphQLError(e.message));
     },
-    myNotes: async (root, {email, first}, context) => {
-        try { return await NoteFactory.getOwned(email, first); }
-        catch (e) { return new GraphQLError(e.message); }
+    myNotes: (root, {email, first}, context) => {
+        return NoteFactory.getOwned(email, first)
+            .catch(err => new GraphQLError(e.message));
     },
     editNote: async (root, {email}, context) => {
         const input = context.variableValues.input;
@@ -39,18 +32,15 @@ module.exports.root = {
         }
         catch (e) { return new GraphQLError(e.message); }
     },
-    removeNote: async (root, {email}, context) => {
+    removeNote: (root, {email}, context) => {
         const noteId = context.variableValues.id;
-        try {
-            const note = await NoteFactory.fromId(noteId);
-            return await note.remove(email);
-        } catch (err) {
-            return false;
-        }
+        return NoteFactory.fromId(noteId)
+            .then(note => note.remove(email))
+            .catch(err => false);
     },
-    createNotebook: async (root, {email}, context) => {
+    createNotebook: (root, {email}, context) => {
         const title = context.variableValues.title;
-        return await Account.fromEmail(email)
+        return Account.fromEmail(email)
             .then(acct => Notebook.build(title, acct))
             .catch(err => new GraphQLError(err.message));
     }
