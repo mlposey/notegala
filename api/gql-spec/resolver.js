@@ -22,12 +22,8 @@ module.exports.root = {
     createNote: (root, {email}, context) => {
         const newNoteInput = context.variableValues.input;
         return NoteFactory.construct(email, newNoteInput)
-            .then(notepad => {
-                return notepad.note;
-            })
-            .catch(e => {
-                return new GraphQLError(e.message);
-            });
+            .then(notepad => notepad.note)
+            .catch(e => new GraphQLError(e.message));
     },
     myNotes: async (root, {email, first}, context) => {
         try { return await NoteFactory.getOwned(email, first); }
