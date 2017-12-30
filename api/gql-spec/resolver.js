@@ -43,5 +43,9 @@ module.exports.root = {
         return Account.fromEmail(email)
             .then(acct => Notebook.build(title, acct))
             .catch(err => new GraphQLError(err.message));
+    },
+    myNotebooks: (root, {email, first}, context) => {
+        return Notebook.getOwned(email, first)
+            .catch(err => new GraphQLError(err.message));
     }
 };
