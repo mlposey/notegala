@@ -68,6 +68,35 @@ describe('Notebook', () => {
         });
     });
 
+    describe('#getOwned(email, limit)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should return an empty array instead of null', async () => {
+            await Account.construct(payload.email, payload.userName)
+                .then(acct => Notebook.getOwned(payload.email, null))
+                .then(notebooks => notebooks.length.should.eql(0));
+        });
+
+        it('should return only notebooks that the user owns', async () => {
+            const a1 = await Account.construct(payload.email, payload.userName)
+            await Notebook.build("test", a1);
+
+            await Account.construct('a' + payload.email, payload.userName)
+                .then(acct => Notebook.getOwned('a' + payload.email, null))
+                .then(notebooks => notebooks.length.should.eql(0));
+        });
+
+        it('should respect the specified limit', async () => {
+            const act = await Account.construct(payload.email, payload.userName)
+            await Notebook.build("test", act);
+            await Notebook.build("test2", act);
+            
+            const limit = 1;
+            const notebooks = await Notebook.getOwned(payload.email, limit);
+            notebooks.length.should.eql(limit);
+        });
+    });
+
     describe('#notes()', () => {
         beforeEach(async () => await clearDB());
 
