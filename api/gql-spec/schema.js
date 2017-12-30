@@ -15,6 +15,11 @@ module.exports.schema = buildSchema(`
         #
         # first - The maximum number of notes to retrieve
         myNotes(first: Int): [Note!]!
+
+        # Retrieves all notebooks owned by the requester
+        #
+        # first - The maximum number of notebooks to retrieve        
+        myNotebooks(first: Int): [Notebook!]!
     }
 
     type Mutation {
