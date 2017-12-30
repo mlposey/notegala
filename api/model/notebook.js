@@ -41,6 +41,24 @@ module.exports = class Notebook {
     }
 
     /**
+     * Builds a local copy of a notebook from the database
+     * 
+     * @param {number} id The unique id of the notebook
+     * @throws {Error} If the id is unrecognized
+     * @returns {Promise.<Notebook>}
+     */
+    static async fromId(id) {
+        const rows = await db('notebooks')
+            .select(['created_at', 'owner_id', 'name'])
+            .where({id: id});
+
+        if (rows.length != 1) throw new Error('unrecognized id');
+        const row = rows[0];
+
+        return new Notebook(id, row.created_at, row.owner_id, row.name);
+    }
+
+    /**
      * @returns {Promise.<Array.<Note>>} All notes in the notebook
      */
     async notes() {

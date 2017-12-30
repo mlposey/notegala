@@ -49,6 +49,25 @@ describe('Notebook', () => {
         });
     });
 
+    describe('#fromId(id)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should get the notebook if it exists', async () => {
+            let acct = await Account.construct(payload.email, payload.userName);
+            let expected = await Notebook.build(payload.nbName, acct);
+
+            let actual = await Notebook.fromId(expected.id);
+            actual.id.should.eql(expected.id);
+        });
+
+        it('should throw an exception if id is unrecognized', async () => {
+            let wasThrown = false;
+            try { await Notebook.fromId(3); }
+            catch (e) { wasThrown = true; }
+            wasThrown.should.eql(true);
+        });
+    });
+
     describe('#notes()', () => {
         beforeEach(async () => await clearDB());
 
