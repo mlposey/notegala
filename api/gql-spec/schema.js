@@ -77,6 +77,9 @@ module.exports.schema = buildSchema(`
 
         # Tags used to categorize the note
         tags: [String!]
+
+        # The notebook where the note should be attached
+        notebook: ID
     }
 
     # Used to change the content of an existing note

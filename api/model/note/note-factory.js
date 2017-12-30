@@ -3,6 +3,7 @@ const { db } = require('../../service/database');
 const Note = require('./note');
 const { Notepad } = require('./notepad');
 const Account = require('../account');
+const Notebook = require('../notebook');
 
 /** Handles creation of Notes and Note accessories */
 module.exports = class NoteFactory {
@@ -16,6 +17,7 @@ module.exports = class NoteFactory {
      * @returns {Promise.<Notepad>}
      */
     static async construct(email, input) {
+        // TODO: Decompose this method.
         if (!input.body && !input.title) {
             throw new Error('missing input note content');
         }
@@ -40,6 +42,11 @@ module.exports = class NoteFactory {
         await note.addWatcher(email, true);        
         if (input.tags) {
             for (let tag of input.tags) await notepad.addTag(tag);
+        }
+
+        if (input.notebook) {
+            const notebook = await Notebook.fromId(input.notebook);
+            await notebook.addNote(note);
         }
         return notepad;
     }
