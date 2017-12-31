@@ -10,6 +10,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.marcusposey.notegala.SignInActivity;
 import com.marcusposey.notegala.net.gen.CreateNoteMutation;
+import com.marcusposey.notegala.net.gen.CreateNotebookMutation;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
@@ -291,6 +292,34 @@ public class ApolloQueryService extends QueryService {
                                 new Exception("could not retrieve notebook notes"), null);
                     } else {
                         listener.onResult(null, response.data().notebook().notes());
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+            });
+        });
+    }
+
+    /**
+     * Creates a new notebook having the specified title
+     *
+     * This method corresponds to the 'createNotebook' mutation in the core API's
+     * GraphQL spec.
+     */
+    @Override
+    public void createNotebook(String title, Listener<CreateNotebookMutation.Notebook> listener) {
+        checkTokenThen(() -> {
+            mApolloClient.mutate(CreateNotebookMutation.builder().title(title).build())
+                    .enqueue(new ApolloCall.Callback<CreateNotebookMutation.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<CreateNotebookMutation.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(new Exception("could not creaate notebook"), null);
+                    } else {
+                        listener.onResult(null, response.data().notebook());
+                        setChanged();
+                        notifyObservers(response.data().notebook());
                     }
                 }
 
