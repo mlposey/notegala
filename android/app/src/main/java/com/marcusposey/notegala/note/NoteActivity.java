@@ -36,6 +36,8 @@ public class NoteActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = NoteActivity.class.getSimpleName();
 
+    // Extra key for receiving the id of the notebook where the note will go
+    public static final String NOTEBOOK_ID_EXTRA = "NOTEBOOK_ID_EXTRA";
     // Extra key for receiving a note's id from another fragment or activity
     public static final String ID_EXTRA = "ID_EXTRA";
     // Extra key for receiving a title from another fragment or activity
@@ -154,9 +156,10 @@ public class NoteActivity extends AppCompatActivity {
     private NewNoteInput serializeContent() {
         String title = ((EditText) findViewById(R.id.edit_note_title)).getText().toString();
         String body = ((EditText) findViewById(R.id.edit_note_body)).getText().toString();
+        String notebookId = getIntent().getStringExtra(NOTEBOOK_ID_EXTRA);
         // TODO: Serialize note tags.
 
-        return NewNoteInput.builder().title(title).body(body).build();
+        return NewNoteInput.builder().title(title).body(body).notebook(notebookId).build();
     }
 
     /** Publishes a new note to the API */
