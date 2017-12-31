@@ -20,6 +20,12 @@ module.exports.schema = buildSchema(`
         #
         # first - The maximum number of notebooks to retrieve        
         myNotebooks(first: Int): [Notebook!]!
+
+        # Retrieves the notebook identified by the id
+        #
+        # This notebook must belong to the account making
+        # the request.
+        notebook(id: ID!): Notebook!
     }
 
     type Mutation {
