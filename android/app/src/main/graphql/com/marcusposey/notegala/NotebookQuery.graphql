@@ -1,0 +1,7 @@
+query Notebook($id: ID!) {
+    notebook(id: $id) {
+        notes {
+            ...Note
+        }
+    }
+}
