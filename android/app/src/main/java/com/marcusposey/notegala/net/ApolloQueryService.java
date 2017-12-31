@@ -13,6 +13,7 @@ import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
 import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
@@ -239,6 +240,34 @@ public class ApolloQueryService extends QueryService {
                 public void onFailure(@Nonnull ApolloException e) {
                     listener.onResult(e, null);
                 }
+            });
+        });
+    }
+
+    /**
+     * Gets header information for each notebook owned by the user
+     *
+     * This does not retrieve the notes of each, as is possible with the full
+     * 'myNotebooks' GraphQL query.
+     */
+    @Override
+    public void getNotebookHeaders(Listener<List<MyNotebooksHeadQuery.Notebook>> listener) {
+        checkTokenThen(() -> {
+            mApolloClient.query(MyNotebooksHeadQuery.builder().build())
+                    .enqueue(new ApolloCall.Callback<MyNotebooksHeadQuery.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<MyNotebooksHeadQuery.Data> response) {
+                    if (response.data() == null) {
+                        listener.onResult(
+                                new Exception("could not retrieve notebook header information"),
+                                null);
+                    } else {
+                        listener.onResult(null, response.data().notebooks());
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
             });
         });
     }
