@@ -72,4 +72,5 @@ public abstract class QueryService extends Observable {
     public abstract void editNote(EditNoteInput input, Listener<EditNoteMutation.Note> listener);
     public abstract void removeNote(String id, Listener<Boolean> listener);
     public abstract void getNotebookHeaders(Listener<List<MyNotebooksHeadQuery.Notebook>> listener);
+    public abstract void getNotebookNotes(String id, Listener<List<Note>> listener);
 }

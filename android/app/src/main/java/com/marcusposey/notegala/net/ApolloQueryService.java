@@ -17,6 +17,7 @@ import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
 import com.marcusposey.notegala.net.gen.Note;
+import com.marcusposey.notegala.net.gen.NotebookQuery;
 import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 
 import java.util.List;
@@ -264,6 +265,32 @@ public class ApolloQueryService extends QueryService {
                                 null);
                     } else {
                         listener.onResult(null, response.data().notebooks());
+                    }
+                }
+
+                @Override
+                public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
+            });
+        });
+    }
+
+    /**
+     * Gets all notes that belong to a notebook
+     *
+     * @param id The unique id of the notebook
+     */
+    @Override
+    public void getNotebookNotes(String id, Listener<List<Note>> listener) {
+        checkTokenThen(() -> {
+            mApolloClient.query(NotebookQuery.builder().id(id).build())
+                    .enqueue(new ApolloCall.Callback<NotebookQuery.Data>() {
+                @Override
+                public void onResponse(@Nonnull Response<NotebookQuery.Data> response) {
+                    if (response.data() == null || response.data().notebook() == null) {
+                        listener.onResult(
+                                new Exception("could not retrieve notebook notes"), null);
+                    } else {
+                        listener.onResult(null, response.data().notebook().notes());
                     }
                 }
 
