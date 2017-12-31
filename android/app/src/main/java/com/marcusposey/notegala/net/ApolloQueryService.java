@@ -1,9 +1,6 @@
 package com.marcusposey.notegala.net;
 
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -24,8 +21,6 @@ import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.annotation.Nonnull;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -109,22 +104,10 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void getAccount(Listener<GetAccountQuery.Account> listener) {
         checkTokenThen(() -> {
-            mApolloClient.query(GetAccountQuery.builder().build())
-                    .enqueue(new ApolloCall.Callback<GetAccountQuery.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<GetAccountQuery.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(new Exception("missing account data"), null);
-                    } else {
-                        listener.onResult(null, response.data().account());
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) {
-                    listener.onResult(e, null);
-                }
-            });
+            mApolloClient.query(GetAccountQuery.builder().build()).enqueue(new ResponseCallback<>(
+                    response -> listener.onResult(null, response.data().account()),
+                    listener, "missing account data"
+            ));
         });
     }
 
@@ -137,22 +120,10 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void getMyNotes(Listener<List<Note>> listener) {
         checkTokenThen(() -> {
-            mApolloClient.query(MyNotesQuery.builder().build())
-                    .enqueue(new ApolloCall.Callback<MyNotesQuery.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<MyNotesQuery.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(new Exception("failed to retrieve notes"), null);
-                    } else {
-                        listener.onResult(null, response.data().notes());
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) {
-                    listener.onResult(e, null);
-                }
-            });
+            mApolloClient.query(MyNotesQuery.builder().build()).enqueue(new ResponseCallback<>(
+                    response -> listener.onResult(null, response.data().notes()),
+                    listener, "failed to retrieve notes"
+            ));
         });
     }
 
@@ -165,24 +136,13 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void createNote(NewNoteInput input, Listener<CreateNoteMutation.Note> listener) {
         checkTokenThen(() -> {
-            mApolloClient.mutate(CreateNoteMutation.builder().input(input).build())
-                    .enqueue(new ApolloCall.Callback<CreateNoteMutation.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<CreateNoteMutation.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(new Exception("could not upload note"), null);
-                    } else {
+            mApolloClient.mutate(CreateNoteMutation.builder().input(input).build()).enqueue(
+                    new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().note());
                         setChanged();
                         notifyObservers();
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) {
-                    listener.onResult(e, null);
-                }
-            });
+                    }, listener, "could not upload note")
+            );
         });
     }
 
@@ -195,24 +155,13 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void editNote(EditNoteInput input, Listener<EditNoteMutation.Note> listener) {
         checkTokenThen(() -> {
-            mApolloClient.mutate(EditNoteMutation.builder().input(input).build())
-                    .enqueue(new ApolloCall.Callback<EditNoteMutation.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<EditNoteMutation.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(new Exception("could not upload edited note"), null);
-                    } else {
+            mApolloClient.mutate(EditNoteMutation.builder().input(input).build()).enqueue(
+                    new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().note());
                         setChanged();
                         notifyObservers();
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) {
-                    listener.onResult(e, null);
-                }
-            });
+                    }, listener, "could not upload edited note")
+            );
         });
     }
 
@@ -226,24 +175,13 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void removeNote(String id, Listener<Boolean> listener) {
         checkTokenThen(() -> {
-            mApolloClient.mutate(RemoveNoteMutation.builder().id(id).build())
-                    .enqueue(new ApolloCall.Callback<RemoveNoteMutation.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<RemoveNoteMutation.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(new Exception("could not delete note"), null);
-                    } else {
+            mApolloClient.mutate(RemoveNoteMutation.builder().id(id).build()).enqueue(
+                    new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().removeNote());
                         setChanged();
                         notifyObservers();
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) {
-                    listener.onResult(e, null);
-                }
-            });
+                    }, listener, "could not delete note")
+            );
         });
     }
 
@@ -256,22 +194,10 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void getNotebookHeaders(Listener<List<MyNotebooksHeadQuery.Notebook>> listener) {
         checkTokenThen(() -> {
-            mApolloClient.query(MyNotebooksHeadQuery.builder().build())
-                    .enqueue(new ApolloCall.Callback<MyNotebooksHeadQuery.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<MyNotebooksHeadQuery.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(
-                                new Exception("could not retrieve notebook header information"),
-                                null);
-                    } else {
-                        listener.onResult(null, response.data().notebooks());
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
-            });
+            mApolloClient.query(MyNotebooksHeadQuery.builder().build()).enqueue(new ResponseCallback<>(
+                    response -> listener.onResult(null, response.data().notebooks()),
+                    listener, "could not retrieve notebook headers")
+            );
         });
     }
 
@@ -283,21 +209,10 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void getNotebookNotes(String id, Listener<List<Note>> listener) {
         checkTokenThen(() -> {
-            mApolloClient.query(NotebookQuery.builder().id(id).build())
-                    .enqueue(new ApolloCall.Callback<NotebookQuery.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<NotebookQuery.Data> response) {
-                    if (response.data() == null || response.data().notebook() == null) {
-                        listener.onResult(
-                                new Exception("could not retrieve notebook notes"), null);
-                    } else {
-                        listener.onResult(null, response.data().notebook().notes());
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
-            });
+            mApolloClient.query(NotebookQuery.builder().id(id).build()).enqueue(new ResponseCallback<>(
+                    response -> listener.onResult(null, response.data().notebook().notes()),
+                    listener, "could not retrieve notebook notes"
+            ));
         });
     }
 
@@ -310,22 +225,13 @@ public class ApolloQueryService extends QueryService {
     @Override
     public void createNotebook(String title, Listener<CreateNotebookMutation.Notebook> listener) {
         checkTokenThen(() -> {
-            mApolloClient.mutate(CreateNotebookMutation.builder().title(title).build())
-                    .enqueue(new ApolloCall.Callback<CreateNotebookMutation.Data>() {
-                @Override
-                public void onResponse(@Nonnull Response<CreateNotebookMutation.Data> response) {
-                    if (response.data() == null) {
-                        listener.onResult(new Exception("could not creaate notebook"), null);
-                    } else {
+            mApolloClient.mutate(CreateNotebookMutation.builder().title(title).build()).enqueue(
+                    new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().notebook());
                         setChanged();
                         notifyObservers(response.data().notebook());
-                    }
-                }
-
-                @Override
-                public void onFailure(@Nonnull ApolloException e) { listener.onResult(e, null); }
-            });
+                    }, listener, "could not create notebook")
+            );
         });
     }
 }
