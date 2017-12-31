@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.note.MyNotesFragment;
+import com.marcusposey.notegala.notebook.NotebookMenuManager;
 
 /**
  * Processes events related to the left navigation drawer
@@ -22,6 +23,7 @@ import com.marcusposey.notegala.note.MyNotesFragment;
 public class SidePane extends NavigationView {
     private MainActivity mParent;
     private DrawerLayout mDrawer;
+    private NotebookMenuManager mNotebookMenu;
 
     public SidePane(Context context) {
         super(context);
@@ -48,19 +50,27 @@ public class SidePane extends NavigationView {
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        setNavigationItemSelectedListener(this::onNavigationItemSelected);
-        MenuItem home = getMenu().getItem(0);
-        home.setChecked(true);
-        onNavigationItemSelected(home);
+        initMenuItems();
     }
 
-    /** Uses account data to populate pane header information */
+    /** Populates the menu with the user's personal data */
     public void displayUserData(GetAccountQuery.Account account) {
         TextView displayName = mParent.findViewById(R.id.header_display_name);
         displayName.setText(account.name());
 
         TextView email = mParent.findViewById(R.id.header_email);
         email.setText(account.email());
+
+        MenuItem notebook = getMenu().findItem(R.id.notebook_menu_title);
+        mNotebookMenu = new NotebookMenuManager(mParent, notebook.getSubMenu(), 3);
+    }
+
+    /** Initializes the static menu items */
+    private void initMenuItems() {
+        setNavigationItemSelectedListener(this::onNavigationItemSelected);
+        MenuItem home = getMenu().getItem(0);
+        home.setChecked(true);
+        onNavigationItemSelected(home);
     }
 
     /** Loads a component's state into the main content frame once pressed */
@@ -79,9 +89,8 @@ public class SidePane extends NavigationView {
             case R.id.nav_explore:
                 // TODO: Load explore section into content frame.
                 break;
-            case R.id.nav_misc:
-                // TODO: Load notebooks into the content frame.
-                break;
+            default:
+                mNotebookMenu.onItemSelected(item);
         }
 
         mDrawer.closeDrawer(GravityCompat.START);
