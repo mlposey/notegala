@@ -16,6 +16,7 @@ import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
+import com.marcusposey.notegala.net.gen.Note;
 import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
 
 import java.util.List;
@@ -132,7 +133,7 @@ public class ApolloQueryService extends QueryService {
      * GraphQL spec
      */
     @Override
-    public void getMyNotes(Listener<List<MyNotesQuery.Note>> listener) {
+    public void getMyNotes(Listener<List<Note>> listener) {
         checkTokenThen(() -> {
             mApolloClient.query(MyNotesQuery.builder().build())
                     .enqueue(new ApolloCall.Callback<MyNotesQuery.Data>() {

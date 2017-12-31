@@ -14,7 +14,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
-import com.marcusposey.notegala.net.gen.MyNotesQuery;
+import com.marcusposey.notegala.net.gen.Note;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -92,7 +92,7 @@ public class MyNotesFragment extends ListFragment implements Observer {
      * Successful requests result in the note list being updated
      * to reflect the current global state of the user's notes.
      */
-    private void onNotesNetworkResponse(Exception e, List<MyNotesQuery.Note> notes) {
+    private void onNotesNetworkResponse(Exception e, List<Note> notes) {
         getActivity().runOnUiThread(() -> {
             if (e != null) {
                 Log.e(LOG_TAG, e.getMessage());
@@ -101,7 +101,7 @@ public class MyNotesFragment extends ListFragment implements Observer {
             } else {
                 Log.i(LOG_TAG, String.format("fetched %d notes", notes.size()));
 
-                MyNotesQuery.Note[] aNotes = notes.toArray(new MyNotesQuery.Note[0]);
+                Note[] aNotes = notes.toArray(new Note[0]);
                 sortByModified(aNotes);
                 MyNoteAdapter adapter = new MyNoteAdapter(getActivity(), getFragmentManager(), aNotes);
                 getListView().setOnItemClickListener(this::onNoteClicked);
@@ -112,7 +112,7 @@ public class MyNotesFragment extends ListFragment implements Observer {
 
     /** Handles clicks/presses of the note cards in the list */
     private void onNoteClicked(AdapterView<?> parent, View view, int position, long id) {
-        MyNotesQuery.Note note = (MyNotesQuery.Note) parent.getItemAtPosition(position);
+        Note note = (Note) parent.getItemAtPosition(position);
 
         Intent intent = new Intent(getContext(), NoteActivity.class);
         intent.putExtra(NoteActivity.TITLE_EXTRA, note.title());
@@ -126,7 +126,7 @@ public class MyNotesFragment extends ListFragment implements Observer {
      *
      * Recently updated notes will have a lower index than older ones.
      */
-    private void sortByModified(MyNotesQuery.Note[] notes) {
+    private void sortByModified(Note[] notes) {
         Arrays.sort(notes, (a, b) -> {
             // Chop off the timezones.
             int aEndPos = a.lastModified().lastIndexOf(" ", a.lastModified().length() - 7);
