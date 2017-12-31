@@ -1,0 +1,8 @@
+mutation CreateNotebook($title: String!) {
+    notebook: createNotebook(title: $title) {
+        id
+        createdAt
+        owner
+        title
+    }
+}
