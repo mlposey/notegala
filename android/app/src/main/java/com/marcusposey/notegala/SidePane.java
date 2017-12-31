@@ -7,7 +7,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -20,8 +19,6 @@ import com.marcusposey.notegala.notebook.NotebookMenuManager;
 import java.util.Observable;
 import java.util.Observer;
 
-import javax.annotation.Nullable;
-
 /**
  * Processes events related to the left navigation drawer
  *
@@ -32,6 +29,9 @@ public class SidePane extends NavigationView implements Observer {
     private MainActivity mParent;
     private DrawerLayout mDrawer;
     private NotebookMenuManager mNotebookMenu;
+
+    // The last menu item that was pressed
+    private MenuItem mPreviouslyChecked;
 
     public SidePane(Context context) {
         super(context);
@@ -83,7 +83,12 @@ public class SidePane extends NavigationView implements Observer {
     }
 
     /** Loads a component's state into the main content frame once pressed */
-    private boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(MenuItem item) {
+        item.setCheckable(true);
+        item.setChecked(true);
+        if (mPreviouslyChecked != null) mPreviouslyChecked.setChecked(false);
+        mPreviouslyChecked = item;
+
         switch (item.getItemId()) {
             case R.id.nav_home:
                 NotesFragment fragment = new MyNotesFragment();
@@ -111,7 +116,7 @@ public class SidePane extends NavigationView implements Observer {
         if (o instanceof QueryService && arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
             mParent.runOnUiThread(() -> {
                 String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
-                mNotebookMenu.refresh(title);
+                mNotebookMenu.refresh(title, this);
             });
         }
     }
