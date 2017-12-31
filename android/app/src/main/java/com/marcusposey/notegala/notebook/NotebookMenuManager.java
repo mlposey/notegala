@@ -1,5 +1,6 @@
 package com.marcusposey.notegala.notebook;
 
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -9,6 +10,7 @@ import android.view.SubMenu;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
+import com.marcusposey.notegala.note.NotesFragment;
 
 import java.util.HashMap;
 
@@ -44,7 +46,16 @@ public class NotebookMenuManager {
 
     public void onItemSelected(MenuItem item) {
         MyNotebooksHeadQuery.Notebook nbHeader = mHeaders.get(item.getTitle());
-        Log.i(LOG_TAG, "pressed item: " + nbHeader.title());
+
+        NotesFragment fragment = new NotebookNotesFragment();
+        Bundle args = new Bundle();
+        args.putString(NotebookNotesFragment.NOTE_ID, nbHeader.id());
+        fragment.setArguments(args);
+
+        mParent.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame, fragment)
+                .commit();
     }
 
     /** Repopulates the notebook list with the most recent network state */
