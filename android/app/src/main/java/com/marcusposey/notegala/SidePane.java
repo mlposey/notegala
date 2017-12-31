@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.note.MyNotesFragment;
+import com.marcusposey.notegala.note.NotesFragment;
 import com.marcusposey.notegala.notebook.NotebookMenuManager;
 
 /**
@@ -77,7 +78,7 @@ public class SidePane extends NavigationView {
     private boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                MyNotesFragment fragment = new MyNotesFragment();
+                NotesFragment fragment = new MyNotesFragment();
                 mParent.getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, fragment)
