@@ -3,6 +3,7 @@ package com.marcusposey.notegala.note;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,6 +51,8 @@ public abstract class NotesFragment extends ListFragment implements Observer {
     public abstract void refreshList(QueryService service, QueryService.Listener<List<Note>> listener);
     /** Perform some action when the new note button is pressed */
     public abstract void onNewNotePressed(View view);
+    /** Set up the action bar content */
+    public abstract void configureAppBar(ActionBar actionBar);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
