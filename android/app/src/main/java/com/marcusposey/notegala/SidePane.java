@@ -7,13 +7,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.note.MyNotesFragment;
 import com.marcusposey.notegala.note.NotesFragment;
 import com.marcusposey.notegala.notebook.NotebookMenuManager;
+
+import java.util.Observable;
+import java.util.Observer;
+
+import javax.annotation.Nullable;
 
 /**
  * Processes events related to the left navigation drawer
@@ -21,7 +28,7 @@ import com.marcusposey.notegala.notebook.NotebookMenuManager;
  * The drawer acts as an entry-point to major application components
  * such as personal notes, notebooks, or the explore feature.
  */
-public class SidePane extends NavigationView {
+public class SidePane extends NavigationView implements Observer {
     private MainActivity mParent;
     private DrawerLayout mDrawer;
     private NotebookMenuManager mNotebookMenu;
@@ -52,6 +59,7 @@ public class SidePane extends NavigationView {
         toggle.syncState();
 
         initMenuItems();
+        QueryService.awaitInstance(service -> service.addObserver(this));
     }
 
     /** Populates the menu with the user's personal data */
@@ -96,5 +104,15 @@ public class SidePane extends NavigationView {
 
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof QueryService && arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
+            mParent.runOnUiThread(() -> {
+                String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
+                mNotebookMenu.refresh(title);
+            });
+        }
     }
 }
