@@ -1,0 +1,7 @@
+fragment Note on Note {
+    id
+    lastModified
+    title
+    body
+    tags
+}
