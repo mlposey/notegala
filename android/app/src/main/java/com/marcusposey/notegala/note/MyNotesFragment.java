@@ -1,6 +1,7 @@
 package com.marcusposey.notegala.note;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 
 import com.marcusposey.notegala.net.QueryService;
@@ -19,5 +20,10 @@ public class MyNotesFragment extends NotesFragment {
     public void onNewNotePressed(View view) {
         Intent intent = new Intent(getContext(), NoteActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void configureAppBar(ActionBar actionBar) {
+        actionBar.setTitle("My Notes");
     }
 }

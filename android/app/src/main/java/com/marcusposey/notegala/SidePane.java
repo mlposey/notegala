@@ -92,6 +92,7 @@ public class SidePane extends NavigationView implements Observer {
         switch (item.getItemId()) {
             case R.id.nav_home:
                 NotesFragment fragment = new MyNotesFragment();
+                fragment.configureAppBar(mParent.getSupportActionBar());
                 mParent.getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.content_frame, fragment)

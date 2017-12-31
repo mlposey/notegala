@@ -53,9 +53,11 @@ public class NotebookMenuManager {
 
         NotesFragment fragment = new NotebookNotesFragment();
         Bundle args = new Bundle();
-        args.putString(NotebookNotesFragment.NOTE_ID, nbHeader.id());
+        args.putString(NotebookNotesFragment.NOTEBOOK_ID, nbHeader.id());
+        args.putString(NotebookNotesFragment.NOTEBOOK_TITLE, nbHeader.title());
         fragment.setArguments(args);
 
+        fragment.configureAppBar(mParent.getSupportActionBar());
         mParent.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame, fragment)
