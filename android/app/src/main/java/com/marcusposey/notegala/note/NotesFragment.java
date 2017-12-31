@@ -3,11 +3,13 @@ package com.marcusposey.notegala.note;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -44,7 +46,9 @@ public abstract class NotesFragment extends ListFragment implements Observer {
         // Required empty public constructor
     }
 
+    /** Use the service to retrieve a new list of notes that are input to listener */
     public abstract void refreshList(QueryService service, QueryService.Listener<List<Note>> listener);
+    /** Perform some action when the new note button is pressed */
     public abstract void onNewNotePressed(View view);
 
     @Override
@@ -67,6 +71,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
         QueryService.awaitInstance(service -> service.deleteObserver(this));
     }
 
+    /** Hook sub-buttons to actions */
     private void configureFloatingActionButtons(View rootView) {
         FloatingActionMenu menu = rootView.findViewById(R.id.fab_menu);
 
@@ -78,9 +83,34 @@ public abstract class NotesFragment extends ListFragment implements Observer {
 
         FloatingActionButton newNotebookButton = rootView.findViewById(R.id.fab_notebook);
         newNotebookButton.setOnClickListener(view -> {
-            Toast.makeText(getContext(), getString(R.string.todo), Toast.LENGTH_SHORT).show();
             menu.close(true);
+            onNewNotebookPress(view);
         });
+    }
+
+    /** Attempts to create a new user-defined notebook */
+    private void onNewNotebookPress(View view) {
+        EditText nameInput = new EditText(getActivity());
+        AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(getActivity())
+                .setTitle("Notebook Title")
+                .setView(nameInput);
+
+        // If yes, create notebook. If no, do nothing.
+        dlgBuilder.setPositiveButton(android.R.string.yes, (dialog, btn) -> {
+            QueryService.awaitInstance(service -> {
+                service.createNotebook(nameInput.getText().toString(), (e, ntbk) -> {
+                    getActivity().runOnUiThread(() -> {
+                        if (e != null) {
+                            Toast.makeText(getContext(), "could not create notebook",
+                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(), "notebook created",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                });
+            });
+        }).setNegativeButton(android.R.string.no, null).show();
     }
 
     /**
