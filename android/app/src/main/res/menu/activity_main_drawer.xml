@@ -18,12 +18,9 @@
             android:title="@string/explore_name" />
     </group>
 
-    <item android:title="@string/notebooks_name">
+    <item android:title="@string/notebooks_name"
+        android:id="@+id/notebook_menu_title">
         <menu>
-            <item
-                android:id="@+id/nav_misc"
-                android:icon="@drawable/ic_book_black_24dp"
-                android:title="@string/default_name" />
         </menu>
     </item>
 
