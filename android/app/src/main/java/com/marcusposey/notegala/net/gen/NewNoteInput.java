@@ -20,10 +20,14 @@ public final class NewNoteInput {
 
   private final Input<List<String>> tags;
 
-  NewNoteInput(Input<String> title, Input<String> body, Input<List<String>> tags) {
+  private final Input<String> notebook;
+
+  public NewNoteInput(Input<String> title, Input<String> body, Input<List<String>> tags,
+      Input<String> notebook) {
     this.title = title;
     this.body = body;
     this.tags = tags;
+    this.notebook = notebook;
   }
 
   public @Nullable String title() {
@@ -36,6 +40,10 @@ public final class NewNoteInput {
 
   public @Nullable List<String> tags() {
     return this.tags.value;
+  }
+
+  public @Nullable String notebook() {
+    return this.notebook.value;
   }
 
   public static Builder builder() {
@@ -62,6 +70,9 @@ public final class NewNoteInput {
             }
           } : null);
         }
+        if (notebook.defined) {
+          writer.writeCustom("notebook", com.marcusposey.notegala.type.CustomType.ID, notebook.value != null ? notebook.value : null);
+        }
       }
     };
   }
@@ -72,6 +83,8 @@ public final class NewNoteInput {
     private Input<String> body = Input.absent();
 
     private Input<List<String>> tags = Input.absent();
+
+    private Input<String> notebook = Input.absent();
 
     Builder() {
     }
@@ -91,6 +104,11 @@ public final class NewNoteInput {
       return this;
     }
 
+    public Builder notebook(@Nullable String notebook) {
+      this.notebook = Input.fromNullable(notebook);
+      return this;
+    }
+
     public Builder titleInput(@Nonnull Input<String> title) {
       this.title = Utils.checkNotNull(title, "title == null");
       return this;
@@ -106,8 +124,13 @@ public final class NewNoteInput {
       return this;
     }
 
+    public Builder notebookInput(@Nonnull Input<String> notebook) {
+      this.notebook = Utils.checkNotNull(notebook, "notebook == null");
+      return this;
+    }
+
     public NewNoteInput build() {
-      return new NewNoteInput(title, body, tags);
+      return new NewNoteInput(title, body, tags, notebook);
     }
   }
 }
