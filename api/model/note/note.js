@@ -45,6 +45,13 @@ module.exports = class Note {
             }).del().returning('user_id');
         if (ids.length == 0) return false;
 
+        // Remove from their personal notebooks.
+        await db.raw(`
+            DELETE FROM notebook_notes
+            WHERE note_id = ?
+              AND notebook_id in (SELECT id FROM notebooks WHERE owner_id = ?);
+        `, [this.id, ids[0]]);
+
         const watchers = await this.watchers();
         // Completely delete it if they were the only watcher.
         if (watchers.length == 0) {
