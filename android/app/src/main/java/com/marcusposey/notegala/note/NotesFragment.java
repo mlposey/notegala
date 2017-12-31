@@ -45,6 +45,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
     }
 
     public abstract void refreshList(QueryService service, QueryService.Listener<List<Note>> listener);
+    public abstract void onNewNotePressed(View view);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -72,8 +73,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
         FloatingActionButton newNoteButton = rootView.findViewById(R.id.fab_note);
         newNoteButton.setOnClickListener(view -> {
             menu.close(true);
-            Intent intent = new Intent(getContext(), NoteActivity.class);
-            startActivity(intent);
+            onNewNotePressed(view);
         });
 
         FloatingActionButton newNotebookButton = rootView.findViewById(R.id.fab_notebook);
