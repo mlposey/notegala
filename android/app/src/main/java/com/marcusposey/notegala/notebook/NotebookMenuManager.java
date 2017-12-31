@@ -14,6 +14,8 @@ import com.marcusposey.notegala.note.NotesFragment;
 
 import java.util.HashMap;
 
+import javax.annotation.Nullable;
+
 /** Manages a collection of notebooks as menu items */
 public class NotebookMenuManager {
     private static final String LOG_TAG = NotebookMenuManager.class.getSimpleName();
@@ -41,11 +43,15 @@ public class NotebookMenuManager {
         mOffset = offset;
         mParent = parent;
 
-        refresh();
+        refresh(null);
     }
 
     public void onItemSelected(MenuItem item) {
-        MyNotebooksHeadQuery.Notebook nbHeader = mHeaders.get(item.getTitle());
+        onItemSelected(item.getTitle().toString());
+    }
+
+    public void onItemSelected(String title) {
+        MyNotebooksHeadQuery.Notebook nbHeader = mHeaders.get(title);
 
         NotesFragment fragment = new NotebookNotesFragment();
         Bundle args = new Bundle();
@@ -58,8 +64,13 @@ public class NotebookMenuManager {
                 .commit();
     }
 
-    /** Repopulates the notebook list with the most recent network state */
-    public void refresh() {
+    /**
+     * Repopulates the notebook list with the most recent network state
+     *
+     * @param title If given a notebook title, that content will fill the
+     *              content frame after the refresh.
+     */
+    public void refresh(@Nullable String title) {
         Log.i(LOG_TAG, "refreshing notebook headers");
 
         mMenu.clear();
@@ -80,6 +91,8 @@ public class NotebookMenuManager {
                         MenuItem item = mMenu.add(0, pos++, Menu.NONE, notebook.title());
                         item.setIcon(R.drawable.ic_book_black_24dp);
                     }
+
+                    if (title != null) onItemSelected(title);
                 });
             }));
         });
