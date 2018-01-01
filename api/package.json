@@ -1,6 +1,6 @@
 {
   "name": "api",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "The core API of NoteGala",
   "main": "server.js",
   "scripts": {

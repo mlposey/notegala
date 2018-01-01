@@ -52,6 +52,11 @@ module.exports.schema = buildSchema(`
         # A user cannot have multiple notebooks with
         # the same name.
         createNotebook(title: String!): Notebook!
+
+        # Removes the notebook from the user's collection
+        #
+        # Any notes it contained will be detached but not deleted.
+        removeNotebook(id: ID!): Boolean!
     }
 
     # Describes a user account

@@ -53,5 +53,10 @@ module.exports.root = {
         const notebook = await Notebook.fromId(context.variableValues.id);
         if (notebook.owner != acct.id) throw new GraphQLError('access denied');
         return notebook;
+    },
+    removeNotebook: (root, {email}, context) => {
+        return Notebook.fromId(context.variableValues.id)
+            .then(notebook => notebook.remove(email))
+            .catch(err => new GraphQLError(err.message));
     }
 };
