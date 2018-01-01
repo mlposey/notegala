@@ -28,6 +28,12 @@ import okhttp3.Request;
 
 /** Makes queries to the remote GraphQL API */
 public class ApolloQueryService extends QueryService {
+    /** Network response types */
+    public enum ResponseType {
+        NOTE_CHANGE,
+        NOTEBOOK_DELETE
+    }
+
     private static final String SERVER_URL = "http://api.marcusposey.com:9002/graphql";
 
     private ApolloClient mApolloClient;
@@ -141,7 +147,7 @@ public class ApolloQueryService extends QueryService {
                     new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().note());
                         setChanged();
-                        notifyObservers();
+                        notifyObservers(ResponseType.NOTE_CHANGE);
                     }, listener, "could not upload note")
             );
         });
@@ -160,7 +166,7 @@ public class ApolloQueryService extends QueryService {
                     new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().note());
                         setChanged();
-                        notifyObservers();
+                        notifyObservers(ResponseType.NOTE_CHANGE);
                     }, listener, "could not upload edited note")
             );
         });
@@ -180,7 +186,7 @@ public class ApolloQueryService extends QueryService {
                     new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().removeNote());
                         setChanged();
-                        notifyObservers();
+                        notifyObservers(ResponseType.NOTE_CHANGE);
                     }, listener, "could not delete note")
             );
         });
@@ -250,7 +256,7 @@ public class ApolloQueryService extends QueryService {
                     new ResponseCallback<>(response -> {
                         listener.onResult(null, response.data().wasRemoved());
                         setChanged();
-                        notifyObservers(response.data());
+                        notifyObservers(ResponseType.NOTEBOOK_DELETE);
                     }, listener, "could not delete notebook")
             );
         });
