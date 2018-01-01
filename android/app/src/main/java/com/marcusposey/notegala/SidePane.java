@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
-import com.marcusposey.notegala.net.gen.RemoveNotebookMutation;
 import com.marcusposey.notegala.note.MyNotesFragment;
 import com.marcusposey.notegala.note.NotesFragment;
 import com.marcusposey.notegala.notebook.NotebookMenuManager;
