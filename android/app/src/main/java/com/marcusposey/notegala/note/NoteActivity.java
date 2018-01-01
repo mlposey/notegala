@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.marcusposey.notegala.DialogFactory;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
@@ -89,15 +90,10 @@ public class NoteActivity extends AppCompatActivity {
             return;
         }
 
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.delete_title))
-                .setMessage(getString(R.string.delete_message))
-                .setPositiveButton(android.R.string.yes, (dialog, btn) -> {
-                    String noteId = getIntent().getStringExtra(ID_EXTRA);
-                    QueryService.awaitInstance(service -> deleteNote(service, noteId));
-                })
-                .setNegativeButton(android.R.string.no, null)
-                .show();
+        DialogFactory.deletion(this, getString(R.string.dialog_note), () -> {
+            String noteId = getIntent().getStringExtra(ID_EXTRA);
+            QueryService.awaitInstance(service -> deleteNote(service, noteId));
+        }).show();
     }
 
     /** Uses the QueryService to trigger note deletion */

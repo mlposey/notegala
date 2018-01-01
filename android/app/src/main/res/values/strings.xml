@@ -24,8 +24,10 @@
     <!-- End overflow menu labels -->
 
     <!-- Begin dialog content -->
-    <string name="delete_title">Delete Note</string>
-    <string name="delete_message">Are you sure? This action cannot be undone.</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_delete_message">Are you sure? This action cannot be undone.</string>
+    <string name="dialog_notebook">Notebook</string>
+    <string name="dialog_note">Note</string>
     <!-- End dialog content -->
 
     <string name="default_note_title">A Wonderful Title</string>
