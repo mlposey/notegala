@@ -17,6 +17,7 @@ import com.marcusposey.notegala.net.gen.NewNoteInput;
 import com.marcusposey.notegala.net.gen.Note;
 import com.marcusposey.notegala.net.gen.NotebookQuery;
 import com.marcusposey.notegala.net.gen.RemoveNoteMutation;
+import com.marcusposey.notegala.net.gen.RemoveNotebookMutation;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -231,6 +232,26 @@ public class ApolloQueryService extends QueryService {
                         setChanged();
                         notifyObservers(response.data().notebook());
                     }, listener, "could not create notebook")
+            );
+        });
+    }
+
+    /**
+     * Removes the notebook from the user's collection, notifying observers if the request succeeds
+     *
+     * This method corresponds to the 'removeNotebook' mutation in the core API's
+     * GraphQL spec.
+     * @param id The unique id of the notebook
+     */
+    @Override
+    public void removeNotebook(String id, Listener<Boolean> listener) {
+        checkTokenThen(() -> {
+            mApolloClient.mutate(RemoveNotebookMutation.builder().id(id).build()).enqueue(
+                    new ResponseCallback<>(response -> {
+                        listener.onResult(null, response.data().wasRemoved());
+                        setChanged();
+                        notifyObservers(response.data());
+                    }, listener, "could not delete notebook")
             );
         });
     }
