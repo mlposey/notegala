@@ -115,7 +115,7 @@ CREATE TABLE notebooks (
 
 CREATE TABLE notebook_notes (
     id serial PRIMARY KEY,
-    notebook_id integer NOT NULL REFERENCES notebooks(id),
+    notebook_id integer NOT NULL REFERENCES notebooks(id) ON DELETE CASCADE,
     note_id integer NOT NULL REFERENCES notes(id),
     UNIQUE (notebook_id, note_id)
 );
