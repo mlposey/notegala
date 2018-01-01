@@ -7,10 +7,8 @@ const Notebook = require('../model/notebook');
 
 // Root resolver for all GraphQL queries and mutations
 module.exports.root = {
-    account: (root, {email, name}, context) => {
-        return Account.fromEmail(email)
-            .catch(e => Account.construct(email, name))
-            .catch(e => new GraphQLError(e.message));
+    account: (root, {acct}, context) => {
+        return acct;
     },
     createNote: (root, {email}, context) => {
         const newNoteInput = context.variableValues.input;

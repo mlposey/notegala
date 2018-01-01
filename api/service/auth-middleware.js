@@ -1,6 +1,7 @@
 'use strict';
 const GoogleAuth = require('google-auth-library');
 const { GraphQLError, formatError } = require('graphql');
+const Account = require('../model/account');
 
 module.exports = class AuthMiddleware {
     /**
@@ -66,7 +67,7 @@ module.exports = class AuthMiddleware {
         this.client.verifyIdToken(
             idToken,
             this.clientId,
-            (e, login) => {
+            async (e, login) => {
                 if (e) {
                     return this.sendError(res, 401, 'invalid token');
                 }
@@ -76,6 +77,10 @@ module.exports = class AuthMiddleware {
                     return this.sendError(res, 400,
                         'missing claims: ' + missingClaims.join(','));
                 }
+
+                try { await this.storeAccount(req, req.email, req.name); }
+                catch (err) { return this.sendError(res, 400, err.message); }
+                
                 next();
             }
         );     
@@ -93,5 +98,24 @@ module.exports = class AuthMiddleware {
                 if (!payload[claim]) return true;
                 req[claim] = payload[claim];
             })
+    }
+
+    /**
+     * Stores the account associated with the email into the req object
+     * 
+     * If the account does not exist, it is created.
+     * @param {Object} req
+     * @param {string} email The email of the account
+     * @param {string} name The display name of the account
+     * @throws {Error} If a new account cannot be constructed
+     */
+    async storeAccount(req, email, name) {
+        try {
+            let acct = await Account.fromEmail(req.email)
+                .catch(missingErr => Account.construct(email, name));
+            req.acct = acct;
+        } catch (err) {
+            throw new Error('could not create account');
+        }
     }
 };
