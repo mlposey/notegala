@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.RemoveNotebookMutation;
 import com.marcusposey.notegala.note.MyNotesFragment;
 import com.marcusposey.notegala.note.NotesFragment;
 import com.marcusposey.notegala.notebook.NotebookMenuManager;
@@ -114,10 +115,15 @@ public class SidePane extends NavigationView implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof QueryService && arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
+        if (o instanceof QueryService) {
             mParent.runOnUiThread(() -> {
-                String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
-                mNotebookMenu.refresh(title, this);
+                if (arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
+                    String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
+                    mNotebookMenu.refresh(title, this);
+                } else if (arg instanceof RemoveNotebookMutation.Data) {
+                    onNavigationItemSelected(getMenu().findItem(R.id.my_note_title));
+                    mNotebookMenu.refresh(null, null);
+                }
             });
         }
     }
