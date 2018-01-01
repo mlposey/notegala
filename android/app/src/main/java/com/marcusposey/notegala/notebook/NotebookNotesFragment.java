@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.marcusposey.notegala.DialogFactory;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.Note;
@@ -41,23 +42,27 @@ public class NotebookNotesFragment extends NotesFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.notebook_menu_delete) {
-            QueryService.awaitInstance(service -> {
-                service.removeNotebook(mNotebookId, (e, wasRemoved) -> {
-                    getActivity().runOnUiThread(() -> {
-                        if (e != null || wasRemoved == null || !wasRemoved.booleanValue()) {
-                            Toast.makeText(getContext(), getString(R.string.fragment_notebook_failed_delete),
-                                    Toast.LENGTH_LONG).show();
-                            Log.e(LOG_TAG, e != null ? e.getMessage() : "could not delete notebook");
-                        } else {
-                            Toast.makeText(getContext(), getString(R.string.fragment_notebook_delete),
-                                    Toast.LENGTH_SHORT).show();
-                            Log.i(LOG_TAG, "deleted notebook " + mNotebookId);
-                        }
-                    });
-                });
-            });
+            DialogFactory.deletion(getContext(), getString(R.string.dialog_notebook),
+                    () -> QueryService.awaitInstance(this::deleteNotebook)
+            ).show();
         }
         return true;
+    }
+
+    private void deleteNotebook(QueryService service) {
+        service.removeNotebook(mNotebookId, (e, wasRemoved) -> {
+            getActivity().runOnUiThread(() -> {
+                if (e != null || wasRemoved == null || !wasRemoved.booleanValue()) {
+                    Toast.makeText(getContext(), getString(R.string.fragment_notebook_failed_delete),
+                            Toast.LENGTH_LONG).show();
+                    Log.e(LOG_TAG, e != null ? e.getMessage() : "could not delete notebook");
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.fragment_notebook_delete),
+                            Toast.LENGTH_SHORT).show();
+                    Log.i(LOG_TAG, "deleted notebook " + mNotebookId);
+                }
+            });
+        });
     }
 
     @Override
