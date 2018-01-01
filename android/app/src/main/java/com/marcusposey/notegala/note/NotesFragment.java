@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.marcusposey.notegala.R;
+import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.Note;
 
@@ -182,7 +183,8 @@ public abstract class NotesFragment extends ListFragment implements Observer {
      */
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof QueryService) {
+        if (o instanceof QueryService && arg instanceof ApolloQueryService.ResponseType &&
+                arg == ApolloQueryService.ResponseType.NOTE_CHANGE) {
             refreshList((QueryService) o, this::onNotesNetworkResponse);
         }
     }

@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.RemoveNotebookMutation;
@@ -120,8 +121,9 @@ public class SidePane extends NavigationView implements Observer {
                 if (arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
                     String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
                     mNotebookMenu.refresh(title, this);
-                } else if (arg instanceof RemoveNotebookMutation.Data) {
-                    onNavigationItemSelected(getMenu().findItem(R.id.my_note_title));
+                } else if (arg instanceof ApolloQueryService.ResponseType &&
+                        arg.equals(ApolloQueryService.ResponseType.NOTEBOOK_DELETE)) {
+                    onNavigationItemSelected(getMenu().getItem(0));
                     mNotebookMenu.refresh(null, null);
                 }
             });
