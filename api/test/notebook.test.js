@@ -97,6 +97,37 @@ describe('Notebook', () => {
         });
     });
 
+    describe('#remove(email)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should remove the note if it is owned by the user', async () => {
+            const act = await Account.construct(payload.email, payload.userName)
+            await Notebook.build(payload.nbName, act);
+
+            let notebooks = await Notebook.getOwned(payload.email);
+            notebooks.length.should.eql(1);
+
+            const res = await notebooks[0].remove(payload.email);
+            res.should.eql(true);
+            notebooks = await Notebook.getOwned(payload.email);
+            
+            notebooks.length.should.eql(0);
+        });
+
+        it('should return false if unrecognized or not owned', async () => {
+            const act = await Account.construct(payload.email, payload.userName)
+            await Notebook.build(payload.nbName, act);
+
+            let notebooks = await Notebook.getOwned(payload.email);
+            notebooks.length.should.eql(1);
+
+            const acct =
+                await Account.construct('a' + payload.email, payload.userName);         
+            const res = await notebooks[0].remove('a' + payload.email);
+            res.should.eql(false);
+        });
+    });
+
     describe('#notes()', () => {
         beforeEach(async () => await clearDB());
 
