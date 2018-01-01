@@ -38,5 +38,7 @@
     <string name="activity_note_ncreate">note created</string>
     <string name="activity_note_nupdate">note updated</string>
     <string name="activity_note_ndelete">note deleted</string>
+    <string name="fragment_notebook_delete">notebook deleted</string>
+    <string name="fragment_notebook_failed_delete">could not delete notebook</string>
     <!-- End toast messages -->
 </resources>

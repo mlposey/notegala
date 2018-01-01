@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
@@ -21,6 +22,8 @@ import java.util.List;
 
 /** Manages a list of notes that belong to a particular notebook */
 public class NotebookNotesFragment extends NotesFragment {
+    private static final String LOG_TAG = NotebookNotesFragment.class.getSimpleName();
+
     // Bundle/argument key for the note id
     public static final String NOTEBOOK_ID = "NOTEBOOK_ID";
 
@@ -38,8 +41,21 @@ public class NotebookNotesFragment extends NotesFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.notebook_menu_delete) {
-            // TODO: Delete notebook on menu press.
-            Log.i("NotebookNotesFragment", "deleted notebook " + mNotebookId);
+            QueryService.awaitInstance(service -> {
+                service.removeNotebook(mNotebookId, (e, wasRemoved) -> {
+                    getActivity().runOnUiThread(() -> {
+                        if (e != null || wasRemoved == null || !wasRemoved.booleanValue()) {
+                            Toast.makeText(getContext(), getString(R.string.fragment_notebook_failed_delete),
+                                    Toast.LENGTH_LONG).show();
+                            Log.e(LOG_TAG, e != null ? e.getMessage() : "could not delete notebook");
+                        } else {
+                            Toast.makeText(getContext(), getString(R.string.fragment_notebook_delete),
+                                    Toast.LENGTH_SHORT).show();
+                            Log.i(LOG_TAG, "deleted notebook " + mNotebookId);
+                        }
+                    });
+                });
+            });
         }
         return true;
     }
