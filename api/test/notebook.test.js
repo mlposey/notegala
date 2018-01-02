@@ -68,33 +68,32 @@ describe('Notebook', () => {
         });
     });
 
-    describe('#remove(email)', () => {
+    describe('#destroy()', () => {
         beforeEach(async () => await clearDB());
 
-        it('should remove the note if it is owned by the user', async () => {
+        it('should remove the note if it is recognized', async () => {
             const act = await Account.construct(payload.email, payload.userName)
             await Notebook.build(payload.nbName, act);
 
             let notebooks = await act.notebooks();
             notebooks.length.should.eql(1);
 
-            const res = await notebooks[0].remove(payload.email);
+            const res = await notebooks[0].destroy();
             res.should.eql(true);
             notebooks = await act.notebooks();
             
             notebooks.length.should.eql(0);
         });
 
-        it('should return false if unrecognized or not owned', async () => {
+        it('should return false if unrecognized', async () => {
             const act = await Account.construct(payload.email, payload.userName)
             await Notebook.build(payload.nbName, act);
 
             let notebooks = await act.notebooks();
             notebooks.length.should.eql(1);
-
-            const acct =
-                await Account.construct('a' + payload.email, payload.userName);         
-            const res = await notebooks[0].remove('a' + payload.email);
+        
+            await notebooks[0].destroy();
+            const res = await notebooks[0].destroy();
             res.should.eql(false);
         });
     });

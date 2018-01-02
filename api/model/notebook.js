@@ -58,19 +58,14 @@ module.exports = class Notebook {
     }
 
     /**
-     * Removes a user's notebook
+     * Deletes the database representation of the notebook
      * 
      * Any notes it contained will be detached but not deleted.
-     * @param {string} email The email of the user -- must match
-     *                       the email of the notebook owner
      * @returns {Promise.<boolean>} True if success; false otherwise
      */
-    async remove(email) {
+    async destroy() {
         let rows = await db('notebooks')
-            .where({
-                id: this.id,
-                owner_id: db('users').select('id').where({email: email})
-            })
+            .where({id: this.id})
             .del()
             .returning('*');
         return rows.length === 1;
