@@ -91,7 +91,6 @@ module.exports = class Notebook {
      * @param {Note} note 
      */
     async addNote(note) {
-        // TODO: Permissions.
         await db('notebook_notes').insert({
             notebook_id: this.id,
             note_id: note.id

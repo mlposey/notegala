@@ -43,7 +43,9 @@ module.exports = class NoteFactory {
 
         if (input.notebook) {
             const notebook = await Notebook.fromId(input.notebook);
-            await notebook.addNote(note);
+            if (acct.id === notebook.owner_id) {
+                await notebook.addNote(note);
+            }
         }
         return notepad;
     }
