@@ -29,11 +29,10 @@ module.exports.root = {
         }
         catch (e) { return new GraphQLError(e.message); }
     },
-    removeNote: (root, {email}, context) => {
-        const noteId = context.variableValues.id;
-        return NoteFactory.fromId(noteId)
-            .then(note => note.remove(email))
-            .catch(err => false);
+    removeNote: async (root, {acct}, context) => {
+        const note = await NoteFactory.fromId(context.variableValues.id);
+        await acct.stopWatching(note);
+        return true;
     },
     createNotebook: (root, {acct}, context) => {
         return Notebook.build(context.variableValues.title, acct)
