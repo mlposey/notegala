@@ -17,11 +17,10 @@ if (process.env.NODE_ENV != 'test') {
     app.use(auth.verifyGId.bind(auth));
 } else {
     let auth = new AuthMiddleware('test-client-id');    
-    app.use((req, res, next) => {
-        auth.storeClaims(req, {
-            email: 'janedoe@example.com',
-            name: 'Jane Doe'
-        });
+    app.use(async (req, res, next) => {
+        const user = {email: 'janedoe@example.com', name: 'Jane Doe'};
+        auth.storeClaims(req, user);
+        await auth.storeAccount(req, user.email, user.name);
         next();
     });
 }
