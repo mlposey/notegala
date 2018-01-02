@@ -2,13 +2,6 @@
 const { db } = require('../../service/database');
 const Account = require('../account.js');
 
-/** Indicates the email is unrecognized */
-class EmailError extends Error {
-    constructor() {
-        super('unrecognized email');
-    }
-}
-
 /** Indicates the necessary permissions are missing */
 class PermissionError extends Error {
     constructor() {
@@ -32,22 +25,6 @@ class Notepad {
     constructor(note, editor) {
         this.note = note;
         this.editor = editor;
-    }
-
-    /**
-     * Builds a Notepad where an account can edit a note
-     * 
-     * @param {Note} note The note to edit
-     * @param {string} editorEmail The email of the user making the edit
-     * @throws {EmailError} If the email is unrecognized
-     * @return {Promise.<Notepad>}
-     */
-    static async build(note, editorEmail) {
-        let account;
-        try { account = await Account.fromEmail(editorEmail); }
-        catch (e) { throw new EmailError(); }
-        
-        return new Notepad(note, account);
     }
 
     /**
@@ -159,7 +136,6 @@ class Notepad {
 }
 
 module.exports = {
-    EmailError: EmailError,
     PermissionError: PermissionError,
     Notepad: Notepad
 };
