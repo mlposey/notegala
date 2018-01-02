@@ -19,11 +19,11 @@ module.exports.root = {
     myNotes: (root, {acct, first}, context) => {
         return acct.notes(first);
     },
-    editNote: async (root, {email}, context) => {
+    editNote: async (root, {acct}, context) => {
         const input = context.variableValues.input;
         try {
             let note = await NoteFactory.fromId(input.id);
-            const notepad = await Notepad.build(note, email);
+            const notepad = new Notepad(note, acct);
             await notepad.edit(input.title, input.body, input.tags);
             return note;
         }
