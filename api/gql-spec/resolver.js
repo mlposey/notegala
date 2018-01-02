@@ -39,9 +39,8 @@ module.exports.root = {
         return Notebook.build(context.variableValues.title, acct)
                 .catch(err => new GraphQLError(err.message));
     },
-    myNotebooks: (root, {email, first}, context) => {
-        return Notebook.getOwned(email, first)
-            .catch(err => new GraphQLError(err.message));
+    myNotebooks: (root, {acct, first}, context) => {
+        return acct.notebooks(first);
     },
     notebook: async (root, {acct}, context) => {
         const notebook = await Notebook.fromId(context.variableValues.id);

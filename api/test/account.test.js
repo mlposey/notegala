@@ -8,6 +8,7 @@ const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const Account = require('../model/account');
 const NoteFactory = require('../model/note/note-factory');
+const Notebook = require('../model/notebook');
 
 // Models a bearer token that would be supplied to the auth layer
 const claims = Object.freeze({
@@ -107,6 +108,36 @@ describe('Account', () => {
             const notes = await acct.notes(max);
             
             notes.length.should.eql(max);
+        });
+    });
+
+    describe('#notebooks(limit)', () => {
+        let acct;
+        beforeEach(async () => {
+            await clearDB();
+            acct = await Account.construct(claims.email, claims.name);
+        });
+
+        it('should return an empty array instead of null', async () => {
+            await acct.notebooks(null)
+                .then(notebooks => notebooks.length.should.eql(0));
+        });
+
+        it('should return only notebooks that the user owns', async () => {
+            await Notebook.build("test", acct);
+
+            await Account.construct('a' + claims.email, claims.name)
+                .then(a2 => a2.notebooks(null))
+                .then(notebooks => notebooks.length.should.eql(0));
+        });
+
+        it('should respect the specified limit', async () => {
+            await Notebook.build("test", acct);
+            await Notebook.build("test2", acct);
+            
+            const limit = 1;
+            const notebooks = await acct.notebooks(limit);
+            notebooks.length.should.eql(limit);
         });
     });
 });

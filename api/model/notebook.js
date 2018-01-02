@@ -58,23 +58,6 @@ module.exports = class Notebook {
     }
 
     /**
-     * Retrieves all notebooks owned by the user
-     * 
-     * @param {string} email The email of the user
-     * @param {number} limit The maximum number of notebooks to retrieve
-     *                       Set equal to null for no limit.
-     * @returns {Promise.<Array.<Notebook>>}
-     */
-    static async getOwned(email, limit) {
-        return await db('notebooks')
-            .select()
-            .where({owner_id: db('users').select('id').where({email: email})})
-            .limit(limit ? limit : Number.MAX_SAFE_INTEGER)
-            .map(row => new Notebook(row.id, row.created_at,
-                                     row.owner_id, row.name));
-    }
-
-    /**
      * Removes a user's notebook
      * 
      * Any notes it contained will be detached but not deleted.
