@@ -55,6 +55,7 @@ module.exports = class NoteFactory {
      * Gets a Note from the persistence layer
      * @param {number} id The table id of the note
      * @throws {Error} If the id is not recognized
+     * @returns {Promise.<Note>}
      */
     static async fromId(id) {
         const rows = await db('notes')
