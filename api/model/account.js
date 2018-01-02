@@ -1,6 +1,7 @@
 'use strict';
 const { db } = require('../service/database');
 const Note = require('./note/note');
+const Notebook = require('./notebook');
 
 /**
  * Models a user account
@@ -65,10 +66,27 @@ module.exports = class Account {
      */
     async notes(limit) {
         return await db('notes')
-            .select('*')
+            .select()
             .where({owner_id: this.id})
             .limit(limit ? limit : Number.MAX_SAFE_INTEGER)
             .map(row => new Note(row.id, row.owner_id, row.created_at,
-                    row.last_modified, row.is_public, row.title, row.body));
+                                 row.last_modified, row.is_public,
+                                 row.title, row.body));
+    }
+
+    /**
+     * Returns the notebooks owned by the account
+     * 
+     * @param {number} limit The maximum number of notebooks to retrieve
+     *                       Set equal to null for no limit.
+     * @returns {Promise.<Array.<Notebook>>}
+     */
+    async notebooks(limit) {
+        return await db('notebooks')
+            .select()
+            .where({owner_id: this.id})
+            .limit(limit ? limit : Number.MAX_SAFE_INTEGER)
+            .map(row => new Notebook(row.id, row.created_at,
+                                     row.owner_id, row.name));
     }
 };
