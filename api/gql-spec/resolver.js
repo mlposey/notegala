@@ -10,9 +10,9 @@ module.exports.root = {
     account: (root, {acct}, context) => {
         return acct;
     },
-    createNote: (root, {email}, context) => {
+    createNote: (root, {acct}, context) => {
         const newNoteInput = context.variableValues.input;
-        return NoteFactory.construct(email, newNoteInput)
+        return NoteFactory.construct(acct, newNoteInput)
             .then(notepad => notepad.note)
             .catch(e => new GraphQLError(e.message));
     },

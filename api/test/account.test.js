@@ -88,12 +88,12 @@ describe('Account', () => {
         });
 
         it('should return only notes that the user owns', async () => {
-            await NoteFactory.construct(claims.email, newNote);
+            await NoteFactory.construct(acct, newNote);
 
             const user = await Account.construct('test' + claims.email,
                 claims.name);
             const body = user.email + user.name;
-            await NoteFactory.construct(user.email, {body: body});
+            await NoteFactory.construct(user, {body: body});
 
             const notes = await user.notes(null);
             notes.length.should.eql(1);
@@ -101,8 +101,8 @@ describe('Account', () => {
         });
 
         it('should respect the specified limit', async () => {
-            await NoteFactory.construct(claims.email, newNote);
-            await NoteFactory.construct(claims.email, newNote);
+            await NoteFactory.construct(acct, newNote);
+            await NoteFactory.construct(acct, newNote);
             
             const max = 1;
             const notes = await acct.notes(max);

@@ -24,23 +24,23 @@ describe('NoteWatcher', () => {
         beforeEach(async () => await clearDB());
 
         it('should set edit permissions to boolean argument', async () => {
-            await Account.construct(users[0].email, users[0].name);
-            await Account.construct(users[1].email, users[1].name);
+            const userA = await Account.construct(users[0].email, users[0].name);
+            const userB = await Account.construct(users[1].email, users[1].name);
 
-            const notepad =
-                await NoteFactory.construct(users[0].email, newNoteInput);
+            const notepad = await NoteFactory.construct(userA, newNoteInput);
             let note = notepad.note;
-            await note.addWatcher(users[1].email, false);
+            note.isPublic = true;
+            await note.addWatcher(userB.id, false);
 
             let watchers = await note.watchers();
             const toChange = watchers
-                .find(watcher => watcher.name === users[1].name);
+                .find(watcher => watcher.name === userB.name);
 
             await toChange.changeEditPerm(true);
             watchers = await note.watchers();
 
             const expectedChange = watchers
-                .find(watcher => watcher.name === users[1].name);
+                .find(watcher => watcher.name === userB.name);
             expectedChange.canEdit.should.eql(true);
         });
     });
@@ -49,17 +49,16 @@ describe('NoteWatcher', () => {
         beforeEach(async () => await clearDB());
         
         it('should return the earliest watcher', async () => {
-            await Account.construct(users[0].email, users[0].name);
-            await Account.construct(users[1].email, users[1].name);
+            const userA = await Account.construct(users[0].email, users[0].name);
+            const userB = await Account.construct(users[1].email, users[1].name);
 
-            const notepad =
-                await NoteFactory.construct(users[0].email, newNoteInput);
+            const notepad = await NoteFactory.construct(userA, newNoteInput);
             const note = notepad.note;
-            await note.addWatcher(users[1].email, false);
+            await note.addWatcher(userB.id, false);
 
             const earliest = await NoteWatcher
                 .earliest(await note.watchers());
-            earliest.name.should.eql(users[0].name);
+            earliest.name.should.eql(userA.name);
         });
 
         it('should return null if the arg contains no watchers', () => {

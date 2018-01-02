@@ -120,7 +120,7 @@ describe('Notebook', () => {
             let notes = await notebook.notes();
             notes.length.should.eql(0);
 
-            const notepad = await NoteFactory.construct(payload.email, {
+            const notepad = await NoteFactory.construct(acct, {
                 title: 'Test'
             });
             await notebook.addNote(notepad.note);

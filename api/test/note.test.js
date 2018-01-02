@@ -21,17 +21,17 @@ const payload = Object.freeze({
 });
 
 describe('Note', () => {
-    describe('#addWatcher(email, canEdit)', () => {
+    describe('#addWatcher(userId, canEdit)', () => {
         beforeEach(async () => await clearDB());
 
         it('should add a user to the watchers list', async () => {
-            await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const a1 = await Account.construct(payload.email, payload.name);
+            const notepad = await NoteFactory.construct(a1, payload.input);
+            notepad.note.isPublic = true;
 
             const newUserEmail = 'test' + payload.email;
             const acct = await Account.construct(newUserEmail, payload.name);
-            await notepad.note.addWatcher(newUserEmail, false);
+            await notepad.note.addWatcher(acct.id, false);
 
             const uids = await db('note_watchers')
                 .select('user_id')
@@ -45,8 +45,7 @@ describe('Note', () => {
 
         it('should delete the note if their was only one watcher', async () => {
             const acct = await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const notepad = await NoteFactory.construct(acct, payload.input);
             
             await notepad.note.removeWatcher(acct.id);
 
@@ -56,12 +55,12 @@ describe('Note', () => {
 
         it('should give ownership to earliest watcher', async () => {
             const acct = await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const notepad = await NoteFactory.construct(acct, payload.input);
             const note = notepad.note;
+            note.isPublic = true;
 
-            await Account.construct('a' + payload.email, 'b' + payload.name);
-            await note.addWatcher('a' + payload.email, false);
+            const b = await Account.construct('a' + payload.email, 'b' + payload.name);
+            await note.addWatcher(b.id, false);
 
             await note.removeWatcher(acct.id);
 
@@ -76,8 +75,8 @@ describe('Note', () => {
         beforeEach(async () => await clearDB());
 
         it('should return an empty array instead of null', async () => {
-            await Account.construct(payload.email, payload.name);
-            const notepad = await NoteFactory.construct(payload.email, {
+            const acct = await Account.construct(payload.email, payload.name);
+            const notepad = await NoteFactory.construct(acct, {
                 body: 'test'
             });
             const tags = await notepad.note.tags();
@@ -86,9 +85,8 @@ describe('Note', () => {
         });
 
         it('should return all linked tags', async () => {
-            await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const acct = await Account.construct(payload.email, payload.name);
+            const notepad = await NoteFactory.construct(acct, payload.input);
             const tags = await notepad.note.tags();
 
             tags.should.be.a('array').that.has.length(payload.input.tags.length);
@@ -99,9 +97,8 @@ describe('Note', () => {
         beforeEach(async () => await clearDB());
 
         it('should return at least one watcher', async () => {
-            await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const acct = await Account.construct(payload.email, payload.name);
+            const notepad = await NoteFactory.construct(acct, payload.input);
             const watchers = await notepad.note.watchers();
 
             watchers.length.should.eql(1);
