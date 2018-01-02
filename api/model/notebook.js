@@ -72,6 +72,19 @@ module.exports = class Notebook {
     }
 
     /**
+     * Sets the title of the notebook in both the local and database
+     * representations
+     * 
+     * @param {string} title The new title
+     */
+    async setTitle(title) {
+        await db('notebooks')
+            .update({name: title})
+            .where({id: this.id});
+        this.title = title;
+    }
+
+    /**
      * @returns {Promise.<Array.<Note>>} All notes in the notebook
      */
     async notes() {
