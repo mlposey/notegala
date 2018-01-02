@@ -27,7 +27,7 @@ describe('Notepad', () => {
 
         it('should add link the tag and note in the database', async () => {
             const acct = await Account.construct(payload.email, payload.name);
-            const notepad = await NoteFactory.construct(payload.email, {
+            const notepad = await NoteFactory.construct(acct, {
                 body: 'test'
             });
 
@@ -39,10 +39,8 @@ describe('Notepad', () => {
 
         it('should ignore duplicate tags', async () => {
             const acct = await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const notepad = await NoteFactory.construct(acct, payload.input);
 
-            
             await notepad.addTag(payload.input.tags[0]);
 
             const rows = await db.select().table('note_tags');
@@ -54,9 +52,8 @@ describe('Notepad', () => {
         beforeEach(async () => await clearDB());
 
         it('should replace this old tag list with the new one', async () => {
-            await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const acct = await Account.construct(payload.email, payload.name);
+            const notepad = await NoteFactory.construct(acct, payload.input);
 
             const newList = ['Brand New Tag'];
             await notepad.replaceTags(newList);
@@ -67,9 +64,8 @@ describe('Notepad', () => {
         });
 
         it('should clear the list if given an empty array', async () => {
-            await Account.construct(payload.email, payload.name);
-            const notepad =
-                await NoteFactory.construct(payload.email, payload.input);
+            const acct = await Account.construct(payload.email, payload.name);
+            const notepad = await NoteFactory.construct(acct, payload.input);
             
             await notepad.replaceTags([]);
             const tags = await notepad.note.tags();

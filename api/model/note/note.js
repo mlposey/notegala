@@ -16,14 +16,18 @@ module.exports = class Note {
 
     /**
      * Adds a user to the note's watchers list
-     * @param {string} email The email of the user to add
+     * 
+     * Private notes cannot have watchers added to them unless
+     * the watcher is the note owner.
+     * @param {number} userId The unique id of the user to add
      * @param {boolean} canEdit Watchers with edit privileges can modify notes
      */
-    async addWatcher(email, canEdit) {
-        // TODO: Make sure the email is the owner or the note is public.
+    async addWatcher(userId, canEdit) {
+        if (!this.isPublic && this.ownerId != userId) return;
+
         await db('note_watchers').insert({
             note_id: this.id,
-            user_id: db('users').select('id').where({ email: email }),
+            user_id: userId,
             can_edit: canEdit
         });
     }

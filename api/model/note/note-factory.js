@@ -10,19 +10,16 @@ module.exports = class NoteFactory {
     /**
      * Constructs a new Note in the persistence layer
      * 
-     * @param {string} email The email address of the note creator
+     * @param {Object} acct The account of the note creator
      * @param {Object} input An object that models the NewNoteInput GraphQL type
-     * @throws {Error} If the email does not belong to an account
      * @throws {Error} If the input has falsy values for body and title
      * @returns {Promise.<Notepad>}
      */
-    static async construct(email, input) {
+    static async construct(acct, input) {
         // TODO: Decompose this method.
         if (!input.body && !input.title) {
             throw new Error('missing input note content');
         }
-
-        let acct = await Account.fromEmail(email);
 
         const noteRows = await db('notes')
             .insert({
@@ -39,7 +36,7 @@ module.exports = class NoteFactory {
 
         let notepad = new Notepad(note, acct);
 
-        await note.addWatcher(email, true);        
+        await note.addWatcher(acct.id, true);        
         if (input.tags) {
             for (let tag of input.tags) await notepad.addTag(tag);
         }
