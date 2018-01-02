@@ -1,7 +1,12 @@
 'use strict';
 const { db } = require('../service/database');
+const Note = require('./note/note');
 
-/** Represents the Account GraphQL type */
+/**
+ * Models a user account
+ * 
+ * This class provides a full implementation of the Account GraphQL type.
+ */
 module.exports = class Account {
     constructor(id, createdAt, lastSeen, email, name) {
         this.id = id;
@@ -49,5 +54,21 @@ module.exports = class Account {
         } catch (err) {
             throw new Error('email address already in use');
         }
+    }
+
+    /**
+     * Returns the notes owned by the account
+     * 
+     * @param {number} limit The maximum number of notes to retrieve
+     *                       Set equal to null for no limit.
+     * @returns {Promise.<Array.<Note>>}
+     */
+    async notes(limit) {
+        return await db('notes')
+            .select('*')
+            .where({owner_id: this.id})
+            .limit(limit ? limit : Number.MAX_SAFE_INTEGER)
+            .map(row => new Note(row.id, row.owner_id, row.created_at,
+                    row.last_modified, row.is_public, row.title, row.body));
     }
 };

@@ -16,9 +16,8 @@ module.exports.root = {
             .then(notepad => notepad.note)
             .catch(e => new GraphQLError(e.message));
     },
-    myNotes: (root, {email, first}, context) => {
-        return NoteFactory.getOwned(email, first)
-            .catch(err => new GraphQLError(e.message));
+    myNotes: (root, {acct, first}, context) => {
+        return acct.notes(first);
     },
     editNote: async (root, {email}, context) => {
         const input = context.variableValues.input;
