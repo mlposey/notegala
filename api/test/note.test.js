@@ -40,23 +40,22 @@ describe('Note', () => {
         });
     });
 
-    describe('#remove(email)', () => {
+    describe('#removeWatcher(userId)', () => {
         beforeEach(async () => await clearDB());
 
         it('should delete the note if their was only one watcher', async () => {
-            await Account.construct(payload.email, payload.name);
+            const acct = await Account.construct(payload.email, payload.name);
             const notepad =
                 await NoteFactory.construct(payload.email, payload.input);
             
-            const res = await notepad.note.remove(payload.email);
-            res.should.eql(true);
+            await notepad.note.removeWatcher(acct.id);
 
             const rows = await db('notes').select();
             rows.length.should.eql(0);
         });
 
         it('should give ownership to earliest watcher', async () => {
-            await Account.construct(payload.email, payload.name);
+            const acct = await Account.construct(payload.email, payload.name);
             const notepad =
                 await NoteFactory.construct(payload.email, payload.input);
             const note = notepad.note;
@@ -64,8 +63,7 @@ describe('Note', () => {
             await Account.construct('a' + payload.email, 'b' + payload.name);
             await note.addWatcher('a' + payload.email, false);
 
-            const res = await note.remove(payload.email);
-            res.should.eql(true);
+            await note.removeWatcher(acct.id);
 
             let rows = await db('notes').select();
             rows.length.should.eql(1);

@@ -29,49 +29,38 @@ module.exports = class Note {
     }
 
     /**
-     * Removes the note from the user's collection
+     * Removes a watcher from the list
      * 
-     * If the user indicated by the email was also the note
-     * owner, the oldest watcher will become the new owner.
-     * 
-     * @returns {boolean} True if the process succeeds; false otherwise
+     * If the watcher was the owner, a new owner is assigned.
+     * If this is the only watcher, the note is destroyed.
+     * @param {number} userId The id of the user to remove
      */
-    async remove(email) {
-        // Stop watching the note.
-        const ids = await db('note_watchers')
+    async removeWatcher(userId) {
+        await db('note_watchers')
             .where({
-                user_id: db('users').select('id').where({email: email}),
+                user_id: userId,
                 note_id: this.id
-            }).del().returning('user_id');
-        if (ids.length == 0) return false;
-
-        // Remove from their personal notebooks.
-        await db.raw(`
-            DELETE FROM notebook_notes
-            WHERE note_id = ?
-              AND notebook_id in (SELECT id FROM notebooks WHERE owner_id = ?);
-        `, [this.id, ids[0]]);
+            }).del();
 
         const watchers = await this.watchers();
-        // Completely delete it if they were the only watcher.
-        if (watchers.length == 0) {
-            await db('note_tags').where({note_id: this.id}).del();
-            await db('notes').where({id: this.id}).del();
-            return true;
+        if (watchers.length === 0) {
+            // No more watchers. Destroy it.
+            await db('note_tags').where({ note_id: this.id }).del();
+            await db('notes').where({ id: this.id }).del();
+            return;
         }
 
         // Give the note a new owner.
-        if (this.ownerId == ids[0]) {
+        if (this.ownerId == userId) {
             const old = NoteWatcher.earliest(watchers);
             // TODO: This task could be turned into a database trigger.
             // I.e., On owner_id column update, set note_watcher can_edit = true
             if (!old.canEdit) await old.changeEditPerm(true);
 
             await db('notes')
-                .update({owner_id: old.id})
-                .where({id: this.id});
+                .update({ owner_id: old.id })
+                .where({ id: this.id });
         }
-        return true;
     }
 
     /**

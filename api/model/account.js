@@ -89,4 +89,19 @@ module.exports = class Account {
             .map(row => new Notebook(row.id, row.created_at,
                                      row.owner_id, row.name));
     }
+
+    /**
+     * Removes the account from the note's watchers list
+     * 
+     * @param {Note} note The note to stop watching
+     */
+    async stopWatching(note) {
+        await db.raw(`
+            DELETE FROM notebook_notes
+            WHERE note_id = ?
+              AND notebook_id in (SELECT id FROM notebooks WHERE owner_id = ?);
+        `, [note.id, this.id]);
+
+        await note.removeWatcher(this.id);
+    }
 };
