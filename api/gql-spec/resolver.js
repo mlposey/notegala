@@ -36,18 +36,15 @@ module.exports.root = {
             .then(note => note.remove(email))
             .catch(err => false);
     },
-    createNotebook: (root, {email}, context) => {
-        const title = context.variableValues.title;
-        return Account.fromEmail(email)
-            .then(acct => Notebook.build(title, acct))
-            .catch(err => new GraphQLError(err.message));
+    createNotebook: (root, {acct}, context) => {
+        return Notebook.build(context.variableValues.title, acct)
+                .catch(err => new GraphQLError(err.message));
     },
     myNotebooks: (root, {email, first}, context) => {
         return Notebook.getOwned(email, first)
             .catch(err => new GraphQLError(err.message));
     },
-    notebook: async (root, {email}, context) => {
-        const acct = await Account.fromEmail(email);
+    notebook: async (root, {acct}, context) => {
         const notebook = await Notebook.fromId(context.variableValues.id);
         if (notebook.owner != acct.id) throw new GraphQLError('access denied');
         return notebook;
