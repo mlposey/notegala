@@ -72,7 +72,7 @@ describe('Notebook', () => {
         beforeEach(async () => await clearDB());
 
         it('should remove the note if it is recognized', async () => {
-            const act = await Account.construct(payload.email, payload.userName)
+            const act = await Account.construct(payload.email, payload.userName);
             await Notebook.build(payload.nbName, act);
 
             let notebooks = await act.notebooks();
@@ -86,7 +86,7 @@ describe('Notebook', () => {
         });
 
         it('should return false if unrecognized', async () => {
-            const act = await Account.construct(payload.email, payload.userName)
+            const act = await Account.construct(payload.email, payload.userName);
             await Notebook.build(payload.nbName, act);
 
             let notebooks = await act.notebooks();
@@ -95,6 +95,21 @@ describe('Notebook', () => {
             await notebooks[0].destroy();
             const res = await notebooks[0].destroy();
             res.should.eql(false);
+        });
+    });
+
+    describe('#setTitle(title)', () => {
+        beforeEach(async () => await clearDB());
+        
+        it('should change the notebook title', async () => {
+            const act = await Account.construct(payload.email, payload.userName);
+            let notebook = await Notebook.build(payload.nbName, act);
+
+            const newTitle = 'a' + payload.nbName;
+            await notebook.setTitle(newTitle);
+
+            const notebooks = await act.notebooks();
+            notebooks[0].title.should.eql(newTitle);
         });
     });
 
