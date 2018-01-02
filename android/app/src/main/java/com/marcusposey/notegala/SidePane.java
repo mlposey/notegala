@@ -85,10 +85,12 @@ public class SidePane extends NavigationView implements Observer {
 
     /** Loads a component's state into the main content frame once pressed */
     public boolean onNavigationItemSelected(MenuItem item) {
-        item.setCheckable(true);
-        item.setChecked(true);
-        if (mPreviouslyChecked != null) mPreviouslyChecked.setChecked(false);
-        mPreviouslyChecked = item;
+        if (item != mPreviouslyChecked) {
+            item.setCheckable(true);
+            item.setChecked(true);
+            if (mPreviouslyChecked != null) mPreviouslyChecked.setChecked(false);
+            mPreviouslyChecked = item;
+        }
 
         switch (item.getItemId()) {
             case R.id.nav_home:
