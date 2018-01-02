@@ -5,6 +5,10 @@ const NoteFactory = require('../model/note/note-factory');
 const { Notepad } = require('../model/note/notepad');
 const Notebook = require('../model/notebook');
 
+// Returned by a resolver if a request is made but it
+// lacks required fine-grained permissions
+const accessError = new GraphQLError('access denied');
+
 // Root resolver for all GraphQL queries and mutations
 module.exports.root = {
     account: (root, {acct}, context) => {
@@ -43,12 +47,20 @@ module.exports.root = {
     },
     notebook: async (root, {acct}, context) => {
         const notebook = await Notebook.fromId(context.variableValues.id);
-        if (notebook.owner != acct.id) throw new GraphQLError('access denied');
+        if (notebook.owner !== acct.id) throw accessError;
         return notebook;
     },
     removeNotebook: async (root, {acct}, context) => {
-        const notebook = await Notebook.fromId(context.variableValues.id)
-        if (acct.id === notebook.owner) return await notebook.destroy();
-        else return new GraphQLError('permission error');
+        const notebook = await Notebook.fromId(context.variableValues.id);
+        if (acct.id !== notebook.owner) return accessError;
+        return await notebook.destroy();
+    },
+    editNotebook: async (root, {acct}, context) => {
+        const input = context.variableValues.input;
+        const notebook = await Notebook.fromId(input.id)
+        if (acct.id !== notebook.owner) return accessError;
+        
+        if (input.title) await notebook.setTitle(input.title);
+        return notebook;
     }
 };

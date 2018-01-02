@@ -57,6 +57,11 @@ module.exports.schema = buildSchema(`
         #
         # Any notes it contained will be detached but not deleted.
         removeNotebook(id: ID!): Boolean!
+
+        # Modifies the specified notebook
+        #
+        # The action can only be completed by the notebook owner.
+        editNotebook(input: EditNotebookInput!): Notebook!
     }
 
     # Describes a user account
@@ -186,5 +191,14 @@ module.exports.schema = buildSchema(`
 
         # All notes contained in the notebook
         notes: [Note!]!
+    }
+
+    # Used to change the content of an existing notebook
+    input EditNotebookInput {
+        # The existing notebook id
+        id: ID!
+
+        # The new notebook title
+        title: String
     }
 `);
