@@ -58,6 +58,27 @@ module.exports = class Notebook {
     }
 
     /**
+     * Moves a note from one notebook to another
+     * 
+     * @param {Note} note The note to move
+     * @param {Notebook} source Optional source notebook
+     * @param {Notebook} dest Destination notebook
+     * @returns {Promise.<Notebook>} The new location of the note
+     */
+    static async moveNote(note, source, dest) {
+        if (source) {
+            if (source.id === dest.id) return source;
+            await source.removeNote(note);
+        }
+        
+        await db.raw(`
+            INSERT INTO notebook_notes (notebook_id, note_id)
+            VALUES (?, ?) ON CONFLICT DO NOTHING
+        `, [dest.id, note.id]);
+        return dest;
+    }
+
+    /**
      * Deletes the database representation of the notebook
      * 
      * Any notes it contained will be detached but not deleted.
@@ -108,5 +129,16 @@ module.exports = class Notebook {
             notebook_id: this.id,
             note_id: note.id
         });
+    }
+
+    /**
+     * Removes the note from the notebook
+     * @param {Note} note 
+     */
+    async removeNote(note) {
+        await db('notebook_notes').where({
+            notebook_id: this.id,
+            note_id: note.id
+        }).del();
     }
 };
