@@ -4,17 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.marcusposey.notegala.DialogFactory;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
@@ -94,15 +93,9 @@ public abstract class NotesFragment extends ListFragment implements Observer {
 
     /** Attempts to create a new user-defined notebook */
     private void onNewNotebookPress(View view) {
-        EditText nameInput = new EditText(getActivity());
-        AlertDialog.Builder dlgBuilder = new AlertDialog.Builder(getActivity())
-                .setTitle("Notebook Title")
-                .setView(nameInput);
-
-        // If yes, create notebook. If no, do nothing.
-        dlgBuilder.setPositiveButton(android.R.string.yes, (dialog, btn) -> {
+        DialogFactory.input(getContext(), "Notebook Title", title -> {
             QueryService.awaitInstance(service -> {
-                service.createNotebook(nameInput.getText().toString(), (e, ntbk) -> {
+                service.createNotebook(title, (e, ntbk) -> {
                     getActivity().runOnUiThread(() -> {
                         if (e != null) {
                             Toast.makeText(getContext(), "could not create notebook",
@@ -114,7 +107,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
                     });
                 });
             });
-        }).setNegativeButton(android.R.string.no, null).show();
+        }).show();
     }
 
     /**
