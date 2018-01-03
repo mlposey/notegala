@@ -20,6 +20,7 @@
     <!-- Begin overflow menu labels -->
     <string name="action_settings">Settings</string>
     <string name="note_delete">Delete</string>
+    <string name="notebook_rename">Rename</string>
     <string name="notebook_delete">Delete</string>
     <!-- End overflow menu labels -->
 
@@ -28,6 +29,7 @@
     <string name="dialog_delete_message">Are you sure? This action cannot be undone.</string>
     <string name="dialog_notebook">Notebook</string>
     <string name="dialog_note">Note</string>
+    <string name="dialog_notebook_rename">New Notebook Title</string>
     <!-- End dialog content -->
 
     <string name="default_note_title">A Wonderful Title</string>

@@ -41,10 +41,18 @@ public class NotebookNotesFragment extends NotesFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.notebook_menu_delete) {
-            DialogFactory.deletion(getContext(), getString(R.string.dialog_notebook),
-                    () -> QueryService.awaitInstance(this::deleteNotebook)
-            ).show();
+        switch (item.getItemId()) {
+            case R.id.notebook_menu_delete:
+                DialogFactory.deletion(getContext(), getString(R.string.dialog_notebook), () -> {
+                    QueryService.awaitInstance(this::deleteNotebook);
+                }).show();
+                break;
+
+            case R.id.notebook_menu_rename:
+                DialogFactory.input(getContext(), getString(R.string.dialog_notebook_rename), title -> {
+                    QueryService.awaitInstance(service -> renameNotebook(service, title));
+                }).show();
+                break;
         }
         return true;
     }
@@ -63,6 +71,10 @@ public class NotebookNotesFragment extends NotesFragment {
                 }
             });
         });
+    }
+
+    private void renameNotebook(QueryService service, String title) {
+        // TODO: Rename notebook menu trigger.
     }
 
     @Override
