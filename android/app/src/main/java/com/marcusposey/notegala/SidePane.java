@@ -122,10 +122,19 @@ public class SidePane extends NavigationView implements Observer {
                 if (arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
                     String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
                     mNotebookMenu.refresh(title, this);
-                } else if (arg instanceof ApolloQueryService.ResponseType &&
-                        arg.equals(ApolloQueryService.ResponseType.NOTEBOOK_DELETE)) {
-                    onNavigationItemSelected(getMenu().getItem(0));
-                    mNotebookMenu.refresh(null, null);
+                } else if (arg instanceof ApolloQueryService.ResponseType) {
+                    ApolloQueryService.ResponseType type = (ApolloQueryService.ResponseType) arg;
+
+                    switch (type) {
+                        case NOTEBOOK_DELETE:
+                            onNavigationItemSelected(getMenu().getItem(0));
+                            mNotebookMenu.refresh(null, null);
+                            break;
+
+                        case NOTEBOOK_RENAME:
+                            mNotebookMenu.refresh(null, null);
+                            break;
+                    }
                 }
             });
         }
