@@ -38,6 +38,23 @@ module.exports.root = {
         await acct.stopWatching(note);
         return true;
     },
+    moveNote: async (root, {acct}, context) => {
+        const input = context.variableValues.input;
+
+        const note = await NoteFactory.fromId(input.id);
+        if (!note.isPublic && note.ownerId !== acct.id) throw accessError;
+
+        const dest = await Notebook.fromId(input.dest);
+        if (dest.owner !== acct.id) throw accessError;
+        
+        let source;
+        if (input.source) {
+            source = await Notebook.fromId(input.source);
+            if (source.owner !== acct.id) throw accessError;
+        }
+
+        return await Notebook.moveNote(note, source, dest);
+    },
     createNotebook: (root, {acct}, context) => {
         return Notebook.build(context.variableValues.title, acct)
                 .catch(err => new GraphQLError(err.message));
