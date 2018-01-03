@@ -144,4 +144,25 @@ describe('Notebook', () => {
             notes.length.should.eql(1);
         });
     });
+
+    describe('#removeNote(note)', () => {
+        beforeEach(async () => await clearDB());
+
+        it('should remove the note from the notebook', async () => {
+            const acct =
+                await Account.construct(payload.email, payload.userName)
+            const notebook = await Notebook.build(payload.nbName, acct);
+
+            const notepad = await NoteFactory.construct(acct, {title: 'Test'});
+            await notebook.addNote(notepad.note);
+
+            let notes = await notebook.notes();
+            notes.length.should.eql(1);
+
+            await notebook.removeNote(notepad.note);
+
+            notes = await notebook.notes();
+            notes.length.should.eql(0);
+        });
+    });
 });
