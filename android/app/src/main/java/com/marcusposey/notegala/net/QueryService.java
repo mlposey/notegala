@@ -4,6 +4,8 @@ import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.CreateNotebookMutation;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.EditNoteMutation;
+import com.marcusposey.notegala.net.gen.EditNotebookInput;
+import com.marcusposey.notegala.net.gen.EditNotebookMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
@@ -76,4 +78,5 @@ public abstract class QueryService extends Observable {
     public abstract void getNotebookNotes(String id, Listener<List<Note>> listener);
     public abstract void createNotebook(String title, Listener<CreateNotebookMutation.Notebook> listener);
     public abstract void removeNotebook(String id, Listener<Boolean> listener);
+    public abstract void editNotebook(EditNotebookInput input, Listener<EditNotebookMutation.Notebook> listener);
 }

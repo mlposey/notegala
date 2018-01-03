@@ -10,6 +10,8 @@ import com.marcusposey.notegala.net.gen.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.CreateNotebookMutation;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.EditNoteMutation;
+import com.marcusposey.notegala.net.gen.EditNotebookInput;
+import com.marcusposey.notegala.net.gen.EditNotebookMutation;
 import com.marcusposey.notegala.net.gen.GetAccountQuery;
 import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
 import com.marcusposey.notegala.net.gen.MyNotesQuery;
@@ -31,7 +33,8 @@ public class ApolloQueryService extends QueryService {
     /** Network response types */
     public enum ResponseType {
         NOTE_CHANGE,
-        NOTEBOOK_DELETE
+        NOTEBOOK_DELETE,
+        NOTEBOOK_RENAME
     }
 
     private static final String SERVER_URL = "http://api.marcusposey.com:9002/graphql";
@@ -258,6 +261,25 @@ public class ApolloQueryService extends QueryService {
                         setChanged();
                         notifyObservers(ResponseType.NOTEBOOK_DELETE);
                     }, listener, "could not delete notebook")
+            );
+        });
+    }
+
+    /**
+     * Uploads modified notebook content to the server, notifying observers if the request succeeds
+     *
+     * This method corresponds to the 'editNotebook' mutation in the core API's
+     * GraphQL spec.
+     */
+    @Override
+    public void editNotebook(EditNotebookInput input, Listener<EditNotebookMutation.Notebook> listener) {
+        checkTokenThen(() -> {
+            mApolloClient.mutate(EditNotebookMutation.builder().input(input).build()).enqueue(
+                    new ResponseCallback<>(response -> {
+                        listener.onResult(null, response.data().notebook());
+                        setChanged();
+                        notifyObservers(ResponseType.NOTEBOOK_RENAME);
+                    }, listener, "could not upload edited notebook")
             );
         });
     }
