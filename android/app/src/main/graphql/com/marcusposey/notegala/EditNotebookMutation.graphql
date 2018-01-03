@@ -1,0 +1,5 @@
+mutation EditNotebook($input: EditNotebookInput!) {
+    notebook: editNotebook(input: $input) {
+        id
+    }
+}
