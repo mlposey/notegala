@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.marcusposey.notegala.DialogFactory;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
+import com.marcusposey.notegala.net.gen.EditNotebookInput;
 import com.marcusposey.notegala.net.gen.Note;
 import com.marcusposey.notegala.note.NoteActivity;
 import com.marcusposey.notegala.note.NotesFragment;
@@ -31,8 +32,13 @@ public class NotebookNotesFragment extends NotesFragment {
     // Bundle/argument key for the notebook title
     public static final String NOTEBOOK_TITLE = "NOTEBOOK_TITLE";
 
+    private ActionBar mActionBar;
+
     // The unique id of the notebook this fragment is focused on
     private String mNotebookId;
+
+    // The title of the notebook this fragment is focused on
+    private String mNotebookTitle;
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -74,7 +80,27 @@ public class NotebookNotesFragment extends NotesFragment {
     }
 
     private void renameNotebook(QueryService service, String title) {
-        // TODO: Rename notebook menu trigger.
+        if (title.equals(mNotebookTitle)) return;
+
+        EditNotebookInput input = EditNotebookInput.builder()
+                .title(title)
+                .id(mNotebookId)
+                .build();
+
+        service.editNotebook(input, (e, notebook) -> {
+            getActivity().runOnUiThread(() -> {
+                if (e != null || notebook == null) {
+                    Toast.makeText(getContext(), getString(R.string.fragment_notebook_failed_rename),
+                            Toast.LENGTH_LONG).show();
+                    Log.e(LOG_TAG, e != null ? e.getMessage() : "could not rename notebook");
+                } else {
+                    mActionBar.setTitle(title);
+                    Toast.makeText(getContext(), getString(R.string.fragment_notebook_rename),
+                            Toast.LENGTH_SHORT).show();
+                    Log.i(LOG_TAG, "renamed notebook to " + title);
+                }
+            });
+        });
     }
 
     @Override
@@ -97,8 +123,10 @@ public class NotebookNotesFragment extends NotesFragment {
      */
     @Override
     public void configureAppBar(ActionBar actionBar) {
+        mActionBar = actionBar;
         Bundle bundle = getArguments();
-        actionBar.setTitle(bundle.getString(NOTEBOOK_TITLE));
+        mNotebookTitle = bundle.getString(NOTEBOOK_TITLE);
+        actionBar.setTitle(mNotebookTitle);
     }
 
     @Override

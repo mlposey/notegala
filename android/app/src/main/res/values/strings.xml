@@ -44,5 +44,7 @@
     <string name="activity_note_ndelete">note deleted</string>
     <string name="fragment_notebook_delete">notebook deleted</string>
     <string name="fragment_notebook_failed_delete">could not delete notebook</string>
+    <string name="fragment_notebook_rename">notebook renamed</string>
+    <string name="fragment_notebook_failed_rename">could not rename notebook</string>
     <!-- End toast messages -->
 </resources>
