@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/notebook_menu_rename"
+        android:title="@string/notebook_rename"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/notebook_menu_delete"
         android:title="@string/notebook_delete"
         app:showAsAction="never" />
