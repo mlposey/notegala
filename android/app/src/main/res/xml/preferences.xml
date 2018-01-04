@@ -5,7 +5,14 @@
         android:title="@string/pref_info">
         <Preference
             android:title="@string/pref_oss"
-            android:key="@string/pref_key_oss">
-        </Preference>
+            android:key="@string/pref_key_oss" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="prev_key_build_settings"
+        android:title="@string/pref_build">
+        <Preference
+            android:key="@string/pref_key_version"
+            android:selectable="false" />
     </PreferenceCategory>
 </PreferenceScreen>

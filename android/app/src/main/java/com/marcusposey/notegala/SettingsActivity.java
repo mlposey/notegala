@@ -26,6 +26,9 @@ public class SettingsActivity extends AppCompatActivity {
                 startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
                 return true;
             });
+
+            Preference version = findPreference(getString(R.string.pref_key_version));
+            version.setTitle(BuildConfig.VERSION_NAME);
         }
 
     }
