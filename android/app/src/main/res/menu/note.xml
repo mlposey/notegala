@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/note_menu_tags"
+        android:title="@string/note_tags"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/note_menu_delete"
         android:title="@string/note_delete"
         app:showAsAction="never" />

@@ -30,6 +30,7 @@
     <!-- Begin overflow menu labels -->
     <string name="action_settings">Settings</string>
     <string name="note_delete">Delete</string>
+    <string name="note_tags">Tags</string>
     <string name="notebook_rename">Rename</string>
     <string name="notebook_delete">Delete</string>
     <!-- End overflow menu labels -->
