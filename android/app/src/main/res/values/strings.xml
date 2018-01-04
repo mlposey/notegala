@@ -56,4 +56,8 @@
     <string name="fragment_notebook_rename">notebook renamed</string>
     <string name="fragment_notebook_failed_rename">could not rename notebook</string>
     <!-- End toast messages -->
+
+    <!-- Being accessibility content -->
+    <string name="access_tag_delete">Delete Tag</string>
+    <!-- End accessibility content -->
 </resources>
