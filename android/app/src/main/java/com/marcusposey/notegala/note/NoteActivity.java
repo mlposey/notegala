@@ -1,5 +1,6 @@
 package com.marcusposey.notegala.note;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,16 +14,14 @@ import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
 import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
+import com.marcusposey.notegala.net.gen.Note;
 
 /**
  * Handles the note creation interface and operations
  *
  * This activity can be used to edit and create notes. If editing
  * a note, the intent used to create this activity should
- * be supplied these extras:
- *      ID_EXTRA      - String extra  - required
- *      TITLE_EXTRA   - String extra  - optional
- *      BODY_EXTRA    - String extra  - optional
+ * be given a ParcelableNote extra using the NoteActivity.NOTE_EXTRA key.
  */
 public class NoteActivity extends AppCompatActivity {
 
@@ -38,20 +37,16 @@ public class NoteActivity extends AppCompatActivity {
 
     // Extra key for receiving the id of the notebook where the note will go
     public static final String NOTEBOOK_ID_EXTRA = "NOTEBOOK_ID_EXTRA";
-    // Extra key for receiving a note's id from another fragment or activity
-    public static final String ID_EXTRA = "ID_EXTRA";
-    // Extra key for receiving a title from another fragment or activity
-    public static final String TITLE_EXTRA = "TITLE_EXTRA";
-    // Extra key for receiving a body from another fragment or activity
-    public static final String BODY_EXTRA = "BODY_EXTRA";
+
+    // Extra key for receiving a ParcelableNote
+    public static final String NOTE_EXTRA = "NOTE_EXTRA";
+
+    // Holds the note that was initially loaded into the activity if
+    // the context is Context.UPDATE
+    private Note mNote;
 
     // The context of this activity
     private Context mCtx;
-
-    // The original title of the note when the activity was created
-    private String mOriginalTitle;
-    // The original body of the note when the activity was created
-    private String mOriginalBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,8 +85,7 @@ public class NoteActivity extends AppCompatActivity {
         }
 
         DialogFactory.deletion(this, getString(R.string.dialog_note), () -> {
-            String noteId = getIntent().getStringExtra(ID_EXTRA);
-            QueryService.awaitInstance(service -> deleteNote(service, noteId));
+            QueryService.awaitInstance(service -> deleteNote(service, mNote.id()));
         }).show();
     }
 
@@ -116,17 +110,16 @@ public class NoteActivity extends AppCompatActivity {
      * if an existing one is being edited.
      */
     private void establishContext() {
-        String idExtra = getIntent().getStringExtra(ID_EXTRA);
-        mCtx = (idExtra == null) ? Context.CREATE : Context.UPDATE;
+        ParcelableNote encoded = getIntent().getParcelableExtra(NOTE_EXTRA);
+        mCtx = (encoded == null) ? Context.CREATE : Context.UPDATE;
 
         if (mCtx == Context.UPDATE) {
-            EditText title = findViewById(R.id.edit_note_title);
-            title.setText(getIntent().getStringExtra(TITLE_EXTRA));
-            mOriginalTitle = title.getText().toString();
+            mNote = encoded.getNote();
 
+            EditText title = findViewById(R.id.edit_note_title);
+            title.setText(mNote.title());
             EditText body = findViewById(R.id.edit_note_body);
-            body.setText(getIntent().getStringExtra(BODY_EXTRA));
-            mOriginalBody = body.getText().toString();
+            body.setText(mNote.body());
         }
     }
 
@@ -184,7 +177,7 @@ public class NoteActivity extends AppCompatActivity {
 
     /** Publishes the updated version of a note to the API */
     private void updateNote(NewNoteInput note, QueryService service) {
-        if (note.body().equals(mOriginalBody) && note.title().equals(mOriginalTitle)) {
+        if (note.body().equals(mNote.body()) && note.title().equals(mNote.title())) {
             Log.i(LOG_TAG, "skipped update of unchanged note");
             return;
         }
@@ -192,9 +185,9 @@ public class NoteActivity extends AppCompatActivity {
         // The single spaces are like clear commands. This is a hack around
         // the express graphql implementation.
         EditNoteInput.Builder builder = EditNoteInput.builder()
-                .id(getIntent().getStringExtra(ID_EXTRA))
-                .title((note.title() == null || note.title().isEmpty()) && mOriginalTitle != null ? " " : note.title())
-                .body((note.body() == null || note.body().isEmpty()) && mOriginalBody != null ? " " : note.body());
+                .id(mNote.id())
+                .title((note.title() == null || note.title().isEmpty()) && mNote.title() != null ? " " : note.title())
+                .body((note.body() == null || note.body().isEmpty()) && !mNote.body().isEmpty() ? " " : note.body());
 
         service.editNote(builder.build(), (e, response) -> {
             runOnUiThread(() -> {
