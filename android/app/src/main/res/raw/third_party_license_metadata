@@ -1,0 +1,47 @@
+0:47 play-services-auth
+48:77 apollo-runtime
+126:46 fab
+173:46 cardview-v7
+220:46 design
+267:47 firebase-core
+315:47 play-services-auth-api-phone
+363:47 play-services-auth-base
+411:47 play-services-base
+459:47 firebase-analytics
+507:47 firebase-analytics-impl
+555:47 firebase-iid
+603:47 firebase-common
+651:47 play-services-tasks
+699:47 play-services-basement
+747:31 cache
+779:77 apollo-api
+857:46 appcompat-v7
+904:46 recyclerview-v7
+951:46 transition
+998:46 animated-vector-drawable
+1045:46 support-vector-drawable
+1092:46 support-v4
+1139:46 support-fragment
+1186:46 support-core-ui
+1233:46 support-media-compat
+1280:46 support-core-utils
+1327:46 support-compat
+1374:46 support-annotations
+1421:2500 zlib
+3922:19442 ICU4C
+23365:1732 Protobuf Nano
+25098:11358 CCTZ
+36457:11358 safeparcel
+47816:3182 PCRE
+50999:1558 RE2
+52558:680 STL
+53239:1481 darts_clone
+54721:243 tz database
+54965:1602 JSR 305
+56568:731 UTF
+57300:11342 flatbuffers
+68643:46 jsr305
+68690:51 jsr250-api
+68742:46 runtime
+68836:46 common
+68883:47 play-services-oss-licenses
