@@ -1,10 +1,18 @@
 <resources>
+    <string name="server_client_id">433727588326-p22mnnor8dd50sb1hugoia97jr0v9c9o.apps.googleusercontent.com</string>
+    <string name="default_note_title">A Wonderful Title</string>
+
+    <!-- Begin settings labels -->
+    <string name="pref_oss">Open Source Licenses</string>
+    <string name="pref_key_oss">pref_key_oss</string>
+    <string name="pref_info">About</string>
+    <!-- End settings labels -->
+
     <!-- Begin app bar labels -->
     <string name="app_name">NoteGala</string>
     <string name="sign_in_label">Sign In</string>
+    <string name="settings_label">Settings</string>
     <!-- End app bar labels -->
-
-    <string name="server_client_id">433727588326-p22mnnor8dd50sb1hugoia97jr0v9c9o.apps.googleusercontent.com</string>
 
     <!-- Begin navigation drawer items -->
     <string name="home_name">My Notes</string>
@@ -31,8 +39,6 @@
     <string name="dialog_note">Note</string>
     <string name="dialog_notebook_rename">New Notebook Title</string>
     <!-- End dialog content -->
-
-    <string name="default_note_title">A Wonderful Title</string>
 
     <!-- Begin toast messages -->
     <string name="network_err">network error</string>
