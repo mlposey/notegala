@@ -139,9 +139,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
         Note note = (Note) parent.getItemAtPosition(position);
 
         Intent intent = new Intent(getContext(), NoteActivity.class);
-        intent.putExtra(NoteActivity.TITLE_EXTRA, note.title());
-        intent.putExtra(NoteActivity.BODY_EXTRA, note.body());
-        intent.putExtra(NoteActivity.ID_EXTRA, note.id());
+        intent.putExtra(NoteActivity.NOTE_EXTRA, new ParcelableNote(note));
         startActivity(intent);
     }
 
