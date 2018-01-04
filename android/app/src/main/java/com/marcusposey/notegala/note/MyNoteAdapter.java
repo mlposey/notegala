@@ -14,22 +14,17 @@ import com.marcusposey.notegala.net.gen.Note;
 
 /** Maps owned notes to cards that display summaries of content */
 public class MyNoteAdapter extends ArrayAdapter<Note> {
-    private final Context mContext;
-    private Note[] mNotes;
-
     public MyNoteAdapter(Context context, FragmentManager manager, Note[] notes) {
         super(context, -1, notes);
-        mContext = context;
-        mNotes = notes;
     }
 
     @Override
     public View getView(int pos, View convertView, ViewGroup parent) {
         LayoutInflater inflater =
-                (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.content_my_note, parent, false);
 
-        Note note = mNotes[pos];
+        Note note = getItem(pos);
         TextView body = row.findViewById(R.id.my_note_body);
         body.setText(note.body());
 
