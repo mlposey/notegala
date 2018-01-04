@@ -1,6 +1,7 @@
 <resources>
     <string name="server_client_id">433727588326-p22mnnor8dd50sb1hugoia97jr0v9c9o.apps.googleusercontent.com</string>
     <string name="default_note_title">A Wonderful Title</string>
+    <string name="input_tag_hint">new tag</string>
 
     <!-- Begin settings labels -->
     <string name="pref_oss">Open Source Licenses</string>
@@ -21,7 +22,6 @@
     <string name="starred_name">Starred</string>
     <string name="explore_name">Explore</string>
     <string name="notebooks_name">Notebooks</string>
-    <string name="default_name">Misc.</string>
     <!-- End navigation drawer items -->
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
