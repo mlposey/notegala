@@ -1,6 +1,8 @@
 package com.marcusposey.notegala;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -100,6 +102,14 @@ public class SidePane extends NavigationView implements Observer {
                         .beginTransaction()
                         .replace(R.id.content_frame, fragment)
                         .commit();
+                break;
+
+            case R.id.nav_settings:
+                // Pause briefly while the drawer closes.
+                new Handler().postDelayed(() -> {
+                    Intent intent = new Intent(getContext(), SettingsActivity.class);
+                    mParent.startActivity(intent);
+                }, 150);
                 break;
             /*
             case R.id.nav_starred:

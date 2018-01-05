@@ -19,6 +19,7 @@
 
     <!-- Begin navigation drawer items -->
     <string name="home_name">My Notes</string>
+    <string name="settings_name">Settings</string>
     <string name="starred_name">Starred</string>
     <string name="explore_name">Explore</string>
     <string name="notebooks_name">Notebooks</string>
