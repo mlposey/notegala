@@ -16,6 +16,10 @@ import com.marcusposey.notegala.net.gen.EditNoteInput;
 import com.marcusposey.notegala.net.gen.NewNoteInput;
 import com.marcusposey.notegala.net.gen.Note;
 
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Handles the note creation interface and operations
  *
@@ -41,9 +45,16 @@ public class NoteActivity extends AppCompatActivity {
     // Extra key for receiving a ParcelableNote
     public static final String NOTE_EXTRA = "NOTE_EXTRA";
 
+    // Activity request code for TagActivity
+    private static final int RC_TAGS = 1;
+
     // Holds the note that was initially loaded into the activity if
     // the context is Context.UPDATE
     private Note mNote;
+
+    // An updated collection of the note's tags. These tags might not be the
+    // same ones found in mNote.
+    private Set<String> mTags = new TreeSet<>();
 
     // The context of this activity
     private Context mCtx;
@@ -65,10 +76,27 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.note_menu_delete) {
-            handleDeletePressed();
+        switch (item.getItemId()) {
+            case R.id.note_menu_delete:
+                handleDeletePressed();
+                break;
+
+            case R.id.note_menu_tags:
+                Intent intent = new Intent(this, TagActivity.class);
+                TagActivity.getTags().clear();
+                TagActivity.getTags().addAll(mTags);
+                startActivityForResult(intent, RC_TAGS);
+                break;
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == RC_TAGS) {
+            mTags = new TreeSet<>(TagActivity.getTags());
+            TagActivity.getTags().clear();
+        }
     }
 
     /**
@@ -115,6 +143,7 @@ public class NoteActivity extends AppCompatActivity {
 
         if (mCtx == Context.UPDATE) {
             mNote = encoded.getNote();
+            mTags.addAll(mNote.tags());
 
             EditText title = findViewById(R.id.edit_note_title);
             title.setText(mNote.title());
@@ -145,9 +174,11 @@ public class NoteActivity extends AppCompatActivity {
         String title = ((EditText) findViewById(R.id.edit_note_title)).getText().toString();
         String body = ((EditText) findViewById(R.id.edit_note_body)).getText().toString();
         String notebookId = getIntent().getStringExtra(NOTEBOOK_ID_EXTRA);
-        // TODO: Serialize note tags.
 
-        return NewNoteInput.builder().title(title).body(body).notebook(notebookId).build();
+        return NewNoteInput.builder()
+                .title(title).body(body).notebook(notebookId)
+                .tags(new ArrayList<>(mTags))
+                .build();
     }
 
     /** Publishes a new note to the API */
@@ -177,7 +208,9 @@ public class NoteActivity extends AppCompatActivity {
 
     /** Publishes the updated version of a note to the API */
     private void updateNote(NewNoteInput note, QueryService service) {
-        if (note.body().equals(mNote.body()) && note.title().equals(mNote.title())) {
+        boolean isTagListSame = new TreeSet<>(mNote.tags()).equals(mTags);
+
+        if (note.body().equals(mNote.body()) && note.title().equals(mNote.title()) && isTagListSame) {
             Log.i(LOG_TAG, "skipped update of unchanged note");
             return;
         }
@@ -187,7 +220,8 @@ public class NoteActivity extends AppCompatActivity {
         EditNoteInput.Builder builder = EditNoteInput.builder()
                 .id(mNote.id())
                 .title((note.title() == null || note.title().isEmpty()) && mNote.title() != null ? " " : note.title())
-                .body((note.body() == null || note.body().isEmpty()) && !mNote.body().isEmpty() ? " " : note.body());
+                .body((note.body() == null || note.body().isEmpty()) && !mNote.body().isEmpty() ? " " : note.body())
+                .tags(isTagListSame ? null : note.tags());
 
         service.editNote(builder.build(), (e, response) -> {
             runOnUiThread(() -> {
