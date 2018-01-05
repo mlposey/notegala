@@ -101,12 +101,14 @@ public class SidePane extends NavigationView implements Observer {
                         .replace(R.id.content_frame, fragment)
                         .commit();
                 break;
+            /*
             case R.id.nav_starred:
                 // TODO: Load starred notes into content frame.
                 break;
             case R.id.nav_explore:
                 // TODO: Load explore section into content frame.
                 break;
+            */
             default:
                 mNotebookMenu.onItemSelected(item);
         }
