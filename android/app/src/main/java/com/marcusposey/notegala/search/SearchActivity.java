@@ -62,6 +62,11 @@ public class SearchActivity extends AppCompatActivity implements Observer {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setIconifiedByDefault(false);
 
+        if (mLastQuery == null) {
+            // Display the query they used to get to this activity.
+            searchView.setQuery(getIntent().getStringExtra(SearchManager.QUERY), false);
+        }
+
         return true;
     }
 
