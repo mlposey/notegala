@@ -2,6 +2,7 @@ package com.marcusposey.notegala.net;
 
 import com.marcusposey.notegala.net.gen.mutation.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.mutation.CreateNotebookMutation;
+import com.marcusposey.notegala.net.gen.query.SearchQuery;
 import com.marcusposey.notegala.net.gen.type.EditNoteInput;
 import com.marcusposey.notegala.net.gen.mutation.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.type.EditNotebookInput;
@@ -79,4 +80,6 @@ public abstract class QueryService extends Observable {
     public abstract void createNotebook(String title, Listener<CreateNotebookMutation.Notebook> listener);
     public abstract void removeNotebook(String id, Listener<Boolean> listener);
     public abstract void editNotebook(EditNotebookInput input, Listener<EditNotebookMutation.Notebook> listener);
+    public abstract void search(String query, @Nullable String notebookId,
+                                Listener<List<SearchQuery.Match>> listener);
 }
