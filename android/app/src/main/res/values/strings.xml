@@ -2,6 +2,7 @@
     <string name="server_client_id">433727588326-p22mnnor8dd50sb1hugoia97jr0v9c9o.apps.googleusercontent.com</string>
     <string name="default_note_title">A Wonderful Title</string>
     <string name="input_tag_hint">new tag</string>
+    <string name="search_hint">Search notes</string>
 
     <!-- Begin settings labels -->
     <string name="pref_oss">Open Source Licenses</string>
@@ -28,13 +29,14 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <!-- Begin overflow menu labels -->
+    <!-- Begin menu labels -->
+    <string name="main_search">Search</string>
     <string name="action_settings">Settings</string>
     <string name="note_delete">Delete</string>
     <string name="note_tags">Tags</string>
     <string name="notebook_rename">Rename</string>
     <string name="notebook_delete">Delete</string>
-    <!-- End overflow menu labels -->
+    <!-- End menu labels -->
 
     <!-- Begin dialog content -->
     <string name="dialog_delete">Delete</string>
