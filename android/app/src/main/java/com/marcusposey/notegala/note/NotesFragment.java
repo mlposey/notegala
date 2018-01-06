@@ -127,7 +127,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
 
                 Note[] aNotes = notes.toArray(new Note[0]);
                 sortByModified(aNotes);
-                MyNoteAdapter adapter = new MyNoteAdapter(getActivity(), getFragmentManager(), aNotes);
+                NoteAdapter adapter = new NoteAdapter(getActivity(), getFragmentManager(), aNotes);
                 getListView().setOnItemClickListener(this::onNoteClicked);
                 setListAdapter(adapter);
             }
