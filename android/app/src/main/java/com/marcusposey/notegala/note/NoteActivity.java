@@ -12,9 +12,9 @@ import android.widget.Toast;
 import com.marcusposey.notegala.DialogFactory;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
-import com.marcusposey.notegala.net.gen.EditNoteInput;
-import com.marcusposey.notegala.net.gen.NewNoteInput;
-import com.marcusposey.notegala.net.gen.Note;
+import com.marcusposey.notegala.net.gen.type.EditNoteInput;
+import com.marcusposey.notegala.net.gen.type.NewNoteInput;
+import com.marcusposey.notegala.net.gen.fragment.Note;
 
 import java.util.ArrayList;
 import java.util.Set;

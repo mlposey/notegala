@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.mutation;
 
 import com.apollographql.apollo.api.InputFieldMarshaller;
 import com.apollographql.apollo.api.InputFieldWriter;
@@ -12,6 +12,9 @@ import com.apollographql.apollo.api.ResponseReader;
 import com.apollographql.apollo.api.ResponseWriter;
 import com.apollographql.apollo.api.internal.UnmodifiableMapBuilder;
 import com.apollographql.apollo.api.internal.Utils;
+import com.marcusposey.notegala.net.gen.type.CustomType;
+import com.marcusposey.notegala.net.gen.type.EditNoteInput;
+
 import java.io.IOException;
 import java.lang.Object;
 import java.lang.Override;
@@ -23,9 +26,9 @@ import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
 @Generated("Apollo GraphQL")
-public final class EditNotebookMutation implements Mutation<EditNotebookMutation.Data, EditNotebookMutation.Data, EditNotebookMutation.Variables> {
-  public static final String OPERATION_DEFINITION = "mutation EditNotebook($input: EditNotebookInput!) {\n"
-      + "  notebook: editNotebook(input: $input) {\n"
+public final class EditNoteMutation implements Mutation<EditNoteMutation.Data, EditNoteMutation.Data, EditNoteMutation.Variables> {
+  public static final String OPERATION_DEFINITION = "mutation EditNote($input: EditNoteInput!) {\n"
+      + "  note: editNote(input: $input) {\n"
       + "    __typename\n"
       + "    id\n"
       + "  }\n"
@@ -36,20 +39,20 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
   private static final OperationName OPERATION_NAME = new OperationName() {
     @Override
     public String name() {
-      return "EditNotebook";
+      return "EditNote";
     }
   };
 
-  private final EditNotebookMutation.Variables variables;
+  private final EditNoteMutation.Variables variables;
 
-  public EditNotebookMutation(@Nonnull EditNotebookInput input) {
+  public EditNoteMutation(@Nonnull EditNoteInput input) {
     Utils.checkNotNull(input, "input == null");
-    variables = new EditNotebookMutation.Variables(input);
+    variables = new EditNoteMutation.Variables(input);
   }
 
   @Override
   public String operationId() {
-    return "4de9c46127fe5e8f2417b9c516954ea6173c0cac8c918c52ff3290d97fadf5de";
+    return "faaad040975bd8dfb0178118b7b0f45f69bed1e5103a6243963bcb80fd2d15da";
   }
 
   @Override
@@ -58,17 +61,17 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
   }
 
   @Override
-  public EditNotebookMutation.Data wrapData(EditNotebookMutation.Data data) {
+  public EditNoteMutation.Data wrapData(EditNoteMutation.Data data) {
     return data;
   }
 
   @Override
-  public EditNotebookMutation.Variables variables() {
+  public EditNoteMutation.Variables variables() {
     return variables;
   }
 
   @Override
-  public ResponseFieldMapper<EditNotebookMutation.Data> responseFieldMapper() {
+  public ResponseFieldMapper<EditNoteMutation.Data> responseFieldMapper() {
     return new Data.Mapper();
   }
 
@@ -82,33 +85,33 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
   }
 
   public static final class Builder {
-    private @Nonnull EditNotebookInput input;
+    private @Nonnull EditNoteInput input;
 
     Builder() {
     }
 
-    public Builder input(@Nonnull EditNotebookInput input) {
+    public Builder input(@Nonnull EditNoteInput input) {
       this.input = input;
       return this;
     }
 
-    public EditNotebookMutation build() {
+    public EditNoteMutation build() {
       Utils.checkNotNull(input, "input == null");
-      return new EditNotebookMutation(input);
+      return new EditNoteMutation(input);
     }
   }
 
   public static final class Variables extends Operation.Variables {
-    private final @Nonnull EditNotebookInput input;
+    private final @Nonnull EditNoteInput input;
 
     private final transient Map<String, Object> valueMap = new LinkedHashMap<>();
 
-    Variables(@Nonnull EditNotebookInput input) {
+    Variables(@Nonnull EditNoteInput input) {
       this.input = input;
       this.valueMap.put("input", input);
     }
 
-    public @Nonnull EditNotebookInput input() {
+    public @Nonnull EditNoteInput input() {
       return input;
     }
 
@@ -130,7 +133,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forObject("notebook", "editNotebook", new UnmodifiableMapBuilder<String, Object>(1)
+      ResponseField.forObject("note", "editNote", new UnmodifiableMapBuilder<String, Object>(1)
         .put("input", new UnmodifiableMapBuilder<String, Object>(2)
           .put("kind", "Variable")
           .put("variableName", "input")
@@ -138,7 +141,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
       .build(), false, Collections.<ResponseField.Condition>emptyList())
     };
 
-    final @Nonnull Notebook notebook;
+    final @Nonnull Note note;
 
     private volatile String $toString;
 
@@ -146,19 +149,19 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
 
     private volatile boolean $hashCodeMemoized;
 
-    public Data(@Nonnull Notebook notebook) {
-      this.notebook = Utils.checkNotNull(notebook, "notebook == null");
+    public Data(@Nonnull Note note) {
+      this.note = Utils.checkNotNull(note, "note == null");
     }
 
-    public @Nonnull Notebook notebook() {
-      return this.notebook;
+    public @Nonnull Note note() {
+      return this.note;
     }
 
     public ResponseFieldMarshaller marshaller() {
       return new ResponseFieldMarshaller() {
         @Override
         public void marshal(ResponseWriter writer) {
-          writer.writeObject($responseFields[0], notebook.marshaller());
+          writer.writeObject($responseFields[0], note.marshaller());
         }
       };
     }
@@ -167,7 +170,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
     public String toString() {
       if ($toString == null) {
         $toString = "Data{"
-          + "notebook=" + notebook
+          + "note=" + note
           + "}";
       }
       return $toString;
@@ -180,7 +183,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
       }
       if (o instanceof Data) {
         Data that = (Data) o;
-        return this.notebook.equals(that.notebook);
+        return this.note.equals(that.note);
       }
       return false;
     }
@@ -190,7 +193,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
       if (!$hashCodeMemoized) {
         int h = 1;
         h *= 1000003;
-        h ^= notebook.hashCode();
+        h ^= note.hashCode();
         $hashCode = h;
         $hashCodeMemoized = true;
       }
@@ -198,22 +201,22 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
     }
 
     public static final class Mapper implements ResponseFieldMapper<Data> {
-      final Notebook.Mapper notebookFieldMapper = new Notebook.Mapper();
+      final Note.Mapper noteFieldMapper = new Note.Mapper();
 
       @Override
       public Data map(ResponseReader reader) {
-        final Notebook notebook = reader.readObject($responseFields[0], new ResponseReader.ObjectReader<Notebook>() {
+        final Note note = reader.readObject($responseFields[0], new ResponseReader.ObjectReader<Note>() {
           @Override
-          public Notebook read(ResponseReader reader) {
-            return notebookFieldMapper.map(reader);
+          public Note read(ResponseReader reader) {
+            return noteFieldMapper.map(reader);
           }
         });
-        return new Data(notebook);
+        return new Data(note);
       }
     }
   }
 
-  public static class Notebook {
+  public static class Note {
     static final ResponseField[] $responseFields = {
       ResponseField.forString("__typename", "__typename", null, false, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forCustomType("id", "id", null, false, CustomType.ID, Collections.<ResponseField.Condition>emptyList())
@@ -229,7 +232,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
 
     private volatile boolean $hashCodeMemoized;
 
-    public Notebook(@Nonnull String __typename, @Nonnull String id) {
+    public Note(@Nonnull String __typename, @Nonnull String id) {
       this.__typename = Utils.checkNotNull(__typename, "__typename == null");
       this.id = Utils.checkNotNull(id, "id == null");
     }
@@ -255,7 +258,7 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
     @Override
     public String toString() {
       if ($toString == null) {
-        $toString = "Notebook{"
+        $toString = "Note{"
           + "__typename=" + __typename + ", "
           + "id=" + id
           + "}";
@@ -268,8 +271,8 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
       if (o == this) {
         return true;
       }
-      if (o instanceof Notebook) {
-        Notebook that = (Notebook) o;
+      if (o instanceof Note) {
+        Note that = (Note) o;
         return this.__typename.equals(that.__typename)
          && this.id.equals(that.id);
       }
@@ -290,12 +293,12 @@ public final class EditNotebookMutation implements Mutation<EditNotebookMutation
       return $hashCode;
     }
 
-    public static final class Mapper implements ResponseFieldMapper<Notebook> {
+    public static final class Mapper implements ResponseFieldMapper<Note> {
       @Override
-      public Notebook map(ResponseReader reader) {
+      public Note map(ResponseReader reader) {
         final String __typename = reader.readString($responseFields[0]);
         final String id = reader.readCustomType((ResponseField.CustomTypeField) $responseFields[1]);
-        return new Notebook(__typename, id);
+        return new Note(__typename, id);
       }
     }
   }

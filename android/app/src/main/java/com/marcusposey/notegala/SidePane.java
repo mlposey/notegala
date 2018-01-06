@@ -14,7 +14,8 @@ import android.widget.TextView;
 
 import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
-import com.marcusposey.notegala.net.gen.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.query.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.mutation.CreateNotebookMutation;
 import com.marcusposey.notegala.note.MyNotesFragment;
 import com.marcusposey.notegala.note.NotesFragment;
 import com.marcusposey.notegala.notebook.NotebookMenuManager;
@@ -131,8 +132,8 @@ public class SidePane extends NavigationView implements Observer {
     public void update(Observable o, Object arg) {
         if (o instanceof QueryService) {
             mParent.runOnUiThread(() -> {
-                if (arg instanceof com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) {
-                    String title = ((com.marcusposey.notegala.net.gen.CreateNotebookMutation.Notebook) arg).title();
+                if (arg instanceof com.marcusposey.notegala.net.gen.mutation.CreateNotebookMutation.Notebook) {
+                    String title = ((CreateNotebookMutation.Notebook) arg).title();
                     mNotebookMenu.refresh(title, this);
                 } else if (arg instanceof ApolloQueryService.ResponseType) {
                     ApolloQueryService.ResponseType type = (ApolloQueryService.ResponseType) arg;

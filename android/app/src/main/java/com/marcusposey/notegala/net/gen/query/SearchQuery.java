@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.query;
 
 import com.apollographql.apollo.api.Input;
 import com.apollographql.apollo.api.InputFieldMarshaller;
@@ -13,6 +13,8 @@ import com.apollographql.apollo.api.ResponseReader;
 import com.apollographql.apollo.api.ResponseWriter;
 import com.apollographql.apollo.api.internal.UnmodifiableMapBuilder;
 import com.apollographql.apollo.api.internal.Utils;
+import com.marcusposey.notegala.net.gen.fragment.Note;
+
 import java.io.IOException;
 import java.lang.Object;
 import java.lang.Override;
@@ -273,7 +275,8 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
 
     final double score;
 
-    final @Nonnull Note note;
+    final @Nonnull
+    Note note;
 
     private volatile String $toString;
 

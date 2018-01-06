@@ -10,7 +10,7 @@ import android.view.SubMenu;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.SidePane;
 import com.marcusposey.notegala.net.QueryService;
-import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
+import com.marcusposey.notegala.net.gen.query.MyNotebooksHeadQuery;
 import com.marcusposey.notegala.note.NotesFragment;
 
 import java.util.HashMap;

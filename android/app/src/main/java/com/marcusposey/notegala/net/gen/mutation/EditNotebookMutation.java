@@ -1,10 +1,10 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.mutation;
 
 import com.apollographql.apollo.api.InputFieldMarshaller;
 import com.apollographql.apollo.api.InputFieldWriter;
+import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.OperationName;
-import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.ResponseField;
 import com.apollographql.apollo.api.ResponseFieldMapper;
 import com.apollographql.apollo.api.ResponseFieldMarshaller;
@@ -12,49 +12,47 @@ import com.apollographql.apollo.api.ResponseReader;
 import com.apollographql.apollo.api.ResponseWriter;
 import com.apollographql.apollo.api.internal.UnmodifiableMapBuilder;
 import com.apollographql.apollo.api.internal.Utils;
+import com.marcusposey.notegala.net.gen.type.CustomType;
+import com.marcusposey.notegala.net.gen.type.EditNotebookInput;
+
 import java.io.IOException;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
 @Generated("Apollo GraphQL")
-public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQuery.Data, NotebookQuery.Variables> {
-  public static final String OPERATION_DEFINITION = "query Notebook($id: ID!) {\n"
-      + "  notebook(id: $id) {\n"
+public final class EditNotebookMutation implements Mutation<EditNotebookMutation.Data, EditNotebookMutation.Data, EditNotebookMutation.Variables> {
+  public static final String OPERATION_DEFINITION = "mutation EditNotebook($input: EditNotebookInput!) {\n"
+      + "  notebook: editNotebook(input: $input) {\n"
       + "    __typename\n"
-      + "    notes {\n"
-      + "      __typename\n"
-      + "      ...Note\n"
-      + "    }\n"
+      + "    id\n"
       + "  }\n"
       + "}";
 
-  public static final String QUERY_DOCUMENT = OPERATION_DEFINITION + "\n"
-   + com.marcusposey.notegala.fragment.Note.FRAGMENT_DEFINITION;
+  public static final String QUERY_DOCUMENT = OPERATION_DEFINITION;
 
   private static final OperationName OPERATION_NAME = new OperationName() {
     @Override
     public String name() {
-      return "Notebook";
+      return "EditNotebook";
     }
   };
 
-  private final NotebookQuery.Variables variables;
+  private final EditNotebookMutation.Variables variables;
 
-  public NotebookQuery(@Nonnull String id) {
-    Utils.checkNotNull(id, "id == null");
-    variables = new NotebookQuery.Variables(id);
+  public EditNotebookMutation(@Nonnull EditNotebookInput input) {
+    Utils.checkNotNull(input, "input == null");
+    variables = new EditNotebookMutation.Variables(input);
   }
 
   @Override
   public String operationId() {
-    return "ec82e3ca6a93df4986fcaa9fd11d0b68c6fab256c3f7d016167f8c8586c1bc6c";
+    return "4de9c46127fe5e8f2417b9c516954ea6173c0cac8c918c52ff3290d97fadf5de";
   }
 
   @Override
@@ -63,17 +61,17 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
   }
 
   @Override
-  public NotebookQuery.Data wrapData(NotebookQuery.Data data) {
+  public EditNotebookMutation.Data wrapData(EditNotebookMutation.Data data) {
     return data;
   }
 
   @Override
-  public NotebookQuery.Variables variables() {
+  public EditNotebookMutation.Variables variables() {
     return variables;
   }
 
   @Override
-  public ResponseFieldMapper<NotebookQuery.Data> responseFieldMapper() {
+  public ResponseFieldMapper<EditNotebookMutation.Data> responseFieldMapper() {
     return new Data.Mapper();
   }
 
@@ -87,34 +85,34 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
   }
 
   public static final class Builder {
-    private @Nonnull String id;
+    private @Nonnull EditNotebookInput input;
 
     Builder() {
     }
 
-    public Builder id(@Nonnull String id) {
-      this.id = id;
+    public Builder input(@Nonnull EditNotebookInput input) {
+      this.input = input;
       return this;
     }
 
-    public NotebookQuery build() {
-      Utils.checkNotNull(id, "id == null");
-      return new NotebookQuery(id);
+    public EditNotebookMutation build() {
+      Utils.checkNotNull(input, "input == null");
+      return new EditNotebookMutation(input);
     }
   }
 
   public static final class Variables extends Operation.Variables {
-    private final @Nonnull String id;
+    private final @Nonnull EditNotebookInput input;
 
     private final transient Map<String, Object> valueMap = new LinkedHashMap<>();
 
-    Variables(@Nonnull String id) {
-      this.id = id;
-      this.valueMap.put("id", id);
+    Variables(@Nonnull EditNotebookInput input) {
+      this.input = input;
+      this.valueMap.put("input", input);
     }
 
-    public @Nonnull String id() {
-      return id;
+    public @Nonnull EditNotebookInput input() {
+      return input;
     }
 
     @Override
@@ -127,7 +125,7 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
       return new InputFieldMarshaller() {
         @Override
         public void marshal(InputFieldWriter writer) throws IOException {
-          writer.writeCustom("id", com.marcusposey.notegala.type.CustomType.ID, id);
+          writer.writeObject("input", input.marshaller());
         }
       };
     }
@@ -135,10 +133,10 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forObject("notebook", "notebook", new UnmodifiableMapBuilder<String, Object>(1)
-        .put("id", new UnmodifiableMapBuilder<String, Object>(2)
+      ResponseField.forObject("notebook", "editNotebook", new UnmodifiableMapBuilder<String, Object>(1)
+        .put("input", new UnmodifiableMapBuilder<String, Object>(2)
           .put("kind", "Variable")
-          .put("variableName", "id")
+          .put("variableName", "input")
         .build())
       .build(), false, Collections.<ResponseField.Condition>emptyList())
     };
@@ -221,12 +219,12 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
   public static class Notebook {
     static final ResponseField[] $responseFields = {
       ResponseField.forString("__typename", "__typename", null, false, Collections.<ResponseField.Condition>emptyList()),
-      ResponseField.forList("notes", "notes", null, false, Collections.<ResponseField.Condition>emptyList())
+      ResponseField.forCustomType("id", "id", null, false, CustomType.ID, Collections.<ResponseField.Condition>emptyList())
     };
 
     final @Nonnull String __typename;
 
-    final @Nonnull List<Note> notes;
+    final @Nonnull String id;
 
     private volatile String $toString;
 
@@ -234,17 +232,17 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
 
     private volatile boolean $hashCodeMemoized;
 
-    public Notebook(@Nonnull String __typename, @Nonnull List<Note> notes) {
+    public Notebook(@Nonnull String __typename, @Nonnull String id) {
       this.__typename = Utils.checkNotNull(__typename, "__typename == null");
-      this.notes = Utils.checkNotNull(notes, "notes == null");
+      this.id = Utils.checkNotNull(id, "id == null");
     }
 
     public @Nonnull String __typename() {
       return this.__typename;
     }
 
-    public @Nonnull List<Note> notes() {
-      return this.notes;
+    public @Nonnull String id() {
+      return this.id;
     }
 
     public ResponseFieldMarshaller marshaller() {
@@ -252,12 +250,7 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
         @Override
         public void marshal(ResponseWriter writer) {
           writer.writeString($responseFields[0], __typename);
-          writer.writeList($responseFields[1], notes, new ResponseWriter.ListWriter() {
-            @Override
-            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
-              listItemWriter.writeObject(((Note) value).marshaller());
-            }
-          });
+          writer.writeCustom((ResponseField.CustomTypeField) $responseFields[1], id);
         }
       };
     }
@@ -267,7 +260,7 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
       if ($toString == null) {
         $toString = "Notebook{"
           + "__typename=" + __typename + ", "
-          + "notes=" + notes
+          + "id=" + id
           + "}";
       }
       return $toString;
@@ -281,7 +274,7 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
       if (o instanceof Notebook) {
         Notebook that = (Notebook) o;
         return this.__typename.equals(that.__typename)
-         && this.notes.equals(that.notes);
+         && this.id.equals(that.id);
       }
       return false;
     }
@@ -293,7 +286,7 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
         h *= 1000003;
         h ^= __typename.hashCode();
         h *= 1000003;
-        h ^= notes.hashCode();
+        h ^= id.hashCode();
         $hashCode = h;
         $hashCodeMemoized = true;
       }
@@ -301,23 +294,11 @@ public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQu
     }
 
     public static final class Mapper implements ResponseFieldMapper<Notebook> {
-      final Note.Mapper noteFieldMapper = new Note.Mapper();
-
       @Override
       public Notebook map(ResponseReader reader) {
         final String __typename = reader.readString($responseFields[0]);
-        final List<Note> notes = reader.readList($responseFields[1], new ResponseReader.ListReader<Note>() {
-          @Override
-          public Note read(ResponseReader.ListItemReader listItemReader) {
-            return listItemReader.readObject(new ResponseReader.ObjectReader<Note>() {
-              @Override
-              public Note read(ResponseReader reader) {
-                return noteFieldMapper.map(reader);
-              }
-            });
-          }
-        });
-        return new Notebook(__typename, notes);
+        final String id = reader.readCustomType((ResponseField.CustomTypeField) $responseFields[1]);
+        return new Notebook(__typename, id);
       }
     }
   }

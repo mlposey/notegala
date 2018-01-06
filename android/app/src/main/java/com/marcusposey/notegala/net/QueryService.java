@@ -1,15 +1,15 @@
 package com.marcusposey.notegala.net;
 
-import com.marcusposey.notegala.net.gen.CreateNoteMutation;
-import com.marcusposey.notegala.net.gen.CreateNotebookMutation;
-import com.marcusposey.notegala.net.gen.EditNoteInput;
-import com.marcusposey.notegala.net.gen.EditNoteMutation;
-import com.marcusposey.notegala.net.gen.EditNotebookInput;
-import com.marcusposey.notegala.net.gen.EditNotebookMutation;
-import com.marcusposey.notegala.net.gen.GetAccountQuery;
-import com.marcusposey.notegala.net.gen.MyNotebooksHeadQuery;
-import com.marcusposey.notegala.net.gen.NewNoteInput;
-import com.marcusposey.notegala.net.gen.Note;
+import com.marcusposey.notegala.net.gen.mutation.CreateNoteMutation;
+import com.marcusposey.notegala.net.gen.mutation.CreateNotebookMutation;
+import com.marcusposey.notegala.net.gen.type.EditNoteInput;
+import com.marcusposey.notegala.net.gen.mutation.EditNoteMutation;
+import com.marcusposey.notegala.net.gen.type.EditNotebookInput;
+import com.marcusposey.notegala.net.gen.mutation.EditNotebookMutation;
+import com.marcusposey.notegala.net.gen.query.GetAccountQuery;
+import com.marcusposey.notegala.net.gen.query.MyNotebooksHeadQuery;
+import com.marcusposey.notegala.net.gen.type.NewNoteInput;
+import com.marcusposey.notegala.net.gen.fragment.Note;
 
 import java.util.ArrayList;
 import java.util.List;

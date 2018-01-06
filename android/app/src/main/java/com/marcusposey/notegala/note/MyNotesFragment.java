@@ -5,7 +5,7 @@ import android.support.v7.app.ActionBar;
 import android.view.View;
 
 import com.marcusposey.notegala.net.QueryService;
-import com.marcusposey.notegala.net.gen.Note;
+import com.marcusposey.notegala.net.gen.fragment.Note;
 
 import java.util.List;
 

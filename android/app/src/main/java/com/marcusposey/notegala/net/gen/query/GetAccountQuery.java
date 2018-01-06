@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.query;
 
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.OperationName;

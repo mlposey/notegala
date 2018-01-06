@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.type;
 
 import com.apollographql.apollo.api.ScalarType;
 import java.lang.Class;
