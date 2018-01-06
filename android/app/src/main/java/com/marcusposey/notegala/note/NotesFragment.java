@@ -57,7 +57,7 @@ public abstract class NotesFragment extends ListFragment implements Observer {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_my_notes, container, false);
+        View root = inflater.inflate(R.layout.fragment_notes, container, false);
 
         QueryService.awaitInstance(service -> {
             refreshList(service, this::onNotesNetworkResponse);
