@@ -1,11 +1,16 @@
 package com.marcusposey.notegala;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +19,7 @@ import android.widget.Toast;
 
 import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
+import com.marcusposey.notegala.search.SearchActivity;
 
 /** Manages the root app state and initial Google token acquisition through SignInActivity */
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
 
     // The side navigation bar that manages major app components
     private SidePane mSidePane;
+
+    // The search item on the app bar
+    private @Nullable MenuItem mSearchItem;
 
     /** Configures the side pane and starts an asynchronous SignInActivity request */
     @Override
@@ -52,16 +61,34 @@ public class MainActivity extends AppCompatActivity {
         else super.onBackPressed();
     }
 
+    /** Configures the search menu item */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchItem = menu.findItem(R.id.app_bar_search);
+
+        SearchView searchView = (SearchView) mSearchItem.getActionView();
+        ComponentName searchComponent = new ComponentName(this, SearchActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(searchComponent));
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: Search.
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (mSearchItem != null) {
+            SearchView searchView = (SearchView) mSearchItem.getActionView();
+            searchView.setQuery("", false);
+            searchView.setIconified(true);
+        }
     }
 
     /**
@@ -75,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
             Log.i(LOG_TAG, "id token - " + token);
 
             new ApolloQueryService(token);
-            // Best stick to the interface.
             QueryService.awaitInstance(service -> {
                 service.getAccount((err, acct) -> {
                     runOnUiThread(() -> {
