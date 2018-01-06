@@ -13,11 +13,18 @@ import com.marcusposey.notegala.R;
 
 /** Handles search queries for notes */
 public class SearchActivity extends AppCompatActivity {
+    private ResultsFragment mResultsFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         setSupportActionBar(findViewById(R.id.search_toolbar));
+
+        mResultsFragment = new ResultsFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.results_frame, mResultsFragment)
+                .commit();
 
         handleIntent(getIntent());
     }
