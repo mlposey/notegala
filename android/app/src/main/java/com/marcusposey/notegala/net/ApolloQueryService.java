@@ -8,6 +8,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.marcusposey.notegala.SignInActivity;
 import com.marcusposey.notegala.net.gen.mutation.CreateNoteMutation;
 import com.marcusposey.notegala.net.gen.mutation.CreateNotebookMutation;
+import com.marcusposey.notegala.net.gen.query.SearchQuery;
 import com.marcusposey.notegala.net.gen.type.EditNoteInput;
 import com.marcusposey.notegala.net.gen.mutation.EditNoteMutation;
 import com.marcusposey.notegala.net.gen.type.EditNotebookInput;
@@ -24,6 +25,8 @@ import com.marcusposey.notegala.net.gen.mutation.RemoveNotebookMutation;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.annotation.Nullable;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -280,6 +283,24 @@ public class ApolloQueryService extends QueryService {
                         setChanged();
                         notifyObservers(ResponseType.NOTEBOOK_RENAME);
                     }, listener, "could not upload edited notebook")
+            );
+        });
+    }
+
+    /**
+     * Searches the user's notes according to a query
+     *
+     * This method corresponds to the 'search' query in the core API' GraphQL spec.
+     * @param query Phrase or keywords to search for
+     * @param notebookId Optional notebook id to restrict the search scope
+     */
+    @Override
+    public void search(String query, @Nullable String notebookId, Listener<List<SearchQuery.Match>> listener) {
+        checkTokenThen(() -> {
+            mApolloClient.query(SearchQuery.builder().query(query).notebook(notebookId).build()).enqueue(
+                    new ResponseCallback<>(
+                        response -> listener.onResult(null, response.data().matches()),
+                        listener, "could not get response")
             );
         });
     }
