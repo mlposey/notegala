@@ -1,5 +1,5 @@
 query Search($query: String!, $notebook: ID) {
-    search(query: $query, notebook: $notebook, first: 10) {
+    matches: search(query: $query, notebook: $notebook, first: 10) {
         score
         note {
             ...Note

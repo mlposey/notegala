@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 @Generated("Apollo GraphQL")
 public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Data, SearchQuery.Variables> {
   public static final String OPERATION_DEFINITION = "query Search($query: String!, $notebook: ID) {\n"
-      + "  search(query: $query, notebook: $notebook, first: 10) {\n"
+      + "  matches: search(query: $query, notebook: $notebook, first: 10) {\n"
       + "    __typename\n"
       + "    score\n"
       + "    note {\n"
@@ -60,7 +60,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
 
   @Override
   public String operationId() {
-    return "d4f606d1bf6bd6043dedaa9ffe833d1417bd1538e95cb2295aca7c9609f6895a";
+    return "d26bc8640d825b2b3fefd7225a6d2267306fc936dfe2ab4f7aa04f97fd85960c";
   }
 
   @Override
@@ -166,7 +166,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forList("search", "search", new UnmodifiableMapBuilder<String, Object>(3)
+      ResponseField.forList("matches", "search", new UnmodifiableMapBuilder<String, Object>(3)
         .put("query", new UnmodifiableMapBuilder<String, Object>(2)
           .put("kind", "Variable")
           .put("variableName", "query")
@@ -179,7 +179,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
       .build(), false, Collections.<ResponseField.Condition>emptyList())
     };
 
-    final @Nonnull List<Search> search;
+    final @Nonnull List<Match> matches;
 
     private volatile String $toString;
 
@@ -187,22 +187,22 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
 
     private volatile boolean $hashCodeMemoized;
 
-    public Data(@Nonnull List<Search> search) {
-      this.search = Utils.checkNotNull(search, "search == null");
+    public Data(@Nonnull List<Match> matches) {
+      this.matches = Utils.checkNotNull(matches, "matches == null");
     }
 
-    public @Nonnull List<Search> search() {
-      return this.search;
+    public @Nonnull List<Match> matches() {
+      return this.matches;
     }
 
     public ResponseFieldMarshaller marshaller() {
       return new ResponseFieldMarshaller() {
         @Override
         public void marshal(ResponseWriter writer) {
-          writer.writeList($responseFields[0], search, new ResponseWriter.ListWriter() {
+          writer.writeList($responseFields[0], matches, new ResponseWriter.ListWriter() {
             @Override
             public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
-              listItemWriter.writeObject(((Search) value).marshaller());
+              listItemWriter.writeObject(((Match) value).marshaller());
             }
           });
         }
@@ -213,7 +213,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
     public String toString() {
       if ($toString == null) {
         $toString = "Data{"
-          + "search=" + search
+          + "matches=" + matches
           + "}";
       }
       return $toString;
@@ -226,7 +226,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
       }
       if (o instanceof Data) {
         Data that = (Data) o;
-        return this.search.equals(that.search);
+        return this.matches.equals(that.matches);
       }
       return false;
     }
@@ -236,7 +236,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
       if (!$hashCodeMemoized) {
         int h = 1;
         h *= 1000003;
-        h ^= search.hashCode();
+        h ^= matches.hashCode();
         $hashCode = h;
         $hashCodeMemoized = true;
       }
@@ -244,27 +244,27 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
     }
 
     public static final class Mapper implements ResponseFieldMapper<Data> {
-      final Search.Mapper searchFieldMapper = new Search.Mapper();
+      final Match.Mapper matchFieldMapper = new Match.Mapper();
 
       @Override
       public Data map(ResponseReader reader) {
-        final List<Search> search = reader.readList($responseFields[0], new ResponseReader.ListReader<Search>() {
+        final List<Match> matches = reader.readList($responseFields[0], new ResponseReader.ListReader<Match>() {
           @Override
-          public Search read(ResponseReader.ListItemReader listItemReader) {
-            return listItemReader.readObject(new ResponseReader.ObjectReader<Search>() {
+          public Match read(ResponseReader.ListItemReader listItemReader) {
+            return listItemReader.readObject(new ResponseReader.ObjectReader<Match>() {
               @Override
-              public Search read(ResponseReader reader) {
-                return searchFieldMapper.map(reader);
+              public Match read(ResponseReader reader) {
+                return matchFieldMapper.map(reader);
               }
             });
           }
         });
-        return new Data(search);
+        return new Data(matches);
       }
     }
   }
 
-  public static class Search {
+  public static class Match {
     static final ResponseField[] $responseFields = {
       ResponseField.forString("__typename", "__typename", null, false, Collections.<ResponseField.Condition>emptyList()),
       ResponseField.forDouble("score", "score", null, false, Collections.<ResponseField.Condition>emptyList()),
@@ -275,8 +275,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
 
     final double score;
 
-    final @Nonnull
-    Note note;
+    final @Nonnull Note note;
 
     private volatile String $toString;
 
@@ -284,7 +283,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
 
     private volatile boolean $hashCodeMemoized;
 
-    public Search(@Nonnull String __typename, double score, @Nonnull Note note) {
+    public Match(@Nonnull String __typename, double score, @Nonnull Note note) {
       this.__typename = Utils.checkNotNull(__typename, "__typename == null");
       this.score = score;
       this.note = Utils.checkNotNull(note, "note == null");
@@ -316,7 +315,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
     @Override
     public String toString() {
       if ($toString == null) {
-        $toString = "Search{"
+        $toString = "Match{"
           + "__typename=" + __typename + ", "
           + "score=" + score + ", "
           + "note=" + note
@@ -330,8 +329,8 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
       if (o == this) {
         return true;
       }
-      if (o instanceof Search) {
-        Search that = (Search) o;
+      if (o instanceof Match) {
+        Match that = (Match) o;
         return this.__typename.equals(that.__typename)
          && Double.doubleToLongBits(this.score) == Double.doubleToLongBits(that.score)
          && this.note.equals(that.note);
@@ -355,11 +354,11 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
       return $hashCode;
     }
 
-    public static final class Mapper implements ResponseFieldMapper<Search> {
+    public static final class Mapper implements ResponseFieldMapper<Match> {
       final Note.Mapper noteFieldMapper = new Note.Mapper();
 
       @Override
-      public Search map(ResponseReader reader) {
+      public Match map(ResponseReader reader) {
         final String __typename = reader.readString($responseFields[0]);
         final double score = reader.readDouble($responseFields[1]);
         final Note note = reader.readObject($responseFields[2], new ResponseReader.ObjectReader<Note>() {
@@ -368,7 +367,7 @@ public final class SearchQuery implements Query<SearchQuery.Data, SearchQuery.Da
             return noteFieldMapper.map(reader);
           }
         });
-        return new Search(__typename, score, note);
+        return new Match(__typename, score, note);
       }
     }
   }
