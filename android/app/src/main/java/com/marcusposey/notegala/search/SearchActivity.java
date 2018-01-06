@@ -8,11 +8,16 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.marcusposey.notegala.R;
+import com.marcusposey.notegala.net.QueryService;
 
 /** Handles search queries for notes */
 public class SearchActivity extends AppCompatActivity {
+    private static final String LOG_TAG = SearchActivity.class.getSimpleName();
+
+    // Holds the search results in the results frame
     private ResultsFragment mResultsFragment;
 
     @Override
@@ -55,6 +60,20 @@ public class SearchActivity extends AppCompatActivity {
 
     /** Finds personal notes that match the specified query */
     private void searchNotes(String query) {
-        Log.i("SearchActivity", "query: " + query);
+        Log.i(LOG_TAG, "query: " + query);
+
+        QueryService.awaitInstance(service -> {
+            service.search(query, null, (err, matches) -> {
+                runOnUiThread(() -> {
+                    if (err != null) {
+                        Log.e(LOG_TAG, err.getMessage());
+                        Toast.makeText(getApplicationContext(), getString(R.string.network_err),
+                                Toast.LENGTH_LONG).show();
+                    } else {
+                        mResultsFragment.showResults(matches);
+                    }
+                });
+            });
+        });
     }
 }
