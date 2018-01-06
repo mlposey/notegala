@@ -18,8 +18,18 @@ import com.marcusposey.notegala.net.QueryService;
 import java.util.Observable;
 import java.util.Observer;
 
-/** Handles search queries for notes */
+import javax.annotation.Nullable;
+
+/**
+ * Handles search queries for notes
+ *
+ * The search context can be restricted to a notebook by supplying
+ * a notebook id as the SearchActivity.NOTEBOOK_ID bundle string extra.
+ */
 public class SearchActivity extends AppCompatActivity implements Observer {
+    // Extra key for a notebook id
+    public static final String NOTEBOOK_ID = "NOTEBOOK_ID";
+
     private static final String LOG_TAG = SearchActivity.class.getSimpleName();
 
     // Holds the search results in the results frame
@@ -27,6 +37,9 @@ public class SearchActivity extends AppCompatActivity implements Observer {
 
     // The last query that was submitted
     private String mLastQuery;
+
+    // The id of the notebook to search
+    private @Nullable String mNotebookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +56,9 @@ public class SearchActivity extends AppCompatActivity implements Observer {
                 .commit();
 
         QueryService.awaitInstance(service -> service.addObserver(this));
+
+        Bundle bundle = getIntent().getBundleExtra(SearchManager.APP_DATA);
+        mNotebookId = bundle == null ? null : bundle.getString(NOTEBOOK_ID);
 
         handleIntent(getIntent());
     }
@@ -95,9 +111,10 @@ public class SearchActivity extends AppCompatActivity implements Observer {
     /** Finds personal notes that match the specified query */
     private void searchNotes(String query) {
         Log.i(LOG_TAG, "query: " + query);
+        if (mNotebookId != null) Log.i(LOG_TAG, "notebook ctx: " + mNotebookId);
 
         QueryService.awaitInstance(service -> {
-            service.search(query, null, (err, matches) -> {
+            service.search(query, mNotebookId, (err, matches) -> {
                 runOnUiThread(() -> {
                     if (err != null) {
                         Log.e(LOG_TAG, err.getMessage());

@@ -1,5 +1,6 @@
 package com.marcusposey.notegala;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ComponentName;
@@ -7,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,10 +21,11 @@ import android.widget.Toast;
 
 import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
+import com.marcusposey.notegala.notebook.NotebookNotesFragment;
 import com.marcusposey.notegala.search.SearchActivity;
 
 /** Manages the root app state and initial Google token acquisition through SignInActivity */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
     
     // Tag used for logging with android.util.Log
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
@@ -72,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
         SearchView searchView = (SearchView) mSearchItem.getActionView();
         ComponentName searchComponent = new ComponentName(this, SearchActivity.class);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(searchComponent));
+        searchView.setOnQueryTextListener(this);
+
         return true;
     }
 
@@ -116,5 +121,23 @@ public class MainActivity extends AppCompatActivity {
                 });
             });
         }
+    }
+
+    /** Sends additional query context information if on a NotebookNotesFragment */
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (fragment instanceof NotebookNotesFragment) {
+            Bundle bundle = new Bundle();
+            bundle.putString(SearchActivity.NOTEBOOK_ID, ((NotebookNotesFragment) fragment).getNotebookId());
+            ((SearchView) mSearchItem.getActionView()).setAppSearchData(bundle);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        return false;
     }
 }
