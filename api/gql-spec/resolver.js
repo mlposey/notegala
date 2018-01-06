@@ -4,6 +4,7 @@ const Account = require('../model/account');
 const NoteFactory = require('../model/note/note-factory');
 const { Notepad } = require('../model/note/notepad');
 const Notebook = require('../model/notebook');
+const { Query } = require('../model/query');
 
 // Returned by a resolver if a request is made but it
 // lacks required fine-grained permissions
@@ -79,18 +80,11 @@ module.exports.root = {
         if (input.title) await notebook.setTitle(input.title);
         return notebook;
     },
-    search: async (root, {acct}, context) => {
-        // TODO: Implement search query.
-        // This is just a placeholder until the
-        // data model is completed.
-        if (!root.notebook) {
-            const notes = await acct.notes(root.first)
-            return notes.map(note => { return {score: 0.0, note: note}; });
-        }
-
-        const notes = await Notebook.fromId(root.notebook)
-            .then(notebook => notebook.notes())
-            .then(notes => notes.slice(0, root.first));
-        return notes.map(note => { return {score: 0.0, note: note}; });
+    search: (root, {acct}, context) => {
+        // TODO: Respond to notebook scope requests.
+        // This ignores the root.notebook value which indicates
+        // the search should be restricted to a specific
+        // notebook.
+        return new Query(acct, root.query, root.first).submit();
     }
 };
