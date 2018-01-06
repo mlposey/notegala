@@ -1,10 +1,10 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.query;
 
 import com.apollographql.apollo.api.InputFieldMarshaller;
 import com.apollographql.apollo.api.InputFieldWriter;
-import com.apollographql.apollo.api.Mutation;
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.OperationName;
+import com.apollographql.apollo.api.Query;
 import com.apollographql.apollo.api.ResponseField;
 import com.apollographql.apollo.api.ResponseFieldMapper;
 import com.apollographql.apollo.api.ResponseFieldMarshaller;
@@ -12,7 +12,7 @@ import com.apollographql.apollo.api.ResponseReader;
 import com.apollographql.apollo.api.ResponseWriter;
 import com.apollographql.apollo.api.internal.UnmodifiableMapBuilder;
 import com.apollographql.apollo.api.internal.Utils;
-import com.marcusposey.notegala.type.CustomType;
+import com.marcusposey.notegala.net.gen.fragment.Note;
 
 import java.io.IOException;
 import java.lang.Object;
@@ -20,38 +20,43 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
 @Generated("Apollo GraphQL")
-public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Data, CreateNoteMutation.Data, CreateNoteMutation.Variables> {
-  public static final String OPERATION_DEFINITION = "mutation CreateNote($input: NewNoteInput!) {\n"
-      + "  note: createNote(input: $input) {\n"
+public final class NotebookQuery implements Query<NotebookQuery.Data, NotebookQuery.Data, NotebookQuery.Variables> {
+  public static final String OPERATION_DEFINITION = "query Notebook($id: ID!) {\n"
+      + "  notebook(id: $id) {\n"
       + "    __typename\n"
-      + "    id\n"
+      + "    notes {\n"
+      + "      __typename\n"
+      + "      ...Note\n"
+      + "    }\n"
       + "  }\n"
       + "}";
 
-  public static final String QUERY_DOCUMENT = OPERATION_DEFINITION;
+  public static final String QUERY_DOCUMENT = OPERATION_DEFINITION + "\n"
+   + com.marcusposey.notegala.fragment.Note.FRAGMENT_DEFINITION;
 
   private static final OperationName OPERATION_NAME = new OperationName() {
     @Override
     public String name() {
-      return "CreateNote";
+      return "Notebook";
     }
   };
 
-  private final CreateNoteMutation.Variables variables;
+  private final NotebookQuery.Variables variables;
 
-  public CreateNoteMutation(@Nonnull NewNoteInput input) {
-    Utils.checkNotNull(input, "input == null");
-    variables = new CreateNoteMutation.Variables(input);
+  public NotebookQuery(@Nonnull String id) {
+    Utils.checkNotNull(id, "id == null");
+    variables = new NotebookQuery.Variables(id);
   }
 
   @Override
   public String operationId() {
-    return "9251732c348dbeb5d9cf9c522bda2b7c36ac25e51c00fb1209bc8ef2c346b086";
+    return "ec82e3ca6a93df4986fcaa9fd11d0b68c6fab256c3f7d016167f8c8586c1bc6c";
   }
 
   @Override
@@ -60,17 +65,17 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
   }
 
   @Override
-  public CreateNoteMutation.Data wrapData(CreateNoteMutation.Data data) {
+  public NotebookQuery.Data wrapData(NotebookQuery.Data data) {
     return data;
   }
 
   @Override
-  public CreateNoteMutation.Variables variables() {
+  public NotebookQuery.Variables variables() {
     return variables;
   }
 
   @Override
-  public ResponseFieldMapper<CreateNoteMutation.Data> responseFieldMapper() {
+  public ResponseFieldMapper<NotebookQuery.Data> responseFieldMapper() {
     return new Data.Mapper();
   }
 
@@ -84,34 +89,34 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
   }
 
   public static final class Builder {
-    private @Nonnull NewNoteInput input;
+    private @Nonnull String id;
 
     Builder() {
     }
 
-    public Builder input(@Nonnull NewNoteInput input) {
-      this.input = input;
+    public Builder id(@Nonnull String id) {
+      this.id = id;
       return this;
     }
 
-    public CreateNoteMutation build() {
-      Utils.checkNotNull(input, "input == null");
-      return new CreateNoteMutation(input);
+    public NotebookQuery build() {
+      Utils.checkNotNull(id, "id == null");
+      return new NotebookQuery(id);
     }
   }
 
   public static final class Variables extends Operation.Variables {
-    private final @Nonnull NewNoteInput input;
+    private final @Nonnull String id;
 
     private final transient Map<String, Object> valueMap = new LinkedHashMap<>();
 
-    Variables(@Nonnull NewNoteInput input) {
-      this.input = input;
-      this.valueMap.put("input", input);
+    Variables(@Nonnull String id) {
+      this.id = id;
+      this.valueMap.put("id", id);
     }
 
-    public @Nonnull NewNoteInput input() {
-      return input;
+    public @Nonnull String id() {
+      return id;
     }
 
     @Override
@@ -124,7 +129,7 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
       return new InputFieldMarshaller() {
         @Override
         public void marshal(InputFieldWriter writer) throws IOException {
-          writer.writeObject("input", input.marshaller());
+          writer.writeCustom("id", com.marcusposey.notegala.type.CustomType.ID, id);
         }
       };
     }
@@ -132,15 +137,15 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forObject("note", "createNote", new UnmodifiableMapBuilder<String, Object>(1)
-        .put("input", new UnmodifiableMapBuilder<String, Object>(2)
+      ResponseField.forObject("notebook", "notebook", new UnmodifiableMapBuilder<String, Object>(1)
+        .put("id", new UnmodifiableMapBuilder<String, Object>(2)
           .put("kind", "Variable")
-          .put("variableName", "input")
+          .put("variableName", "id")
         .build())
       .build(), false, Collections.<ResponseField.Condition>emptyList())
     };
 
-    final @Nonnull Note note;
+    final @Nonnull Notebook notebook;
 
     private volatile String $toString;
 
@@ -148,19 +153,19 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
 
     private volatile boolean $hashCodeMemoized;
 
-    public Data(@Nonnull Note note) {
-      this.note = Utils.checkNotNull(note, "note == null");
+    public Data(@Nonnull Notebook notebook) {
+      this.notebook = Utils.checkNotNull(notebook, "notebook == null");
     }
 
-    public @Nonnull Note note() {
-      return this.note;
+    public @Nonnull Notebook notebook() {
+      return this.notebook;
     }
 
     public ResponseFieldMarshaller marshaller() {
       return new ResponseFieldMarshaller() {
         @Override
         public void marshal(ResponseWriter writer) {
-          writer.writeObject($responseFields[0], note.marshaller());
+          writer.writeObject($responseFields[0], notebook.marshaller());
         }
       };
     }
@@ -169,7 +174,7 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
     public String toString() {
       if ($toString == null) {
         $toString = "Data{"
-          + "note=" + note
+          + "notebook=" + notebook
           + "}";
       }
       return $toString;
@@ -182,7 +187,7 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
       }
       if (o instanceof Data) {
         Data that = (Data) o;
-        return this.note.equals(that.note);
+        return this.notebook.equals(that.notebook);
       }
       return false;
     }
@@ -192,7 +197,7 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
       if (!$hashCodeMemoized) {
         int h = 1;
         h *= 1000003;
-        h ^= note.hashCode();
+        h ^= notebook.hashCode();
         $hashCode = h;
         $hashCodeMemoized = true;
       }
@@ -200,30 +205,30 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
     }
 
     public static final class Mapper implements ResponseFieldMapper<Data> {
-      final Note.Mapper noteFieldMapper = new Note.Mapper();
+      final Notebook.Mapper notebookFieldMapper = new Notebook.Mapper();
 
       @Override
       public Data map(ResponseReader reader) {
-        final Note note = reader.readObject($responseFields[0], new ResponseReader.ObjectReader<Note>() {
+        final Notebook notebook = reader.readObject($responseFields[0], new ResponseReader.ObjectReader<Notebook>() {
           @Override
-          public Note read(ResponseReader reader) {
-            return noteFieldMapper.map(reader);
+          public Notebook read(ResponseReader reader) {
+            return notebookFieldMapper.map(reader);
           }
         });
-        return new Data(note);
+        return new Data(notebook);
       }
     }
   }
 
-  public static class Note {
+  public static class Notebook {
     static final ResponseField[] $responseFields = {
       ResponseField.forString("__typename", "__typename", null, false, Collections.<ResponseField.Condition>emptyList()),
-      ResponseField.forCustomType("id", "id", null, false, CustomType.ID, Collections.<ResponseField.Condition>emptyList())
+      ResponseField.forList("notes", "notes", null, false, Collections.<ResponseField.Condition>emptyList())
     };
 
     final @Nonnull String __typename;
 
-    final @Nonnull String id;
+    final @Nonnull List<Note> notes;
 
     private volatile String $toString;
 
@@ -231,17 +236,17 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
 
     private volatile boolean $hashCodeMemoized;
 
-    public Note(@Nonnull String __typename, @Nonnull String id) {
+    public Notebook(@Nonnull String __typename, @Nonnull List<Note> notes) {
       this.__typename = Utils.checkNotNull(__typename, "__typename == null");
-      this.id = Utils.checkNotNull(id, "id == null");
+      this.notes = Utils.checkNotNull(notes, "notes == null");
     }
 
     public @Nonnull String __typename() {
       return this.__typename;
     }
 
-    public @Nonnull String id() {
-      return this.id;
+    public @Nonnull List<Note> notes() {
+      return this.notes;
     }
 
     public ResponseFieldMarshaller marshaller() {
@@ -249,7 +254,12 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
         @Override
         public void marshal(ResponseWriter writer) {
           writer.writeString($responseFields[0], __typename);
-          writer.writeCustom((ResponseField.CustomTypeField) $responseFields[1], id);
+          writer.writeList($responseFields[1], notes, new ResponseWriter.ListWriter() {
+            @Override
+            public void write(Object value, ResponseWriter.ListItemWriter listItemWriter) {
+              listItemWriter.writeObject(((Note) value).marshaller());
+            }
+          });
         }
       };
     }
@@ -257,9 +267,9 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
     @Override
     public String toString() {
       if ($toString == null) {
-        $toString = "Note{"
+        $toString = "Notebook{"
           + "__typename=" + __typename + ", "
-          + "id=" + id
+          + "notes=" + notes
           + "}";
       }
       return $toString;
@@ -270,10 +280,10 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
       if (o == this) {
         return true;
       }
-      if (o instanceof Note) {
-        Note that = (Note) o;
+      if (o instanceof Notebook) {
+        Notebook that = (Notebook) o;
         return this.__typename.equals(that.__typename)
-         && this.id.equals(that.id);
+         && this.notes.equals(that.notes);
       }
       return false;
     }
@@ -285,19 +295,31 @@ public final class CreateNoteMutation implements Mutation<CreateNoteMutation.Dat
         h *= 1000003;
         h ^= __typename.hashCode();
         h *= 1000003;
-        h ^= id.hashCode();
+        h ^= notes.hashCode();
         $hashCode = h;
         $hashCodeMemoized = true;
       }
       return $hashCode;
     }
 
-    public static final class Mapper implements ResponseFieldMapper<Note> {
+    public static final class Mapper implements ResponseFieldMapper<Notebook> {
+      final Note.Mapper noteFieldMapper = new Note.Mapper();
+
       @Override
-      public Note map(ResponseReader reader) {
+      public Notebook map(ResponseReader reader) {
         final String __typename = reader.readString($responseFields[0]);
-        final String id = reader.readCustomType((ResponseField.CustomTypeField) $responseFields[1]);
-        return new Note(__typename, id);
+        final List<Note> notes = reader.readList($responseFields[1], new ResponseReader.ListReader<Note>() {
+          @Override
+          public Note read(ResponseReader.ListItemReader listItemReader) {
+            return listItemReader.readObject(new ResponseReader.ObjectReader<Note>() {
+              @Override
+              public Note read(ResponseReader reader) {
+                return noteFieldMapper.map(reader);
+              }
+            });
+          }
+        });
+        return new Notebook(__typename, notes);
       }
     }
   }

@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.query;
 
 import com.apollographql.apollo.api.Operation;
 import com.apollographql.apollo.api.OperationName;
@@ -9,6 +9,8 @@ import com.apollographql.apollo.api.ResponseFieldMarshaller;
 import com.apollographql.apollo.api.ResponseReader;
 import com.apollographql.apollo.api.ResponseWriter;
 import com.apollographql.apollo.api.internal.Utils;
+import com.marcusposey.notegala.net.gen.fragment.Note;
+
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;

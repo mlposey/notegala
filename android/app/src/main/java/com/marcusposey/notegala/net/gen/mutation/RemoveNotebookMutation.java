@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.mutation;
 
 import com.apollographql.apollo.api.InputFieldMarshaller;
 import com.apollographql.apollo.api.InputFieldWriter;
@@ -23,9 +23,9 @@ import javax.annotation.Generated;
 import javax.annotation.Nonnull;
 
 @Generated("Apollo GraphQL")
-public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Data, RemoveNoteMutation.Data, RemoveNoteMutation.Variables> {
-  public static final String OPERATION_DEFINITION = "mutation RemoveNote($id: ID!) {\n"
-      + "  removeNote(id: $id)\n"
+public final class RemoveNotebookMutation implements Mutation<RemoveNotebookMutation.Data, RemoveNotebookMutation.Data, RemoveNotebookMutation.Variables> {
+  public static final String OPERATION_DEFINITION = "mutation RemoveNotebook($id: ID!) {\n"
+      + "  wasRemoved: removeNotebook(id: $id)\n"
       + "}";
 
   public static final String QUERY_DOCUMENT = OPERATION_DEFINITION;
@@ -33,20 +33,20 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
   private static final OperationName OPERATION_NAME = new OperationName() {
     @Override
     public String name() {
-      return "RemoveNote";
+      return "RemoveNotebook";
     }
   };
 
-  private final RemoveNoteMutation.Variables variables;
+  private final RemoveNotebookMutation.Variables variables;
 
-  public RemoveNoteMutation(@Nonnull String id) {
+  public RemoveNotebookMutation(@Nonnull String id) {
     Utils.checkNotNull(id, "id == null");
-    variables = new RemoveNoteMutation.Variables(id);
+    variables = new RemoveNotebookMutation.Variables(id);
   }
 
   @Override
   public String operationId() {
-    return "41bc5e0feaa2973906c115dd23e887248124ff3b905a83c9751a991a1585c4a3";
+    return "98a05ede19f90d1abedce48f677335240f234985cbbbf2d7e82ad74e3d120a84";
   }
 
   @Override
@@ -55,17 +55,17 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
   }
 
   @Override
-  public RemoveNoteMutation.Data wrapData(RemoveNoteMutation.Data data) {
+  public RemoveNotebookMutation.Data wrapData(RemoveNotebookMutation.Data data) {
     return data;
   }
 
   @Override
-  public RemoveNoteMutation.Variables variables() {
+  public RemoveNotebookMutation.Variables variables() {
     return variables;
   }
 
   @Override
-  public ResponseFieldMapper<RemoveNoteMutation.Data> responseFieldMapper() {
+  public ResponseFieldMapper<RemoveNotebookMutation.Data> responseFieldMapper() {
     return new Data.Mapper();
   }
 
@@ -89,9 +89,9 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
       return this;
     }
 
-    public RemoveNoteMutation build() {
+    public RemoveNotebookMutation build() {
       Utils.checkNotNull(id, "id == null");
-      return new RemoveNoteMutation(id);
+      return new RemoveNotebookMutation(id);
     }
   }
 
@@ -127,7 +127,7 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forBoolean("removeNote", "removeNote", new UnmodifiableMapBuilder<String, Object>(1)
+      ResponseField.forBoolean("wasRemoved", "removeNotebook", new UnmodifiableMapBuilder<String, Object>(1)
         .put("id", new UnmodifiableMapBuilder<String, Object>(2)
           .put("kind", "Variable")
           .put("variableName", "id")
@@ -135,7 +135,7 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
       .build(), false, Collections.<ResponseField.Condition>emptyList())
     };
 
-    final boolean removeNote;
+    final boolean wasRemoved;
 
     private volatile String $toString;
 
@@ -143,19 +143,19 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
 
     private volatile boolean $hashCodeMemoized;
 
-    public Data(boolean removeNote) {
-      this.removeNote = removeNote;
+    public Data(boolean wasRemoved) {
+      this.wasRemoved = wasRemoved;
     }
 
-    public boolean removeNote() {
-      return this.removeNote;
+    public boolean wasRemoved() {
+      return this.wasRemoved;
     }
 
     public ResponseFieldMarshaller marshaller() {
       return new ResponseFieldMarshaller() {
         @Override
         public void marshal(ResponseWriter writer) {
-          writer.writeBoolean($responseFields[0], removeNote);
+          writer.writeBoolean($responseFields[0], wasRemoved);
         }
       };
     }
@@ -164,7 +164,7 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
     public String toString() {
       if ($toString == null) {
         $toString = "Data{"
-          + "removeNote=" + removeNote
+          + "wasRemoved=" + wasRemoved
           + "}";
       }
       return $toString;
@@ -177,7 +177,7 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
       }
       if (o instanceof Data) {
         Data that = (Data) o;
-        return this.removeNote == that.removeNote;
+        return this.wasRemoved == that.wasRemoved;
       }
       return false;
     }
@@ -187,7 +187,7 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
       if (!$hashCodeMemoized) {
         int h = 1;
         h *= 1000003;
-        h ^= Boolean.valueOf(removeNote).hashCode();
+        h ^= Boolean.valueOf(wasRemoved).hashCode();
         $hashCode = h;
         $hashCodeMemoized = true;
       }
@@ -197,8 +197,8 @@ public final class RemoveNoteMutation implements Mutation<RemoveNoteMutation.Dat
     public static final class Mapper implements ResponseFieldMapper<Data> {
       @Override
       public Data map(ResponseReader reader) {
-        final boolean removeNote = reader.readBoolean($responseFields[0]);
-        return new Data(removeNote);
+        final boolean wasRemoved = reader.readBoolean($responseFields[0]);
+        return new Data(wasRemoved);
       }
     }
   }

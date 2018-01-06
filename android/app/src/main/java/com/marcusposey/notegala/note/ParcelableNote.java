@@ -3,7 +3,7 @@ package com.marcusposey.notegala.note;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.marcusposey.notegala.net.gen.Note;
+import com.marcusposey.notegala.net.gen.fragment.Note;
 
 import java.util.ArrayList;
 import java.util.List;

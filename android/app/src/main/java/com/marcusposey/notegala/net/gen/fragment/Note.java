@@ -1,4 +1,4 @@
-package com.marcusposey.notegala.net.gen;
+package com.marcusposey.notegala.net.gen.fragment;
 
 import com.apollographql.apollo.api.GraphqlFragment;
 import com.apollographql.apollo.api.ResponseField;

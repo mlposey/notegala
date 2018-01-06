@@ -15,8 +15,8 @@ import android.widget.Toast;
 import com.marcusposey.notegala.DialogFactory;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.QueryService;
-import com.marcusposey.notegala.net.gen.EditNotebookInput;
-import com.marcusposey.notegala.net.gen.Note;
+import com.marcusposey.notegala.net.gen.type.EditNotebookInput;
+import com.marcusposey.notegala.net.gen.fragment.Note;
 import com.marcusposey.notegala.note.NoteActivity;
 import com.marcusposey.notegala.note.NotesFragment;
 
