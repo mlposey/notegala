@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.marcusposey.notegala.R;
@@ -31,7 +32,10 @@ public class SearchActivity extends AppCompatActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
         setSupportActionBar(findViewById(R.id.search_toolbar));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mResultsFragment = new ResultsFragment();
         getSupportFragmentManager().beginTransaction()
@@ -59,6 +63,16 @@ public class SearchActivity extends AppCompatActivity implements Observer {
         searchView.setIconifiedByDefault(false);
 
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
