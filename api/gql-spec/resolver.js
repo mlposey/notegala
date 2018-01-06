@@ -81,10 +81,7 @@ module.exports.root = {
         return notebook;
     },
     search: (root, {acct}, context) => {
-        // TODO: Respond to notebook scope requests.
-        // This ignores the root.notebook value which indicates
-        // the search should be restricted to a specific
-        // notebook.
-        return new Query(acct, root.query, root.first).submit();
+        return new Query(acct, root.query, root.notebook)
+            .submit(root.first);
     }
 };
