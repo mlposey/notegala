@@ -11,14 +11,21 @@ import android.view.Menu;
 import android.widget.Toast;
 
 import com.marcusposey.notegala.R;
+import com.marcusposey.notegala.net.ApolloQueryService;
 import com.marcusposey.notegala.net.QueryService;
 
+import java.util.Observable;
+import java.util.Observer;
+
 /** Handles search queries for notes */
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements Observer {
     private static final String LOG_TAG = SearchActivity.class.getSimpleName();
 
     // Holds the search results in the results frame
     private ResultsFragment mResultsFragment;
+
+    // The last query that was submitted
+    private String mLastQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +38,15 @@ public class SearchActivity extends AppCompatActivity {
                 .replace(R.id.results_frame, mResultsFragment)
                 .commit();
 
+        QueryService.awaitInstance(service -> service.addObserver(this));
+
         handleIntent(getIntent());
+    }
+
+    @Override
+    public void onBackPressed() {
+        QueryService.awaitInstance(service -> service.deleteObserver(this));
+        super.onBackPressed();
     }
 
     @Override
@@ -70,10 +85,19 @@ public class SearchActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), getString(R.string.network_err),
                                 Toast.LENGTH_LONG).show();
                     } else {
+                        mLastQuery = query;
                         mResultsFragment.showResults(matches);
                     }
                 });
             });
         });
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (o instanceof QueryService && arg instanceof ApolloQueryService.ResponseType &&
+                arg == ApolloQueryService.ResponseType.NOTE_CHANGE) {
+            if (mLastQuery != null) searchNotes(mLastQuery);
+        }
     }
 }
