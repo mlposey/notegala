@@ -12,9 +12,9 @@ import android.widget.TextView;
 import com.marcusposey.notegala.R;
 import com.marcusposey.notegala.net.gen.fragment.Note;
 
-/** Maps owned notes to cards that display summaries of content */
-public class MyNoteAdapter extends ArrayAdapter<Note> {
-    public MyNoteAdapter(Context context, FragmentManager manager, Note[] notes) {
+/** Maps notes to cards that display summaries of content */
+public class NoteAdapter extends ArrayAdapter<Note> {
+    public NoteAdapter(Context context, FragmentManager manager, Note[] notes) {
         super(context, -1, notes);
     }
 
