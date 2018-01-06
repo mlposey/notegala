@@ -26,6 +26,13 @@ module.exports.schema = buildSchema(`
         # This notebook must belong to the account making
         # the request.
         notebook(id: ID!): Notebook!
+
+        # Searches through notes of the requester
+        #
+        # query - The search query
+        # notebook - Notebook id to restrict search to a notebook
+        # first - The maximum number of notebooks to retrieve
+        search(query: String!, notebook: ID, first: Int): [NoteSearchResult!]!
     }
 
     type Mutation {
@@ -220,5 +227,15 @@ module.exports.schema = buildSchema(`
 
         # The new notebook title
         title: String
+    }
+
+    # A note that matches a search query
+    type NoteSearchResult {
+        # Indicates the relevancy score of this result
+        # A higher score is a better match
+        score: Float!
+
+        # The note that matched the query
+        note: Note!
     }
 `);
