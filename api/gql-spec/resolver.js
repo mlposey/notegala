@@ -79,5 +79,19 @@ module.exports.root = {
         
         if (input.title) await notebook.setTitle(input.title);
         return notebook;
+    },
+    search: async (root, {acct}, context) => {
+        // TODO: Implement search query.
+        // This is just a placeholder until the
+        // data model is completed.
+        if (!root.notebook) {
+            const notes = await acct.notes(root.first)
+            return notes.map(note => { return {score: 0.0, note: note}; });
+        }
+
+        const notes = await Notebook.fromId(root.notebook)
+            .then(notebook => notebook.notes())
+            .then(notes => notes.slice(0, root.first));
+        return notes.map(note => { return {score: 0.0, note: note}; });
     }
 };
