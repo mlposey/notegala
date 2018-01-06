@@ -138,4 +138,9 @@ public class NotebookNotesFragment extends NotesFragment {
         mNotebookId = bundle.getString(NOTEBOOK_ID);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
+
+    /** Returns the id of the current notebook */
+    public String getNotebookId() {
+        return mNotebookId;
+    }
 }
