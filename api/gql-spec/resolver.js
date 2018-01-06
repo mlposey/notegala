@@ -15,8 +15,7 @@ module.exports.root = {
         return acct;
     },
     createNote: (root, {acct}, context) => {
-        const newNoteInput = context.variableValues.input;
-        return NoteFactory.construct(acct, newNoteInput)
+        return NoteFactory.construct(acct, root.input)
             .then(notepad => notepad.note)
             .catch(e => new GraphQLError(e.message));
     },
@@ -24,7 +23,7 @@ module.exports.root = {
         return acct.notes(first);
     },
     editNote: async (root, {acct}, context) => {
-        const input = context.variableValues.input;
+        const input = root.input;
         try {
             let note = await NoteFactory.fromId(input.id);
             const notepad = new Notepad(note, acct);
@@ -34,12 +33,12 @@ module.exports.root = {
         catch (e) { return new GraphQLError(e.message); }
     },
     removeNote: async (root, {acct}, context) => {
-        const note = await NoteFactory.fromId(context.variableValues.id);
+        const note = await NoteFactory.fromId(root.id);
         await acct.stopWatching(note);
         return true;
     },
     moveNote: async (root, {acct}, context) => {
-        const input = context.variableValues.input;
+        const input = root.input;
 
         const note = await NoteFactory.fromId(input.id);
         if (!note.isPublic && note.ownerId !== acct.id) throw accessError;
@@ -56,24 +55,24 @@ module.exports.root = {
         return await Notebook.moveNote(note, source, dest);
     },
     createNotebook: (root, {acct}, context) => {
-        return Notebook.build(context.variableValues.title, acct)
+        return Notebook.build(root.title, acct)
                 .catch(err => new GraphQLError(err.message));
     },
-    myNotebooks: (root, {acct, first}, context) => {
-        return acct.notebooks(first);
+    myNotebooks: (root, {acct}, context) => {
+        return acct.notebooks(root.first);
     },
     notebook: async (root, {acct}, context) => {
-        const notebook = await Notebook.fromId(context.variableValues.id);
+        const notebook = await Notebook.fromId(root.id);
         if (notebook.owner !== acct.id) throw accessError;
         return notebook;
     },
     removeNotebook: async (root, {acct}, context) => {
-        const notebook = await Notebook.fromId(context.variableValues.id);
+        const notebook = await Notebook.fromId(root.id);
         if (acct.id !== notebook.owner) return accessError;
         return await notebook.destroy();
     },
     editNotebook: async (root, {acct}, context) => {
-        const input = context.variableValues.input;
+        const input = root.input;
         const notebook = await Notebook.fromId(input.id)
         if (acct.id !== notebook.owner) return accessError;
         
