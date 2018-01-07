@@ -9,7 +9,8 @@ import com.apollographql.apollo.api.ResponseFieldMarshaller;
 import com.apollographql.apollo.api.ResponseReader;
 import com.apollographql.apollo.api.ResponseWriter;
 import com.apollographql.apollo.api.internal.Utils;
-import com.marcusposey.notegala.type.CustomType;
+import com.marcusposey.notegala.net.gen.type.CustomType;
+
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -21,7 +22,7 @@ import javax.annotation.Nonnull;
 @Generated("Apollo GraphQL")
 public final class MyNotebooksHeadQuery implements Query<MyNotebooksHeadQuery.Data, MyNotebooksHeadQuery.Data, Operation.Variables> {
   public static final String OPERATION_DEFINITION = "query MyNotebooksHead {\n"
-      + "  notebooks: myNotebooks {\n"
+      + "  notebooks: notebooks {\n"
       + "    __typename\n"
       + "    id\n"
       + "    createdAt\n"
@@ -46,7 +47,7 @@ public final class MyNotebooksHeadQuery implements Query<MyNotebooksHeadQuery.Da
 
   @Override
   public String operationId() {
-    return "b6c376b4cc12cc37a5fd2c00beddb33c0ff93bb81ef78f01d87c7c264086f6a5";
+    return "2e0eb4575fd01263fdb7fd4c325f44e4e2d179e6420ba4a191fbb27cac247ce7";
   }
 
   @Override
@@ -89,7 +90,7 @@ public final class MyNotebooksHeadQuery implements Query<MyNotebooksHeadQuery.Da
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forList("notebooks", "myNotebooks", null, false, Collections.<ResponseField.Condition>emptyList())
+      ResponseField.forList("notebooks", "notebooks", null, false, Collections.<ResponseField.Condition>emptyList())
     };
 
     final @Nonnull List<Notebook> notebooks;

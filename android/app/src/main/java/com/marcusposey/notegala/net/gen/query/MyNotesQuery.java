@@ -22,7 +22,7 @@ import javax.annotation.Nonnull;
 @Generated("Apollo GraphQL")
 public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery.Data, Operation.Variables> {
   public static final String OPERATION_DEFINITION = "query MyNotes {\n"
-      + "  notes: myNotes {\n"
+      + "  notes: notes {\n"
       + "    __typename\n"
       + "    ...Note\n"
       + "  }\n"
@@ -46,7 +46,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
   @Override
   public String operationId() {
-    return "d1a44aafa51b962e4e47cf7c494837da9a903458fd8340fbfd0d07356fccc17d";
+    return "b8bf090bfb1f55ad191d03e1d91e6baffcbeaeff17515ee257f7054b9476d4dd";
   }
 
   @Override
@@ -89,7 +89,7 @@ public final class MyNotesQuery implements Query<MyNotesQuery.Data, MyNotesQuery
 
   public static class Data implements Operation.Data {
     static final ResponseField[] $responseFields = {
-      ResponseField.forList("notes", "myNotes", null, false, Collections.<ResponseField.Condition>emptyList())
+      ResponseField.forList("notes", "notes", null, false, Collections.<ResponseField.Condition>emptyList())
     };
 
     final @Nonnull List<Note> notes;

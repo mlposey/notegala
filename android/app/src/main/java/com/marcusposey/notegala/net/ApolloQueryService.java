@@ -127,7 +127,7 @@ public class ApolloQueryService extends QueryService {
     /**
      * Fetches all notes owned by the user
      *
-     * This method corresponds to the 'myNotes' query in the core API's
+     * This method corresponds to the 'notes' query in the core API's
      * GraphQL spec
      */
     @Override
