@@ -14,12 +14,12 @@ module.exports.schema = buildSchema(`
         # Retrieves all notes owned by the requester
         #
         # first - The maximum number of notes to retrieve
-        myNotes(first: Int): [Note!]!
+        notes(first: Int): [Note!]!
 
         # Retrieves all notebooks owned by the requester
         #
         # first - The maximum number of notebooks to retrieve        
-        myNotebooks(first: Int): [Notebook!]!
+        notebooks(first: Int): [Notebook!]!
 
         # Retrieves the notebook identified by the id
         #
