@@ -20,7 +20,7 @@ module.exports.root = {
             .then(notepad => notepad.note)
             .catch(e => new GraphQLError(e.message));
     },
-    myNotes: (root, {acct, first}, context) => {
+    notes: (root, {acct, first}, context) => {
         return acct.notes(first);
     },
     editNote: async (root, {acct}, context) => {
@@ -59,7 +59,7 @@ module.exports.root = {
         return Notebook.build(root.title, acct)
                 .catch(err => new GraphQLError(err.message));
     },
-    myNotebooks: (root, {acct}, context) => {
+    notebooks: (root, {acct}, context) => {
         return acct.notebooks(root.first);
     },
     notebook: async (root, {acct}, context) => {
