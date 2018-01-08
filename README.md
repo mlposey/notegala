@@ -39,8 +39,8 @@ enough that reactive logic can easily be coded using appropriate attention
 to design patterns, but RxJava may eventually become necessary. Network interaction with the API uses the [apollo-android](https://github.com/apollographql/apollo-android)
 client extensively.
 
-### PostgreSQL
+### Database
 All persistent state is kept in a PostgreSQL database managed by Google Cloud
-SQL. That state includes (but is not limited to) account metadata, notes,
-notebooks, and stemmed/indexable text that permits full text search on
-English content.
+SQL. That state includes (but is not limited to) account metadata, notes, and
+notebooks. Additionally, most note content is structured to enable full text
+search.
