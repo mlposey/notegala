@@ -5,6 +5,11 @@ NoteGala is an Android application that allows people to create, edit, and
 categorize notes. The client is backed by a public GraphQL API that can
 readily accommodate new clients or integrations.
 
+## Demo Media
+The res/demo [readme](res/demo) contains GIFs of the latest Android build
+for those without the necessary development environment. In total, the demo
+media is roughly 25 MB.
+
 ## Tech Stack
 The system is comprised of the following core components:  
 * CI/CD Pipeline
