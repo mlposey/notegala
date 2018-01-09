@@ -2,6 +2,7 @@
 const GoogleAuth = require('google-auth-library');
 const { GraphQLError, formatError } = require('graphql');
 const Account = require('../model/account');
+const { db } = require('./database');
 
 module.exports = class AuthMiddleware {
     /**
@@ -111,11 +112,25 @@ module.exports = class AuthMiddleware {
      */
     async storeAccount(req, email, name) {
         try {
-            let acct = await Account.fromEmail(req.email)
+            let acct = await Account.fromEmail(email)
+                .then(acct => {
+                    this.logSignIn(acct);
+                    return acct;
+                })
                 .catch(missingErr => Account.construct(email, name));
             req.acct = acct;
         } catch (err) {
             throw new Error('could not create account');
         }
+    }
+
+    /**
+     * Logs the time when the account performed the API request
+     * @param {Account} acct 
+     */
+    async logSignIn(acct) {
+        await db('users')
+            .update({last_seen: db.raw('NOW()')})
+            .where({id: acct.id});
     }
 };

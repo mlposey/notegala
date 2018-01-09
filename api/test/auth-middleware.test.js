@@ -2,6 +2,10 @@
 process.env.NODE_ENV = 'test';
 
 const AuthMiddleware = require('../service/auth-middleware');
+const Account = require('../model/account');
+const { db } = require('../service/database');
+const { clearDB } = require('./index');
+
 const chai = require('chai');
 const should = chai.should();
 
@@ -39,6 +43,24 @@ describe('AuthMiddleware', () => {
 
             missingClaims.should.not.contain('name');
             req.should.have.property('name').eql(JWT.name);
+        });
+    });
+
+    describe('#logSignIn(acct)', () => {
+        beforeEach(async () => clearDB());
+
+        it('should log the current time under the account', async () => {
+            const acct = await Account.construct('test@t.com', 'test');
+            const lastSeen = acct.lastSeen;
+
+            const auth = new AuthMiddleware('test');
+            await auth.logSignIn(acct);
+
+            const rows = await db('users')
+                .select(['last_seen'])
+                .where({id: acct.id});
+            
+            lastSeen.should.not.eql(rows[0].last_seen);
         });
     });
 });
