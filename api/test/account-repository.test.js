@@ -102,3 +102,15 @@ describe('AccountRepository', () => {
         });
     });
 });
+
+describe('EmailSpecification', () => {
+    it('should match accounts by email', async () => {
+        // TODO: Change once account is refactored.
+        const account = await Account.construct(creds.email, creds.name);
+        const repo = new AccountRepository();
+
+        const matches = await repo.find(new EmailSpecification(creds.email));
+        matches.length.should.eql(1);
+        matches[0].id.should.eql(account.id);
+    });
+});
