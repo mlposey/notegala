@@ -8,8 +8,8 @@ const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const Account = require('../account/account');
 const AccountRepository = require('../account/account-repository');
-const NoteFactory = require('../model/note/note-factory');
-const Notebook = require('../model/notebook');
+const NoteFactory = require('../note/note-factory');
+const Notebook = require('../notebook');
 
 // Models a bearer token that would be supplied to the auth layer
 const claims = Object.freeze({

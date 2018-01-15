@@ -6,10 +6,10 @@ const should = chai.should();
 
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
-const NoteFactory = require('../model/note/note-factory');
+const NoteFactory = require('../note/note-factory');
 const Account = require('../account/account');
 const AccountRepository = require('../account/account-repository');
-const NoteWatcher = require('../model/note/note-watcher');
+const NoteWatcher = require('../note/note-watcher');
 
 const users = Object.freeze([
     {email: 'test1@example.com', name: 'Test One'},
