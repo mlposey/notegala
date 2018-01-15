@@ -6,7 +6,8 @@ const { Repository, NotFoundError } = require('../repository');
 module.exports = class AccountRepository extends Repository {
     /**
      * Adds a new account to the repository
-     * @param {Account} account 
+     * @param {Account} account Will be updated to match the version as it
+     *                          exists in the repository
      * @throws {Error} If the account email is already in use
      */
     async add(account) {
@@ -14,10 +15,10 @@ module.exports = class AccountRepository extends Repository {
             let rows = await db('users')
                 .insert({email: account.email, name: account.name})
                 .returning(['id', 'created_at', 'last_seen', 'email', 'name']);
-            let row = rows[0];
 
-            return new Account(row.id, row.created_at, row.last_seen,
-                row.email, row.name);
+            account.id = rows[0].id;
+            account.createdAt = rows[0].created_at;
+            account.lastSeen = rows[0].last_seen;
         } catch (err) {
             throw new Error('email address already in use');
         }
