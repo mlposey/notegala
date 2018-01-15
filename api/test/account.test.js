@@ -4,12 +4,12 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const should = chai.should();
 
-const { db } = require('../service/database');
+const { db } = require('../app/service/database');
 const { clearDB } = require('./index');
-const Account = require('../account/account');
-const AccountRepository = require('../account/account-repository');
-const NoteFactory = require('../note/note-factory');
-const Notebook = require('../note/notebook');
+const Account = require('../app/account/account');
+const AccountRepository = require('../app/account/account-repository');
+const NoteFactory = require('../app/note/note-factory');
+const Notebook = require('../app/note/notebook');
 
 // Models a bearer token that would be supplied to the auth layer
 const claims = Object.freeze({

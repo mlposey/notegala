@@ -1,6 +1,6 @@
 'use strict';
 process.env.NODE_ENV = 'test';
-const { db } = require('../service/database');
+const { db } = require('../app/service/database');
 
 /** Removes all rows from each table in the database */
 module.exports.clearDB = async () => {

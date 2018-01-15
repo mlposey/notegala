@@ -5,10 +5,10 @@ const chai = require('chai');
 const should = chai.should();
 
 const { clearDB } = require('./index');
-const { db } = require('../service/database');
-const Account = require('../account/account');
-const AccountRepository = require('../account/account-repository');
-const EmailSpecification = require('../account/email-spec');
+const { db } = require('../app/service/database');
+const Account = require('../app/account/account');
+const AccountRepository = require('../app/account/account-repository');
+const EmailSpecification = require('../app/account/email-spec');
 
 // Sample account data
 const creds = Object.freeze({
