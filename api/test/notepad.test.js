@@ -4,12 +4,12 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const should = chai.should();
 
-const { db } = require('../service/database');
+const { db } = require('../app/service/database');
 const { clearDB } = require('./index');
-const NoteFactory = require('../note/note-factory');
-const Account = require('../account/account');
-const AccountRepository = require('../account/account-repository');
-const { Notepad } = require('../note/notepad');
+const NoteFactory = require('../app/note/note-factory');
+const Account = require('../app/account/account');
+const AccountRepository = require('../app/account/account-repository');
+const { Notepad } = require('../app/note/notepad');
 
 // Models potential data supplied by the request
 const payload = Object.freeze({
