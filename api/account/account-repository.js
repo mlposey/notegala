@@ -65,7 +65,10 @@ module.exports = class AccountRepository extends Repository {
      */
     async find(spec) {
         let rows = await spec.toQuery();
-        return rows.map(row => new Account(row.id, row.created_at,
-            row.last_seen, row.email, row.name))
+        return rows.map(row => new Account(row.email, row.name, {
+            id: row.id,
+            createdAt: row.created_at,
+            lastSeen: row.last_seen
+        }));
     }
 };

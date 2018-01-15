@@ -6,7 +6,8 @@ const should = chai.should();
 
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
-const Account = require('../model/account');
+const Account = require('../account/account');
+const AccountRepository = require('../account/account-repository');
 const NoteFactory = require('../model/note/note-factory');
 const Notebook = require('../model/notebook');
 
@@ -23,63 +24,16 @@ const newNote = Object.freeze({
     tags: ['test', 'example', 'mock']
 });
 
+// The repository for all accounts
+const repo = new AccountRepository();
+
 describe('Account', () => {
-    describe('#fromEmail(email)', () => {
-        beforeEach(async () => await clearDB());
-    
-        it('should get the account if it exists', async () => {
-            await db('users').insert({
-                email: claims.email,
-                name: claims.name
-            });
-
-            let account = await Account.fromEmail(claims.email);
-            account.name.should.eql(claims.name);
-        });
-
-        it('should throw an Error if the account is missing', async () => {
-            let wasThrown = false;
-            try {
-                await Account.fromEmail(claims.email);
-            } catch (err) {
-                wasThrown = true;
-            }
-            wasThrown.should.eql(true);
-        });
-    });
-
-    describe('#construct(email, name)', () => {
-        beforeEach(async () => await clearDB());
-
-        it('should create the account if the email is unique', async () => {
-            let account =
-                await Account.construct(claims.email, claims.name);
-
-            account.email.should.eql(claims.email);
-            account.name.should.eql(claims.name);
-
-            let rows = await db.select().table('users');
-            rows.length.should.not.eql(0);
-        });
-
-        it('should throw an Error if the email is taken', async () => {
-            await Account.construct(claims.email, claims.name);
-
-            let wasThrown = false;
-            try {
-                await Account.construct(claims.email, claims.name);
-            } catch (err) {
-                wasThrown = true;
-            }
-            wasThrown.should.eql(true);
-        });
-    });
-
     describe('#notes(limit)', () => {
         let acct;
         beforeEach(async () => {
             await clearDB();
-            acct = await Account.construct(claims.email, claims.name);
+            acct = new Account(claims.email, claims.name);
+            await repo.add(acct);
         });
 
         it('should return an empty array instead of null', async () => {
@@ -90,8 +44,8 @@ describe('Account', () => {
         it('should return only notes that the user owns', async () => {
             await NoteFactory.construct(acct, newNote);
 
-            const user = await Account.construct('test' + claims.email,
-                claims.name);
+            const user = new Account('test' + claims.email, claims.name);
+            await repo.add(user);
             const body = user.email + user.name;
             await NoteFactory.construct(user, {body: body});
 
@@ -115,20 +69,23 @@ describe('Account', () => {
         let acct;
         beforeEach(async () => {
             await clearDB();
-            acct = await Account.construct(claims.email, claims.name);
+            acct = new Account(claims.email, claims.name);
+            await repo.add(acct);
         });
 
         it('should return an empty array instead of null', async () => {
-            await acct.notebooks(null)
+            await acct.notebooks()
                 .then(notebooks => notebooks.length.should.eql(0));
         });
 
         it('should return only notebooks that the user owns', async () => {
             await Notebook.build("test", acct);
 
-            await Account.construct('a' + claims.email, claims.name)
-                .then(a2 => a2.notebooks(null))
-                .then(notebooks => notebooks.length.should.eql(0));
+            const user = new Account('a' + claims.email, claims.name);
+            await repo.add(user)
+            
+            const notebooks = await user.notebooks();
+            notebooks.length.should.eql(0);
         });
 
         it('should respect the specified limit', async () => {

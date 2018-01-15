@@ -1,7 +1,7 @@
 'use strict';
 const { db } = require('../service/database');
 const Note = require('./note/note');
-const Account = require('./account');
+const Account = require('../account/account');
 
 /** Models a ranked result from a Query */
 class Result {

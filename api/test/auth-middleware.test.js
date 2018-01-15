@@ -2,7 +2,8 @@
 process.env.NODE_ENV = 'test';
 
 const AuthMiddleware = require('../service/auth-middleware');
-const Account = require('../model/account');
+const Account = require('../account/account');
+const AccountRepository = require('../account/account-repository');
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
 
@@ -50,7 +51,8 @@ describe('AuthMiddleware', () => {
         beforeEach(async () => clearDB());
 
         it('should log the current time under the account', async () => {
-            const acct = await Account.construct('test@t.com', 'test');
+            const acct = new Account('test@t.com', 'test');
+            await new AccountRepository().add(acct);
             const lastSeen = acct.lastSeen;
 
             const auth = new AuthMiddleware('test');

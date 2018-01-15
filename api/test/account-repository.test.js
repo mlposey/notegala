@@ -24,8 +24,7 @@ describe('AccountRepository', () => {
             let rows = await db.select().table('users');
             rows.length.should.eql(0);
 
-            const account = new Account(null, null, null, creds.email,
-                creds.name);
+            const account = new Account(creds.email, creds.name);
 
             const repo = new AccountRepository();
             await repo.add(account);
@@ -35,8 +34,7 @@ describe('AccountRepository', () => {
         });
 
         it('should reject accounts with duplicate emails', async () => {
-            const account = new Account(null, null, null, creds.email,
-                creds.name);
+            const account = new Account(creds.email, creds.name);
 
             const repo = new AccountRepository();
             await repo.add(account);
@@ -52,9 +50,9 @@ describe('AccountRepository', () => {
         beforeEach(async () => await clearDB());
         
         it('should remove account if exists', async () => {
-            // TODO: Change once account is refactored.
-            const account = await Account.construct(creds.email, creds.name);
+            const account = new Account(creds.email, creds.name);
             const repo = new AccountRepository();
+            await repo.add(account);
             
             let rows = await db.select().table('users');
             rows.length.should.eql(1);
@@ -65,7 +63,7 @@ describe('AccountRepository', () => {
         });
 
         it('should throw NotFoundError if missing', async () => {
-            const account = new Account(null, null, null, null, null);
+            const account = new Account(creds.email, creds.name);
             const repo = new AccountRepository();
 
             let wasThrown = false;
@@ -79,20 +77,21 @@ describe('AccountRepository', () => {
         beforeEach(async () => await clearDB());
         
         it('should update the account if it exists', async () => {
-            // TODO: Change once account is refactored.
-            const account = await Account.construct(creds.email, creds.name);
+            const account = new Account(creds.email, creds.name);
             const repo = new AccountRepository();
+            await repo.add(account);
 
             const newName = 'a' + account.name;
             account.name = newName;
             await repo.replace(account);
 
-            let acct = await Account.fromEmail(account.email);
-            acct.name.should.eql(newName);
+            let matches = await repo.find(new EmailSpecification(account.email));
+            matches.length.should.eql(1);
+            matches[0].name.should.eql(newName);
         });
 
         it('should throw NotFoundError if missing', async () => {
-            const account = new Account(null, null, null, null, null);
+            const account = new Account(creds.email, creds.name);
             const repo = new AccountRepository();
 
             let wasThrown = false;
@@ -105,9 +104,9 @@ describe('AccountRepository', () => {
 
 describe('EmailSpecification', () => {
     it('should match accounts by email', async () => {
-        // TODO: Change once account is refactored.
-        const account = await Account.construct(creds.email, creds.name);
+        const account = new Account(creds.email, creds.name);
         const repo = new AccountRepository();
+        await repo.add(account);
 
         const matches = await repo.find(new EmailSpecification(creds.email));
         matches.length.should.eql(1);

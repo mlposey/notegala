@@ -1,6 +1,6 @@
 'use strict';
 const { GraphQLError } = require('graphql');
-const Account = require('../model/account');
+const Account = require('../account/account');
 const NoteFactory = require('../model/note/note-factory');
 const { Notepad } = require('../model/note/notepad');
 const Notebook = require('../model/notebook');

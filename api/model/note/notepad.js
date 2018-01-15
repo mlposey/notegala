@@ -1,6 +1,6 @@
 'use strict';
 const { db } = require('../../service/database');
-const Account = require('../account.js');
+const Account = require('../../account/account');
 
 /** Indicates the necessary permissions are missing */
 class PermissionError extends Error {
