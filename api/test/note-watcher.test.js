@@ -7,7 +7,8 @@ const should = chai.should();
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const NoteFactory = require('../model/note/note-factory');
-const Account = require('../model/account');
+const Account = require('../account/account');
+const AccountRepository = require('../account/account-repository');
 const NoteWatcher = require('../model/note/note-watcher');
 
 const users = Object.freeze([
@@ -19,13 +20,17 @@ const newNoteInput = Object.freeze({
     body: 'Test'
 });
 
+const accountRepo = new AccountRepository();
+
 describe('NoteWatcher', () => {
     describe('#changeEditPerm()', () => {
         beforeEach(async () => await clearDB());
 
         it('should set edit permissions to boolean argument', async () => {
-            const userA = await Account.construct(users[0].email, users[0].name);
-            const userB = await Account.construct(users[1].email, users[1].name);
+            const userA = new Account(users[0].email, users[0].name);
+            await accountRepo.add(userA);
+            const userB = new Account(users[1].email, users[1].name);
+            await accountRepo.add(userB);
 
             const notepad = await NoteFactory.construct(userA, newNoteInput);
             let note = notepad.note;
@@ -49,9 +54,11 @@ describe('NoteWatcher', () => {
         beforeEach(async () => await clearDB());
         
         it('should return the earliest watcher', async () => {
-            const userA = await Account.construct(users[0].email, users[0].name);
-            const userB = await Account.construct(users[1].email, users[1].name);
-
+            const userA = new Account(users[0].email, users[0].name);
+            await accountRepo.add(userA);
+            const userB = new Account(users[1].email, users[1].name);
+            await accountRepo.add(userB);
+            
             const notepad = await NoteFactory.construct(userA, newNoteInput);
             const note = notepad.note;
             await note.addWatcher(userB.id, false);

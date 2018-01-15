@@ -6,7 +6,8 @@ const should = chai.should();
 
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
-const Account = require('../model/account');
+const Account = require('../account/account');
+const AccountRepository = require('../account/account-repository');
 const Notebook = require('../model/notebook');
 const NoteFactory = require('../model/note/note-factory');
 
@@ -17,12 +18,19 @@ const payload = Object.freeze({
     nbName: 'Test Notebook'
 });
 
+const accountRepo = new AccountRepository();
+
 describe('Notebook', () => {
+    let acct;    
     describe('#build(title, author)', () => {
-        beforeEach(async () => await clearDB());
+        beforeEach(async () => {
+            await clearDB();
+            acct = new Account(payload.email, payload.userName);
+            await accountRepo.add(acct);
+        });
 
         it('should throw an exception if the author is unrecognized', async () => {
-            let fakeAcct = new Account(2, '', '', 'blah@blah.com', 'blah');
+            let fakeAcct = new Account('blah@blah.com', 'blah', {id: 1});
 
             let wasThrown = false;            
             try { await Notebook.build(payload.nbName, fakeAcct); }
@@ -31,7 +39,6 @@ describe('Notebook', () => {
         });
 
         it('should create the notebook if (name, author) is unique', async () => {
-            let acct = await Account.construct(payload.email, payload.userName);
             await Notebook.build(payload.nbName, acct);
 
             let rows = await db('notebooks').select();
@@ -39,7 +46,6 @@ describe('Notebook', () => {
         });
 
         it('should throw an exception if (name, author) is duplicate', async () => {
-            let acct = await Account.construct(payload.email, payload.userName);
             await Notebook.build(payload.nbName, acct);
             
             let wasThrown = false;
@@ -50,10 +56,13 @@ describe('Notebook', () => {
     });
 
     describe('#fromId(id)', () => {
-        beforeEach(async () => await clearDB());
+        beforeEach(async () => {
+            await clearDB();
+            acct = new Account(payload.email, payload.userName);
+            await accountRepo.add(acct);
+        });
 
         it('should get the notebook if it exists', async () => {
-            let acct = await Account.construct(payload.email, payload.userName);
             let expected = await Notebook.build(payload.nbName, acct);
 
             let actual = await Notebook.fromId(expected.id);
@@ -69,27 +78,29 @@ describe('Notebook', () => {
     });
 
     describe('#destroy()', () => {
-        beforeEach(async () => await clearDB());
+        beforeEach(async () => {
+            await clearDB();
+            acct = new Account(payload.email, payload.userName);
+            await accountRepo.add(acct);
+        });
 
         it('should remove the note if it is recognized', async () => {
-            const act = await Account.construct(payload.email, payload.userName);
-            await Notebook.build(payload.nbName, act);
+            await Notebook.build(payload.nbName, acct);
 
-            let notebooks = await act.notebooks();
+            let notebooks = await acct.notebooks();
             notebooks.length.should.eql(1);
 
             const res = await notebooks[0].destroy();
             res.should.eql(true);
-            notebooks = await act.notebooks();
+            notebooks = await acct.notebooks();
             
             notebooks.length.should.eql(0);
         });
 
         it('should return false if unrecognized', async () => {
-            const act = await Account.construct(payload.email, payload.userName);
-            await Notebook.build(payload.nbName, act);
+            await Notebook.build(payload.nbName, acct);
 
-            let notebooks = await act.notebooks();
+            let notebooks = await acct.notebooks();
             notebooks.length.should.eql(1);
         
             await notebooks[0].destroy();
@@ -102,7 +113,8 @@ describe('Notebook', () => {
         beforeEach(async () => await clearDB());
         
         it('should change the notebook title', async () => {
-            const act = await Account.construct(payload.email, payload.userName);
+            const act = new Account(payload.email, payload.userName);
+            await accountRepo.add(act);
             let notebook = await Notebook.build(payload.nbName, act);
 
             const newTitle = 'a' + payload.nbName;
@@ -117,8 +129,9 @@ describe('Notebook', () => {
         beforeEach(async () => await clearDB());
 
         it('should return an empty array instead of null', async () => {
-            await Account.construct(payload.email, payload.userName)
-                .then(acct => Notebook.build(payload.nbName, acct))
+            const acct = new Account(payload.email, payload.userName);
+            await accountRepo.add(acct);
+            Notebook.build(payload.nbName, acct)
                 .then(notebook => notebook.notes())
                 .then(notes => notes.length.should.eql(0));
         });
@@ -128,8 +141,8 @@ describe('Notebook', () => {
         beforeEach(async () => await clearDB());
 
         it('should attach the note to the notebook', async () => {
-            const acct =
-                await Account.construct(payload.email, payload.userName)
+            const acct = new Account(payload.email, payload.userName);
+            await accountRepo.add(acct);
 
             const notebook = await Notebook.build(payload.nbName, acct);
             let notes = await notebook.notes();
@@ -149,8 +162,8 @@ describe('Notebook', () => {
         beforeEach(async () => await clearDB());
 
         it('should remove the note from the notebook', async () => {
-            const acct =
-                await Account.construct(payload.email, payload.userName)
+            const acct = new Account(payload.email, payload.userName);
+            await accountRepo.add(acct);
             const notebook = await Notebook.build(payload.nbName, acct);
 
             const notepad = await NoteFactory.construct(acct, {title: 'Test'});

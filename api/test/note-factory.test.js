@@ -7,7 +7,8 @@ const should = chai.should();
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const NoteFactory = require('../model/note/note-factory');
-const Account = require('../model/account');
+const Account = require('../account/account');
+const AccountRepository = require('../account/account-repository');
 
 // Models potential data supplied by a createNote request
 const payload = Object.freeze({
@@ -20,13 +21,18 @@ const payload = Object.freeze({
     }
 });
 
+const accountRepo = new AccountRepository();
+
 describe('NoteFactory', () => {
     describe('#construct(email, input)', () => {
-        beforeEach(async () => await clearDB());
+        let acct;
+        beforeEach(async () => {
+            await clearDB()
+            acct = new Account(payload.email, payload.name);
+            await accountRepo.add(acct);
+        });
 
         it('should throw an exception if input lacks title and body values', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
-
             let wasThrown = false;
             try {
                 await NoteFactory.construct(acct, {tags: ['test']});
@@ -37,7 +43,6 @@ describe('NoteFactory', () => {
         });
 
         it('should return a valid note if no exception is thrown', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             let np = await NoteFactory.construct(acct, payload.input);
 
             np.note.body.should.eql(payload.input.body);
@@ -45,7 +50,6 @@ describe('NoteFactory', () => {
         });
 
         it('should put created notes in the persistence layer', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             const notepad =
                 await NoteFactory.construct(acct, payload.input);
 
@@ -62,10 +66,14 @@ describe('NoteFactory', () => {
     });
 
     describe('#fromId(id)', () => {
-        beforeEach(async () => await clearDB());
+        let acct;
+        beforeEach(async () => {
+            await clearDB()
+            acct = new Account(payload.email, payload.name);
+            await accountRepo.add(acct);
+        });
 
         it('should retrieve the note if it exists', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             const notepad = 
                 await NoteFactory.construct(acct, payload.input);
 
@@ -74,7 +82,6 @@ describe('NoteFactory', () => {
         });
 
         it('should throw an exception if the note does not exist', async () => {
-            await Account.construct(payload.email, payload.name);            
             let wasThrown = false;
             try {
                 await NoteFactory.fromId(0);

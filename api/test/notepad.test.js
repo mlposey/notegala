@@ -7,7 +7,8 @@ const should = chai.should();
 const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const NoteFactory = require('../model/note/note-factory');
-const Account = require('../model/account');
+const Account = require('../account/account');
+const AccountRepository = require('../account/account-repository');
 const { Notepad } = require('../model/note/notepad');
 
 // Models potential data supplied by the request
@@ -21,12 +22,18 @@ const payload = Object.freeze({
     }
 });
 
+const accountRepo = new AccountRepository();
+
 describe('Notepad', () => {
+    let acct;
     describe('#addTag(tag)', () => {
-        beforeEach(async () => await clearDB());
+        beforeEach(async () => {
+            await clearDB();
+            acct = new Account(payload.email, payload.name);
+            await accountRepo.add(acct);
+        });
 
         it('should add link the tag and note in the database', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             const notepad = await NoteFactory.construct(acct, {
                 body: 'test'
             });
@@ -38,7 +45,6 @@ describe('Notepad', () => {
         });
 
         it('should ignore duplicate tags', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             const notepad = await NoteFactory.construct(acct, payload.input);
 
             await notepad.addTag(payload.input.tags[0]);
@@ -49,10 +55,13 @@ describe('Notepad', () => {
     });
 
     describe('#replaceTags(newList)', () => {
-        beforeEach(async () => await clearDB());
+        beforeEach(async () => {
+            await clearDB();
+            acct = new Account(payload.email, payload.name);
+            await accountRepo.add(acct);
+        });
 
         it('should replace this old tag list with the new one', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             const notepad = await NoteFactory.construct(acct, payload.input);
 
             const newList = ['Brand New Tag'];
@@ -64,7 +73,6 @@ describe('Notepad', () => {
         });
 
         it('should clear the list if given an empty array', async () => {
-            const acct = await Account.construct(payload.email, payload.name);
             const notepad = await NoteFactory.construct(acct, payload.input);
             
             await notepad.replaceTags([]);
