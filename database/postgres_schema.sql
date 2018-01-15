@@ -73,7 +73,7 @@ CREATE TABLE note_watchers (
 
 CREATE TABLE note_tags (
     id serial PRIMARY KEY,
-    note_id integer NOT NULL REFERENCES notes(id),
+    note_id integer NOT NULL REFERENCES notes(id) ON DELETE CASCADE,
     tag_id integer NOT NULL REFERENCES tags(id),
     UNIQUE (note_id, tag_id)
 );
@@ -108,7 +108,7 @@ ON note_tags FOR EACH ROW EXECUTE PROCEDURE on_note_tag_deleted();
 CREATE TABLE notebooks (
     id serial PRIMARY KEY,
     created_at timestamptz NOT NULL DEFAULT NOW(),
-    owner_id integer NOT NULL REFERENCES users(id),
+    owner_id integer NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     name text NOT NULL,
     UNIQUE (owner_id, name)
 );
