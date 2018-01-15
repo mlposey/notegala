@@ -1,7 +1,7 @@
 'use strict';
 const { db } = require('../service/database');
-const Note = require('../model/note/note');
-const Notebook = require('../model/notebook');
+const Note = require('../note/note');
+const Notebook = require('../notebook');
 
 /**
  * Models a user account

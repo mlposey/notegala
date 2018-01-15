@@ -8,8 +8,8 @@ const { db } = require('../service/database');
 const { clearDB } = require('./index');
 const Account = require('../account/account');
 const AccountRepository = require('../account/account-repository');
-const Notebook = require('../model/notebook');
-const NoteFactory = require('../model/note/note-factory');
+const Notebook = require('../notebook');
+const NoteFactory = require('../note/note-factory');
 
 // Sample data for notebook creation
 const payload = Object.freeze({

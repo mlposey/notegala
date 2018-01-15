@@ -1,10 +1,10 @@
 'use strict';
 const { GraphQLError } = require('graphql');
 const Account = require('../account/account');
-const NoteFactory = require('../model/note/note-factory');
-const { Notepad } = require('../model/note/notepad');
-const Notebook = require('../model/notebook');
-const { Query } = require('../model/query');
+const NoteFactory = require('../note/note-factory');
+const { Notepad } = require('../note/notepad');
+const Notebook = require('../notebook');
+const { Query } = require('../query');
 
 // Returned by a resolver if a request is made but it
 // lacks required fine-grained permissions

@@ -1,8 +1,8 @@
 'use strict';
-const { db } = require('../../service/database');
+const { db } = require('../service/database');
 const Note = require('./note');
 const { Notepad } = require('./notepad');
-const Account = require('../../account/account');
+const Account = require('../account/account');
 const Notebook = require('../notebook');
 
 /** Handles creation of Notes and Note accessories */
