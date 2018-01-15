@@ -2,8 +2,9 @@
   "name": "api",
   "version": "1.3.0",
   "description": "The core API of NoteGala",
-  "main": "app/server.js",
+  "main": "server.js",
   "scripts": {
+    "start": "node ./app/server.js",
     "test": "mocha --timeout 5000"
   },
   "author": "Marcus Posey",
