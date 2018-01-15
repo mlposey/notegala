@@ -3,6 +3,7 @@ const { db } = require('../service/database');
 const Account = require('./account');
 const { Repository, NotFoundError } = require('../repository');
 
+/** Manages the global collection of Accounts */
 module.exports = class AccountRepository extends Repository {
     /**
      * Adds a new account to the repository
