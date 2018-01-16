@@ -8,7 +8,7 @@ const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
-const Notebook = require('../app/note/notebook');
+const Notebook = require('../app/notebook/notebook');
 const NoteFactory = require('../app/note/note-factory');
 
 // Sample data for notebook creation

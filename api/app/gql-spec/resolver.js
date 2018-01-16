@@ -3,7 +3,7 @@ const { GraphQLError } = require('graphql');
 const Account = require('../account/account');
 const NoteFactory = require('../note/note-factory');
 const { Notepad } = require('../note/notepad');
-const Notebook = require('../note/notebook');
+const Notebook = require('../notebook/notebook');
 const { Query } = require('../query');
 
 // Returned by a resolver if a request is made but it

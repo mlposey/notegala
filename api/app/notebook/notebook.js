@@ -1,6 +1,6 @@
 'use strict';
 const { db } = require('../data/database');
-const Note = require('./note');
+const Note = require('../note/note');
 
 /** Represents the Notebook GraphQL type */
 module.exports = class Notebook {
