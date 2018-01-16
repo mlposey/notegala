@@ -4,11 +4,16 @@ const Account = require('../account/account');
 const NoteFactory = require('../note/note-factory');
 const { Notepad } = require('../note/notepad');
 const Notebook = require('../notebook/notebook');
+const NotebookRepository = require('../notebook/notebook-repository');
+const NotebookIdSpec = require('../notebook/id-spec');
 const { Query } = require('../query');
 
 // Returned by a resolver if a request is made but it
 // lacks required fine-grained permissions
 const accessError = new GraphQLError('access denied');
+
+// The repository of all notebooks
+const notebookRepo = new NotebookRepository();
 
 // Root resolver for all GraphQL queries and mutations
 module.exports.root = {
@@ -55,9 +60,10 @@ module.exports.root = {
 
         return await Notebook.moveNote(note, source, dest);
     },
-    createNotebook: (root, {acct}, context) => {
-        return Notebook.build(root.title, acct)
-                .catch(err => new GraphQLError(err.message));
+    createNotebook: async (root, {acct}, context) => {
+        const notebook = new Notebook(acct.id, root.title);
+        await notebookRepo.add(notebook);
+        return notebook;
     },
     notebooks: (root, {acct}, context) => {
         return acct.notebooks(root.first);
@@ -68,17 +74,25 @@ module.exports.root = {
         return notebook;
     },
     removeNotebook: async (root, {acct}, context) => {
-        const notebook = await Notebook.fromId(root.id);
-        if (acct.id !== notebook.owner) return accessError;
-        return await notebook.destroy();
+        let matches = await notebookRepo.find(new NotebookIdSpec(root.id));
+        if (matches.length === 0 || acct.id !== matches[0].owner) {
+            return accessError;
+        }
+        await notebookRepo.remove(matches[0]);
+        return true;
     },
     editNotebook: async (root, {acct}, context) => {
         const input = root.input;
-        const notebook = await Notebook.fromId(input.id)
-        if (acct.id !== notebook.owner) return accessError;
-        
-        if (input.title) await notebook.setTitle(input.title);
-        return notebook;
+        const matches = await notebookRepo.find(new NotebookIdSpec(input.id));
+        if (matches.length === 0 || acct.id !== matches[0].owner) {
+            return accessError;
+        }
+
+        if (input.title) {
+            matches[0].title = input.title;
+            await notebookRepo.replace(matches[0]);
+        }
+        return matches[0];
     },
     search: (root, {acct}, context) => {
         return new Query(acct, root.query, root.notebook)
