@@ -4,6 +4,8 @@ const Note = require('./note');
 const { Notepad } = require('./notepad');
 const Account = require('../account/account');
 const Notebook = require('../notebook/notebook');
+const NotebookRepository = require('../notebook/notebook-repository');
+const NotebookIdSpec = require('../notebook/id-spec');
 
 /** Handles creation of Notes and Note accessories */
 module.exports = class NoteFactory {
@@ -42,8 +44,12 @@ module.exports = class NoteFactory {
         }
 
         if (input.notebook) {
-            const notebook = await Notebook.fromId(input.notebook);
-            if (acct.id === notebook.owner) await notebook.addNote(note);
+            const notebookRepo = new NotebookRepository();
+            const matches = await notebookRepo
+                .find(new NotebookIdSpec(input.notebook));
+            if (matches.length !== 0 && matches[0].owner === acct.id) {
+                await matches[0].addNote(note);
+            }
         }
         return notepad;
     }
