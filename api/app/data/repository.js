@@ -3,6 +3,11 @@
 module.exports = {
     /** Describes an abstract collection of objects */    
     Repository: class Repository {
+        constructor() {
+            // A default limit on number of items to retrieve from #find(...)
+            this.DEFAULT_LIMIT = 1000;
+        }
+
         add(item) {
             throw new Error('#add not implemented');
         }
@@ -15,8 +20,11 @@ module.exports = {
             throw new Error('#replace not implemented');
         }
 
-        /** @param {Specification} specification */
-        find(specification) {
+        /**
+         * @param {Specification} specification
+         * @param {number} limit Max items to return
+         */
+        find(specification, limit) {
             throw new Error('#find not implemented');
         }
     },
