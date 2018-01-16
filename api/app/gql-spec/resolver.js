@@ -69,9 +69,11 @@ module.exports.root = {
         return acct.notebooks(root.first);
     },
     notebook: async (root, {acct}, context) => {
-        const notebook = await Notebook.fromId(root.id);
-        if (notebook.owner !== acct.id) throw accessError;
-        return notebook;
+        let matches = await notebookRepo.find(new NotebookIdSpec(root.id));
+        if (matches.length === 0 || acct.id !== matches[0].owner) {
+            return accessError;
+        }
+        return matches[0];
     },
     removeNotebook: async (root, {acct}, context) => {
         let matches = await notebookRepo.find(new NotebookIdSpec(root.id));
