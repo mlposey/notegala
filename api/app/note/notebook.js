@@ -1,5 +1,5 @@
 'use strict';
-const { db } = require('../service/database');
+const { db } = require('../data/database');
 const Note = require('./note');
 
 /** Represents the Notebook GraphQL type */

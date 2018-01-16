@@ -1,5 +1,5 @@
 'use strict';
-const { db } = require('../service/database');
+const { db } = require('../data/database');
 const Account = require('../account/account');
 
 /** Indicates the necessary permissions are missing */

@@ -1,7 +1,7 @@
 'use strict';
-const { db } = require('../service/database');
+const { db } = require('../data/database');
 const Account = require('./account');
-const { Repository, NotFoundError } = require('../repository');
+const { Repository, NotFoundError } = require('../data/repository');
 
 /** Manages the global collection of Accounts */
 module.exports = class AccountRepository extends Repository {

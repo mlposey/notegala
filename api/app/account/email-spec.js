@@ -1,6 +1,6 @@
 'use strict';
-const Specification = require('../specification');
-const { db } = require('../service/database');
+const Specification = require('../data/specification');
+const { db } = require('../data/database');
 
 /** Specifies an Account by its email address */
 module.exports = class EmailSpecification extends Specification {

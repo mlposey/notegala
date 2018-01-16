@@ -4,7 +4,7 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const should = chai.should();
 
-const { db } = require('../app/service/database');
+const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
