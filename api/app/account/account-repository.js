@@ -62,10 +62,11 @@ module.exports = class AccountRepository extends Repository {
     /**
      * Finds all accounts in the repository that match the specification
      * @param {Specification} spec
+     * @param {number} limit The maximum number of accounts to retrieve
      * @returns {Promise.<Array.<Account>>}
      */
-    async find(spec) {
-        let rows = await spec.toQuery();
+    async find(spec, limit = this.DEFAULT_LIMIT) {
+        let rows = await spec.toQuery().limit(limit);
         return rows.map(row => new Account(row.email, row.name, {
             id: row.id,
             createdAt: row.created_at,
