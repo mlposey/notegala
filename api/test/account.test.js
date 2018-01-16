@@ -10,6 +10,7 @@ const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 const NoteFactory = require('../app/note/note-factory');
 const Notebook = require('../app/notebook/notebook');
+const NotebookRepository = require('../app/notebook/notebook-repository');
 
 // Models a bearer token that would be supplied to the auth layer
 const claims = Object.freeze({
@@ -25,7 +26,9 @@ const newNote = Object.freeze({
 });
 
 // The repository for all accounts
-const repo = new AccountRepository();
+const accountRepo = new AccountRepository();
+// The repository for all notebooks
+const notebookRepo = new NotebookRepository();
 
 describe('Account', () => {
     describe('#notes(limit)', () => {
@@ -33,7 +36,7 @@ describe('Account', () => {
         beforeEach(async () => {
             await clearDB();
             acct = new Account(claims.email, claims.name);
-            await repo.add(acct);
+            await accountRepo.add(acct);
         });
 
         it('should return an empty array instead of null', async () => {
@@ -45,7 +48,7 @@ describe('Account', () => {
             await NoteFactory.construct(acct, newNote);
 
             const user = new Account('test' + claims.email, claims.name);
-            await repo.add(user);
+            await accountRepo.add(user);
             const body = user.email + user.name;
             await NoteFactory.construct(user, {body: body});
 
@@ -70,7 +73,7 @@ describe('Account', () => {
         beforeEach(async () => {
             await clearDB();
             acct = new Account(claims.email, claims.name);
-            await repo.add(acct);
+            await accountRepo.add(acct);
         });
 
         it('should return an empty array instead of null', async () => {
@@ -79,18 +82,18 @@ describe('Account', () => {
         });
 
         it('should return only notebooks that the user owns', async () => {
-            await Notebook.build("test", acct);
+            await notebookRepo.add(new Notebook(acct.id, 'test'));
 
             const user = new Account('a' + claims.email, claims.name);
-            await repo.add(user)
+            await accountRepo.add(user)
             
             const notebooks = await user.notebooks();
             notebooks.length.should.eql(0);
         });
 
         it('should respect the specified limit', async () => {
-            await Notebook.build("test", acct);
-            await Notebook.build("test2", acct);
+            await notebookRepo.add(new Notebook(acct.id, 'test1'));
+            await notebookRepo.add(new Notebook(acct.id, 'test2'));
             
             const limit = 1;
             const notebooks = await acct.notebooks(limit);

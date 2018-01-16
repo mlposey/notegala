@@ -2,6 +2,8 @@
 const { db } = require('../data/database');
 const Note = require('../note/note');
 const Notebook = require('../notebook/notebook');
+const NotebookRepository = require('../notebook/notebook-repository');
+const NotebookOwnerSpec = require('../notebook/owner-spec');
 
 /**
  * Models a user account
@@ -23,6 +25,8 @@ module.exports = class Account {
         this.id = options.id;
         this.createdAt = options.createdAt;
         this.lastSeen = options.lastSeen;
+
+        this.notebookRepo = new NotebookRepository();
     }
 
     /**
@@ -50,12 +54,8 @@ module.exports = class Account {
      * @returns {Promise.<Array.<Notebook>>}
      */
     async notebooks(limit) {
-        return await db('notebooks')
-            .select()
-            .where({owner_id: this.id})
-            .limit(limit ? limit : Number.MAX_SAFE_INTEGER)
-            .map(row => new Notebook(row.id, row.created_at,
-                                     row.owner_id, row.name));
+        return await this.notebookRepo
+            .find(new NotebookOwnerSpec(this.id), limit);
     }
 
     /**
