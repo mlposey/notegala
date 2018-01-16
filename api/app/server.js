@@ -1,9 +1,9 @@
 'use strict';
 const express = require('express');
 const graphql = require('express-graphql');
-const AuthMiddleware = require('./service/auth-middleware');
+const AuthMiddleware = require('./auth-middleware');
 // Perform initial connection health check.
-require('./service/database');
+require('./data/database');
 
 var app = express();
 app.use('/status', (req, res, next) => {

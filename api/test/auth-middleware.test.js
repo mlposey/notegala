@@ -1,10 +1,10 @@
 'use strict';
 process.env.NODE_ENV = 'test';
 
-const AuthMiddleware = require('../app/service/auth-middleware');
+const AuthMiddleware = require('../app/auth-middleware');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
-const { db } = require('../app/service/database');
+const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
 
 const chai = require('chai');

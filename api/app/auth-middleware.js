@@ -1,10 +1,10 @@
 'use strict';
 const GoogleAuth = require('google-auth-library');
 const { GraphQLError, formatError } = require('graphql');
-const Account = require('../account/account');
-const AccountRepository = require('../account/account-repository');
-const EmailSpecification = require('../account/email-spec');
-const { db } = require('./database');
+const Account = require('./account/account');
+const AccountRepository = require('./account/account-repository');
+const EmailSpecification = require('./account/email-spec');
+const { db } = require('./data/database');
 
 module.exports = class AuthMiddleware {
     /**

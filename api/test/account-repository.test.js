@@ -5,7 +5,7 @@ const chai = require('chai');
 const should = chai.should();
 
 const { clearDB } = require('./index');
-const { db } = require('../app/service/database');
+const { db } = require('../app/data/database');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 const EmailSpecification = require('../app/account/email-spec');

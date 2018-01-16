@@ -1,5 +1,5 @@
 'use strict';
-const { db } = require('../service/database');
+const { db } = require('../data/database');
 const Note = require('./note');
 const { Notepad } = require('./notepad');
 const Account = require('../account/account');

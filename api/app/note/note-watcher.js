@@ -1,5 +1,5 @@
 'use strict';
-const { db } = require('../service/database');
+const { db } = require('../data/database');
 
 /**
  * Represents the NoteWatcher GraphQL type
