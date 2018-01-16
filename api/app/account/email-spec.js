@@ -9,6 +9,7 @@ module.exports = class EmailSpecification extends Specification {
         this.email = email;
     }
 
+    /** @returns {Knex.QueryBuilder} */
     toQuery() {
         return db('users').select().where({email: this.email});
     }
