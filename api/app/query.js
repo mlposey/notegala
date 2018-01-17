@@ -93,9 +93,12 @@ class Query {
             }
 
             return response.rows.map(row => {
-                const note = new Note(row['id'], row['owner_id'],
-                    row['created_at'], row['last_modified'],
-                    row['is_public'], row['title'], row['body']);
+                const note = new Note(row['owner_id'], row['title'], row['body'], {
+                    id: row['id'],
+                    createdAt: row['created_at'],
+                    lastModified: row['last_modified'],
+                    isPublic: row['is_public']
+                });
                 return new Result(row['score'], note);
             });
         } catch (err) {
