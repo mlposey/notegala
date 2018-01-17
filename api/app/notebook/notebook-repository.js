@@ -25,7 +25,7 @@ module.exports = class NotebookRepository extends Repository {
     /**
      * Removes a notebook from the repository
      * @param {Notebook} notebook 
-     * @throws {NoteFoundError} If the notebook is not in the repository
+     * @throws {NotFoundError} If the notebook is not in the repository
      */
     async remove(notebook) {
         let rows = await db('notebooks')
@@ -39,7 +39,7 @@ module.exports = class NotebookRepository extends Repository {
      * Replaces the existing notebook in the repository
      * @param {Notebook} notebook An updated notebook
      *                            Note: The id must remain the same
-     * @throws {NoteFoundError} If the account is not in the repository
+     * @throws {NotFoundError} If the account is not in the repository
      */
     async replace(notebook) {
         let rows = await db('notebooks')
