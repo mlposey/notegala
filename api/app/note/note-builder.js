@@ -11,6 +11,8 @@ module.exports = class NoteBuilder {
     /** @param {Account} owner The owner of the note being created */
     constructor(owner) {
         this.owner = owner;
+        this.title = '';
+        this.body = '';
         this.tags = [];
     }
 
