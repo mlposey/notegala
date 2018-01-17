@@ -4,14 +4,32 @@ const NoteWatcher = require('./note-watcher');
 
 /** Represents the Note GraphQL type */
 module.exports = class Note {
-    constructor(id, ownerId, createdAt, lastModified, isPublic, title, body) {
-        this.id = id;
-        this.ownerId = ownerId;
-        this.createdAt = createdAt;
-        this.lastModified = lastModified;
-        this.isPublic = isPublic;
+    /**
+     * Instantiates a new Note object
+     * 
+     * The note cannot have blank fields for both title and body.
+     * @param {number} owner The id of the owner account
+     * @param {string} title The note title
+     * @param {string} body The content of the note
+     * @param {Object} options Optional data that may define:
+     *                 id           - The unique id of the notebook
+     *                 createdAt    - Timestamp indicating creation
+     *                 lastModified - Timestamp indicating creation
+     *                 isPublic     - Determines if others can view the note
+     *                                Defaults to false
+     * @throws {Error} If the title and body are empty
+     */
+    constructor(owner, title, body, options = {}) {
+        this.owner = owner;
+
+        if (!title && !body) throw new Error('note is missing content');
         this.title = title;
         this.body = body;
+
+        this.id = options.id;
+        this.createdAt = options.createdAt;
+        this.lastModified = options.lastModified;
+        this.isPublic = options.isPublic || false;
     }
 
     /**
@@ -23,7 +41,7 @@ module.exports = class Note {
      * @param {boolean} canEdit Watchers with edit privileges can modify notes
      */
     async addWatcher(userId, canEdit) {
-        if (!this.isPublic && this.ownerId != userId) return;
+        if (!this.isPublic && this.owner != userId) return;
 
         await db('note_watchers').insert({
             note_id: this.id,

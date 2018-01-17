@@ -8,7 +8,7 @@ const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
-const NoteFactory = require('../app/note/note-factory');
+const NoteBuilder = require('../app/note/note-builder');
 const Notebook = require('../app/notebook/notebook');
 const NotebookRepository = require('../app/notebook/notebook-repository');
 
@@ -33,10 +33,15 @@ const notebookRepo = new NotebookRepository();
 describe('Account', () => {
     describe('#notes(limit)', () => {
         let acct;
+        let noteBuilder;
         beforeEach(async () => {
             await clearDB();
             acct = new Account(claims.email, claims.name);
             await accountRepo.add(acct);
+            noteBuilder = new NoteBuilder(acct)
+                .setTitle(newNote.title)
+                .setBody(newNote.body)
+                .addTags(newNote.tags);
         });
 
         it('should return an empty array instead of null', async () => {
@@ -45,12 +50,12 @@ describe('Account', () => {
         });
 
         it('should return only notes that the user owns', async () => {
-            await NoteFactory.construct(acct, newNote);
+            await noteBuilder.build();
 
             const user = new Account('test' + claims.email, claims.name);
             await accountRepo.add(user);
             const body = user.email + user.name;
-            await NoteFactory.construct(user, {body: body});
+            await new NoteBuilder(user).setBody(body).build();
 
             const notes = await user.notes(null);
             notes.length.should.eql(1);
@@ -58,8 +63,8 @@ describe('Account', () => {
         });
 
         it('should respect the specified limit', async () => {
-            await NoteFactory.construct(acct, newNote);
-            await NoteFactory.construct(acct, newNote);
+            await noteBuilder.build();
+            await noteBuilder.build();
             
             const max = 1;
             const notes = await acct.notes(max);

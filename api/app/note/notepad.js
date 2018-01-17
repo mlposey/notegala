@@ -1,6 +1,7 @@
 'use strict';
 const { db } = require('../data/database');
 const Account = require('../account/account');
+const NoteRepository = require('./repo/note-repository');
 
 /** Indicates the necessary permissions are missing */
 class PermissionError extends Error {
@@ -9,12 +10,7 @@ class PermissionError extends Error {
     }
 }
 
-/**
- * Handles modification of notes
- * 
- * Notepad ensures that the local and database representations
- * remain in sync and that note permissions are respected.
- */
+/** Handles modification of notes by authorized accounts */
 class Notepad {
     /**
      * Constructs a Notepad where a note can be edited
@@ -93,16 +89,18 @@ class Notepad {
             .where({note_id: this.note.id})
             .del();
         
-        for (const tag of newList) {
-            await this.addTag(tag);
-        }
+        for (const tag of newList) await this.addTag(tag);
     }
 
     /**
      * Edits the contents of a note
      * 
-     * @param {string} title The new title or null to keep the existing one     
-     * @param {string} body The new body or null to keep the existing one
+     * @param {string} title The new title. The following values are reserved:
+     *                       null - keeps the existing title
+     *                       ' '  - clears the existing title     
+     * @param {string} body The new body. The following values are reserved:
+     *                       null - keeps the existing body
+     *                       ' '  - clears the existing body 
      * @param {Array.<string>} tags The new tags or null to keep the existing ones
      * @throws {PermissionError} If the user is not allowed to make this change
      */
@@ -110,28 +108,16 @@ class Notepad {
         const canEdit = await this.canEdit();
         if (!canEdit) throw new PermissionError();
 
-        let payload = {};
-
-        if (title) {
-            payload.title = title === ' ' ? '' : title;
-            this.note.title = payload.title;
-        }
-        if (body) {
-            payload.body = body === ' ' ? '' : body;
-            this.note.body = payload.body;
-        }
-
-        if (payload.title || payload.body) {
-            await db('notes').update(payload).where({id: this.note.id});
-        }
-
         if (tags) await this.replaceTags(tags);
+        if (title) this.note.title = (title === ' ') ? '' : title;
+        if (body)  this.note.body  = (body  === ' ') ? '' : body;
 
-        const rows = await db('notes')
-            .select('last_modified')
-            .where({id: this.note.id});
-        // Database triggers may have changed the value.
-        this.note.lastModified = rows[0].last_modified;
+        if (title || body || tags) {
+            // The repo won't actually update the tags, but it will
+            // update the lastModified timestamp for the local object.
+            const repo = new NoteRepository();
+            await repo.replace(this.note);
+        }
     }
 }
 

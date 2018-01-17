@@ -1,6 +1,8 @@
 'use strict';
 const { db } = require('../data/database');
 const Note = require('../note/note');
+const NoteRepository = require('../note/repo/note-repository');
+const NoteOwnerSpec = require('../note/repo/owner-spec');
 const Notebook = require('../notebook/notebook');
 const NotebookRepository = require('../notebook/notebook-repository');
 const NotebookOwnerSpec = require('../notebook/owner-spec');
@@ -25,8 +27,6 @@ module.exports = class Account {
         this.id = options.id;
         this.createdAt = options.createdAt;
         this.lastSeen = options.lastSeen;
-
-        this.notebookRepo = new NotebookRepository();
     }
 
     /**
@@ -37,13 +37,9 @@ module.exports = class Account {
      * @returns {Promise.<Array.<Note>>}
      */
     async notes(limit) {
-        return await db('notes')
-            .select()
-            .where({owner_id: this.id})
-            .limit(limit ? limit : Number.MAX_SAFE_INTEGER)
-            .map(row => new Note(row.id, row.owner_id, row.created_at,
-                                 row.last_modified, row.is_public,
-                                 row.title, row.body));
+        const repo = new NoteRepository();
+        return await repo
+            .find(new NoteOwnerSpec(this.id), limit);
     }
 
     /**
@@ -54,7 +50,8 @@ module.exports = class Account {
      * @returns {Promise.<Array.<Notebook>>}
      */
     async notebooks(limit) {
-        return await this.notebookRepo
+        const repo = new NotebookRepository();
+        return await repo
             .find(new NotebookOwnerSpec(this.id), limit);
     }
 

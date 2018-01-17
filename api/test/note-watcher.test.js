@@ -6,7 +6,7 @@ const should = chai.should();
 
 const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
-const NoteFactory = require('../app/note/note-factory');
+const NoteBuilder = require('../app/note/note-builder');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 const NoteWatcher = require('../app/note/note-watcher');
@@ -32,8 +32,10 @@ describe('NoteWatcher', () => {
             const userB = new Account(users[1].email, users[1].name);
             await accountRepo.add(userB);
 
-            const notepad = await NoteFactory.construct(userA, newNoteInput);
-            let note = notepad.note;
+            const note = await new NoteBuilder(userA)
+                .setTitle(newNoteInput.title)
+                .setBody(newNoteInput.body)
+                .build();
             note.isPublic = true;
             await note.addWatcher(userB.id, false);
 
@@ -59,8 +61,10 @@ describe('NoteWatcher', () => {
             const userB = new Account(users[1].email, users[1].name);
             await accountRepo.add(userB);
             
-            const notepad = await NoteFactory.construct(userA, newNoteInput);
-            const note = notepad.note;
+            const note = await new NoteBuilder(userA)
+                .setTitle(newNoteInput.title)
+                .setBody(newNoteInput.body)
+                .build();
             await note.addWatcher(userB.id, false);
 
             const earliest = await NoteWatcher

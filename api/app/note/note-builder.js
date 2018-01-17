@@ -1,7 +1,7 @@
 'use strict';
 const Account = require('../account/account');
 const Note = require('./note');
-const NoteRepository = require('./note-repository');
+const NoteRepository = require('./repo/note-repository');
 const { Notepad } = require('./notepad');
 const NotebookRepository = require('../notebook/notebook-repository');
 const NotebookIdSpec = require('../notebook/id-spec');

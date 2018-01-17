@@ -1,6 +1,6 @@
 'use strict';
-const Specification = require('../data/specification');
-const { db } = require('../data/database');
+const Specification = require('../../data/specification');
+const { db } = require('../../data/database');
 
 /** Specifies a Note by its unique id */
 module.exports = class IdSpecification extends Specification {

@@ -1,8 +1,14 @@
 'use strict';
 const { db } = require('../data/database');
 const Note = require('../note/note');
+const NoteRepository = require('../note/repo/note-repository');
+const NoteNbSpec = require('../note/repo/notebook-spec');
 
-/** Represents the Notebook GraphQL type */
+/**
+ * Models a labeled collection of related notes
+ * 
+ * This class implements the Notebook GraphQL type.
+ */
 module.exports = class Notebook {
     /**
      * Instantiates a new Notebook object
@@ -20,40 +26,11 @@ module.exports = class Notebook {
         this.createdAt = options.createdAt;
     }
 
-    /**
-     * Moves a note from one notebook to another
-     * 
-     * @param {Note} note The note to move
-     * @param {Notebook} source Optional source notebook
-     * @param {Notebook} dest Destination notebook
-     * @returns {Promise.<Notebook>} The new location of the note
-     */
-    static async moveNote(note, source, dest) {
-        if (source) {
-            if (source.id === dest.id) return source;
-            await source.removeNote(note);
-        }
-        
-        await db.raw(`
-            INSERT INTO notebook_notes (notebook_id, note_id)
-            VALUES (?, ?) ON CONFLICT DO NOTHING
-        `, [dest.id, note.id]);
-        return dest;
-    }
-
-    /**
-     * @returns {Promise.<Array.<Note>>} All notes in the notebook
-     */
+    /** @returns {Promise.<Array.<Note>>} All notes in the notebook */
     async notes() {
-        return await db('notebook_notes')
-            .join('notes', 'notebook_notes.note_id', 'notes.id')
-            .select(['notes.id', 'notes.owner_id', 'notes.created_at',
-                     'notes.last_modified', 'notes.is_public', 'notes.title',
-                     'notes.body'])
-            .where({notebook_id: this.id})
-            .map(row => new Note(row.id, row.owner_id, row.created_at,
-                                 row.last_modified, row.is_public,
-                                 row.title, row.body));
+        const repo = new NoteRepository();
+        return await repo
+            .find(new NoteNbSpec(this.id));
     }
 
     /**

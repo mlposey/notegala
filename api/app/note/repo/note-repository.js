@@ -1,7 +1,7 @@
 'use strict';
-const { db } = require('../data/database');
-const { Repository, NotFoundError } = require('../data/repository');
-const Note = require('./note');
+const { db } = require('../../data/database');
+const { Repository, NotFoundError } = require('../../data/repository');
+const Note = require('../note');
 
 /** Manages the global collection of Notes */
 module.exports = class NoteRepository extends Repository {

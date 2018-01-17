@@ -9,8 +9,8 @@ const { db } = require('../app/data/database');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 const Note = require('../app/note/note');
-const NoteRepository = require('../app/note/note-repository');
-const NoteIdSpec = require('../app/note/id-spec');
+const NoteRepository = require('../app/note/repo/note-repository');
+const NoteIdSpec = require('../app/note/repo/id-spec');
 
 // Models potential data supplied by a createNote request
 const payload = Object.freeze({

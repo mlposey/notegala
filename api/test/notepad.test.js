@@ -6,7 +6,7 @@ const should = chai.should();
 
 const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
-const NoteFactory = require('../app/note/note-factory');
+const NoteBuilder = require('../app/note/note-builder');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 const { Notepad } = require('../app/note/notepad');
@@ -26,29 +26,23 @@ const accountRepo = new AccountRepository();
 
 describe('Notepad', () => {
     let acct;
+    let notepad;            
     describe('#addTag(tag)', () => {
         beforeEach(async () => {
             await clearDB();
             acct = new Account(payload.email, payload.name);
             await accountRepo.add(acct);
-        });
 
-        it('should add link the tag and note in the database', async () => {
-            const notepad = await NoteFactory.construct(acct, {
-                body: 'test'
-            });
-
-            await notepad.addTag('test');
-
-            const rows = await db.select('id').table('note_tags');
-            rows.length.should.eql(1);
+            let note = await new NoteBuilder(acct)
+                .setTitle(payload.input.title)
+                .setBody(payload.input.body)
+                .addTags(payload.input.tags)
+                .build();
+            notepad = new Notepad(note, acct);
         });
 
         it('should ignore duplicate tags', async () => {
-            const notepad = await NoteFactory.construct(acct, payload.input);
-
             await notepad.addTag(payload.input.tags[0]);
-
             const rows = await db.select().table('note_tags');
             rows.length.should.eql(payload.input.tags.length);
         });
@@ -59,11 +53,14 @@ describe('Notepad', () => {
             await clearDB();
             acct = new Account(payload.email, payload.name);
             await accountRepo.add(acct);
+
+            let note = await new NoteBuilder(acct)
+                .setTitle(payload.input.title)
+                .build();
+            notepad = new Notepad(note, acct);
         });
 
         it('should replace this old tag list with the new one', async () => {
-            const notepad = await NoteFactory.construct(acct, payload.input);
-
             const newList = ['Brand New Tag'];
             await notepad.replaceTags(newList);
 
@@ -73,8 +70,6 @@ describe('Notepad', () => {
         });
 
         it('should clear the list if given an empty array', async () => {
-            const notepad = await NoteFactory.construct(acct, payload.input);
-            
             await notepad.replaceTags([]);
             const tags = await notepad.note.tags();
             tags.length.should.eql(0);
