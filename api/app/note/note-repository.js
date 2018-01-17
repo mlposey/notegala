@@ -58,9 +58,10 @@ module.exports = class NoteRepository extends Repository {
                 body: note.body
             })
             .where({id: note.id})
-            .returning('id');
+            .returning('last_modified');
 
         if (rows.length === 0) throw new NotFoundError();
+        note.lastModified = rows[0];
     }
 
     /**
