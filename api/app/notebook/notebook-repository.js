@@ -55,6 +55,7 @@ module.exports = class NotebookRepository extends Repository {
     /**
      * Finds all notebooks in the repository that match the specification
      * @param {Specification} spec
+     * @param {number} limit The maximum number of notebooks to retrieve
      * @return {Promise.<Array.<Notebook>>}
      */
     async find(spec, limit = this.DEFAULT_LIMIT) {
