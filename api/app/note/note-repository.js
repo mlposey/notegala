@@ -51,6 +51,8 @@ module.exports = class NoteRepository extends Repository {
      * @throws {NotFoundError} If the note is not in the repository
      */
     async replace(note) {
+        // TODO: This won't get the updated last_modified timestamp because
+        // the 'returning' invocation occurs before the database trigger.
         const rows = await db('notes')
             .update({
                 is_public: note.isPublic,
