@@ -10,7 +10,7 @@ const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 const Notebook = require('../app/notebook/notebook');
 const NotebookRepository = require('../app/notebook/notebook-repository');
-const NoteFactory = require('../app/note/note-factory');
+const NoteBuilder = require('../app/note/note-builder');
 
 // Sample data for notebook creation
 const payload = Object.freeze({
@@ -52,10 +52,8 @@ describe('Notebook', () => {
             let notes = await notebook.notes();
             notes.length.should.eql(0);
 
-            const notepad = await NoteFactory.construct(acct, {
-                title: 'Test'
-            });
-            await notebook.addNote(notepad.note);
+            const note = await new NoteBuilder(acct).setTitle('Test').build();
+            await notebook.addNote(note);
 
             notes = await notebook.notes();
             notes.length.should.eql(1);
@@ -71,13 +69,13 @@ describe('Notebook', () => {
             const notebook = new Notebook(acct.id, payload.nbName);
             await notebookRepo.add(notebook);
 
-            const notepad = await NoteFactory.construct(acct, {title: 'Test'});
-            await notebook.addNote(notepad.note);
+            const note = await new NoteBuilder(acct).setTitle('Test').build();
+            await notebook.addNote(note);
 
             let notes = await notebook.notes();
             notes.length.should.eql(1);
 
-            await notebook.removeNote(notepad.note);
+            await notebook.removeNote(note);
 
             notes = await notebook.notes();
             notes.length.should.eql(0);

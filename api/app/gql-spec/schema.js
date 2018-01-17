@@ -54,14 +54,6 @@ module.exports.schema = buildSchema(`
         # otherwise
         removeNote(id: ID!): Boolean!
 
-        # Moves the note to the notebook
-        #
-        # This action can only be completed by the owner of
-        # both the old and new notebook.
-        #
-        # Returns the new notebook where the note is located.
-        moveNote(input: MoveNoteInput!): Notebook!
-
         # Creates a new note with the specified name
         #
         # A user cannot have multiple notebooks with
@@ -137,18 +129,6 @@ module.exports.schema = buildSchema(`
         # If null, the old value is kept.
         # If empty, the old tags are removed.
         tags: [String!]
-    }
-
-    # Used to move a note to a notebook
-    input MoveNoteInput {
-        # The id of the note
-        id: ID!
-
-        # The id of the old notebook
-        source: ID
-
-        # The id of the new notebook
-        dest: ID!
     }
 
     # Details the full state of a note

@@ -6,7 +6,7 @@ const should = chai.should();
 
 const { db } = require('../app/data/database');
 const { clearDB } = require('./index');
-const NoteFactory = require('../app/note/note-factory');
+const NoteBuilder = require('../app/note/note-builder');
 const Account = require('../app/account/account');
 const AccountRepository = require('../app/account/account-repository');
 
@@ -30,13 +30,18 @@ describe('Note', () => {
         it('should add a user to the watchers list', async () => {
             const a1 = new Account(payload.email, payload.name);
             await accountRepo.add(a1);
-            const notepad = await NoteFactory.construct(a1, payload.input);
-            notepad.note.isPublic = true;
+
+            const note = await new NoteBuilder(a1)
+                .setTitle(payload.input.title)
+                .setBody(payload.input.body)
+                .addTags(payload.input.tags)
+                .build();
+            note.isPublic = true;
 
             const newUserEmail = 'test' + payload.email;
             const acct = new Account(newUserEmail, payload.name);
             await accountRepo.add(acct);
-            await notepad.note.addWatcher(acct.id, false);
+            await note.addWatcher(acct.id, false);
 
             const uids = await db('note_watchers')
                 .select('user_id')
@@ -47,23 +52,25 @@ describe('Note', () => {
 
     describe('#removeWatcher(userId)', () => {
         let acct;
+        let note;
         beforeEach(async () => {
             await clearDB();
             acct = new Account(payload.email, payload.name);
             await accountRepo.add(acct);
+            note = await new NoteBuilder(acct)
+                .setTitle(payload.input.title)
+                .setBody(payload.input.body)
+                .addTags(payload.input.tags)
+                .build();
         });
 
         it('should delete the note if their was only one watcher', async () => {
-            const notepad = await NoteFactory.construct(acct, payload.input);
-            await notepad.note.removeWatcher(acct.id);
-
+            await note.removeWatcher(acct.id);
             const rows = await db('notes').select();
             rows.length.should.eql(0);
         });
 
         it('should give ownership to earliest watcher', async () => {
-            const notepad = await NoteFactory.construct(acct, payload.input);
-            const note = notepad.note;
             note.isPublic = true;
 
             const b = new Account('a' + payload.email, 'b' + payload.name);
@@ -88,17 +95,18 @@ describe('Note', () => {
         });
 
         it('should return an empty array instead of null', async () => {
-            const notepad = await NoteFactory.construct(acct, {
-                body: 'test'
-            });
-            const tags = await notepad.note.tags();
-            console.log(typeof tags);
+            const note = await new NoteBuilder(acct).setBody('test').build();
+            const tags = await note.tags();
             tags.should.be.a('array').that.has.length(0);
         });
 
         it('should return all linked tags', async () => {
-            const notepad = await NoteFactory.construct(acct, payload.input);
-            const tags = await notepad.note.tags();
+            const note = await new NoteBuilder(acct)
+                .setTitle(payload.input.title)
+                .setBody(payload.input.body)
+                .addTags(payload.input.tags)
+                .build();
+            const tags = await note.tags();
 
             tags.should.be.a('array').that.has.length(payload.input.tags.length);
         });
@@ -110,9 +118,13 @@ describe('Note', () => {
         it('should return at least one watcher', async () => {
             const acct = new Account(payload.email, payload.name);
             await accountRepo.add(acct);
-            const notepad = await NoteFactory.construct(acct, payload.input);
-            const watchers = await notepad.note.watchers();
+            const note = await new NoteBuilder(acct)
+                .setTitle(payload.input.title)
+                .setBody(payload.input.body)
+                .addTags(payload.input.tags)
+                .build();
 
+            const watchers = await note.watchers();
             watchers.length.should.eql(1);
         });
     });
