@@ -1,5 +1,5 @@
 # NoteGala
-![Build Status](http://jenkins.marcusposey.com:8081/buildStatus/icon?job=NoteGala/notegala/master)
+![Build Status](http://jenkins.marcusposey.com:8081/buildStatus/icon?job=mlposey/notegala/master)
 
 NoteGala is an Android application that allows people to create, edit, and
 categorize notes. The client is backed by a public GraphQL API that can
