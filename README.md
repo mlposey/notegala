@@ -6,46 +6,53 @@ categorize notes. The client is backed by a public GraphQL API that can
 readily accommodate new clients or integrations.
 
 ## Demo Media
-The res/demo [readme](res/demo) contains GIFs of the latest Android build
-for those without the necessary development environment. In total, the demo
-media is roughly 25 MB.
+You can find GIFs of the app in action [here](res/demo).
 
-## Tech Stack
-The system is comprised of the following core components:  
-* CI/CD Pipeline
-* GraphQL API 
-* Android Application
-* PostgreSQL Data Store
+## Architecture
+### Front End
+The application is developed for Android using the Java programming language.
+The design is fairly simple; users authenticate with Google using OAuth 2.0 and
+their actions invoke the GraphQL API to evoke change. [apollo-android](https://github.com/apollographql/apollo-android)
+provides most of the network glue so that the code focuses mostly on application logic.
 
-### Pipeline
-Jenkins performs automated API testing on each push to any branch. Tests
-are run in an isolated Docker Compose environment made of the Node.js
-tests and an updated version of the PostgreSQL database. Unless the branch
-is master, only the test stage is run. Changes to master result in execution
-of all stages, i.e.,  
-* isolated testing
-* staging of the API on an internal network
-* replacing the latest Docker Hub images
-* deploying the API to production Google Compute Engine servers
+### Back End
+#### Disclaimer
+The back end is a bit over-engineered for the current scale. This reflects the fact that
+the project is primarily an educational pursuit.
 
-### API
-The API is a Node.js service that uses GraphQL to enable retrieval and mutation
-of the system state. It requires a Google ID token to authenticate requests.
-These tokens can be generated in the [Google OAuth 2.0 Playground](https://developers.google.com/oauthplayground/)
-if querying the API manually.
+#### Services
+There are essentially only two back-end services: PostgreSQL and the Node.js GraphQL API.
 
-TDD principles are followed somewhat religiously, which is made possible by
-the Mocha and Chai frameworks. In test and production environments, the service
-is run within a Docker container.
+Postgres may not seem the ideal candidate for the type of data stored, but its combination
+of performance and full-text search capabilities make it an ideal solution for the current
+scale. The current production version is 10.1.
 
-### Android
-Android development is performed with Java. The current feature set is simple
-enough that reactive logic can easily be coded using appropriate attention
-to design patterns, but RxJava may eventually become necessary. Network interaction with the API uses the [apollo-android](https://github.com/apollographql/apollo-android)
-client extensively.
+The rich features of postgres meant that any API would perform minimal processing and instead
+act as an authenticated message translation gateway. Further, the mobile app needed a way
+to restrict the scope of responses to save bandwidth. Node.js, in combination with GraphQL,
+provide an optimal API solution under these circumstances.
 
-### Database
-All persistent state is kept in a PostgreSQL database managed by Google Cloud
-SQL. That state includes (but is not limited to) account metadata, notes, and
-notebooks. Additionally, most note content is structured to enable full text
-search.
+#### CI/CD
+Jenkins performs integration and deployment for the API. A multibranch pipeline
+runs its tests in an isolated Docker Compose environment. If they pass, the code becomes
+eligible for a PR into master. Should that also succeed, the code is retested and then
+deployed into production. It is important that, when modifying the API, you also update
+its semantic version; failure to do so will result in no deployment.
+
+#### Container Orchestration
+[Kubernetes](https://github.com/kubernetes/kubernetes) manages the life cycle of Docker
+containers and their secrets. Any of the configuration files that can be put into Git
+will go in the [cluster directory](cluster/).
+
+#### Cloud Infrastructure
+Everything is AWS. Here's a nice list:
+- Route 53
+    - Handles the DNS configuration for the project
+- RDS
+    - Manages the PostgreSQL instance
+- EC2 / EBS
+    - Provides node/storage resources for the cluster
+- S3
+    - Stores [kops](https://github.com/kubernetes/kops) information for the cluster
+- ELB
+    - Provides classic load balancing for Kubernetes services
