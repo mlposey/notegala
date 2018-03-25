@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_USER = credentials('DOCKER_USER')        
-    }
     stages {
         stage('Test API') {
             steps {
@@ -17,24 +14,15 @@ pipeline {
                 }
             }
         }
-        stage('Build Docker Images') {
+        stage('Deploy API') {
             when { branch 'master' }
             environment {
+                DOCKER_USER = credentials('DOCKER_USER')                
                 DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
             }
             steps {
                 dir('api') {
-                    sh 'docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}'
-                    sh '''docker build -t ${DOCKER_USER}/core:$(sed -rn 's/^.*"version": "(.*)",$/\1/p' package.json) .'''
-                    sh '''docker push ${DOCKER_USER}/core:$(sed -rn 's/^.*"version": "(.*)",$/\1/p' package.json)'''
-                }
-            }
-        }
-        stage('Deploy') {
-            when { branch 'master' }
-            steps {
-                dir('api') {
-                    sh '''kubectl set image deployment/core-api core-api:${DOCKER_USER}/core:$(sed -rn 's/^.*"version": "(.*)",$/\1/p' package.json)'''
+                    sh '/bin/bash ./deploy.sh core core-api core-api'
                 }
             }
         }
