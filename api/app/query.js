@@ -36,7 +36,7 @@ class Query {
         this.contextualSearch = `
             SELECT notes.*, ts_rank_cd(title_body_tsv, phrase) as score
             FROM notebook_notes
-            CROSS JOIN to_tsquery(?) phrase
+            CROSS JOIN to_tsquery('pg_catalog.english', ?) phrase
             JOIN notes ON notebook_notes.note_id = notes.id
             JOIN notebooks ON notebook_notes.notebook_id = notebooks.id
             WHERE title_body_tsv @@ phrase
@@ -50,7 +50,7 @@ class Query {
         // Raw postgres query that searches all notebooks owned by acct.
         this.contextlessSearch = `
             SELECT notes.*, ts_rank_cd(title_body_tsv, phrase) as score
-            FROM notes, to_tsquery(?) phrase
+            FROM notes, to_tsquery('pg_catalog.english', ?) phrase
             WHERE title_body_tsv @@ phrase
               AND owner_id = ?
             ORDER BY score DESC
