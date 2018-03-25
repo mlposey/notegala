@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_USER = credentials('DOCKER_USER')        
+    }
     stages {
         stage('Test API') {
             steps {
@@ -17,7 +20,6 @@ pipeline {
         stage('Build Docker Images') {
             when { branch 'master' }
             environment {
-                DOCKER_USER = credentials('DOCKER_USER')
                 DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
             }
             steps {
