@@ -40,7 +40,7 @@ public class ApolloQueryService extends QueryService {
         NOTEBOOK_RENAME
     }
 
-    private static final String SERVER_URL = "http://api.marcusposey.com:9002/graphql";
+    private static final String SERVER_URL = "http://api.ng.marcusposey.com/graphql";
 
     private ApolloClient mApolloClient;
 
