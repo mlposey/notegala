@@ -1,11 +1,7 @@
 pipeline {
     agent any
-    environment {
-        CLIENT_ID = credentials('CLIENT_ID')
-        DOCKER_USER = credentials('DOCKER_USER')
-    }
     stages {
-        stage('Test') {
+        stage('Test API') {
             steps {
                 dir('api') {
                     sh '''
@@ -18,55 +14,25 @@ pipeline {
                 }
             }
         }
-        stage('Build Deployment Images') {
+        stage('Build Docker Images') {
             when { branch 'master' }
             environment {
+                DOCKER_USER = credentials('DOCKER_USER')
                 DOCKER_PASSWORD = credentials('DOCKER_PASSWORD')
             }
             steps {
                 dir('api') {
                     sh 'docker login -u ${DOCKER_USER} -p ${DOCKER_PASSWORD}'
-                    sh 'docker build -t ${DOCKER_USER}/core .'
-                    sh 'docker push ${DOCKER_USER}/core'
-                }
-            }
-        }
-        stage('Stage') {
-            when { branch 'master' }
-            environment {
-                SQL_HOST = credentials('STAGE_SQL_HOST')
-                SQL_DATABASE = credentials('STAGE_SQL_DATABASE')
-                SQL_USER = credentials('STAGE_SQL_USER')
-                SQL_PASSWORD = credentials('STAGE_SQL_PASSWORD')                
-            }
-            steps {
-                dir('api') {
-                    sh 'docker rm -f ng_core_stage || true'
-                    sh '''
-                        docker run \
-                            --rm -d \
-                            --name ng_core_stage \
-                            --net="host" \
-                            -e NODE_ENV=test \
-                            -e SQL_HOST \
-                            -e SQL_DATABASE \
-                            -e SQL_USER \
-                            -e SQL_PASSWORD \
-                            -e CLIENT_ID \
-                            ${DOCKER_USER}/core
-                    '''
+                    sh '''docker build -t ${DOCKER_USER}/core:$(sed -rn 's/^.*"version": "(.*)",$/\1/p' package.json) .'''
+                    sh '''docker push ${DOCKER_USER}/core:$(sed -rn 's/^.*"version": "(.*)",$/\1/p' package.json)'''
                 }
             }
         }
         stage('Deploy') {
             when { branch 'master' }
-            environment {
-                DEPLOY_USER = credentials('DEPLOY_USER')
-                DEPLOY_SRV = credentials('DEPLOY_SRV')
-            }
             steps {
                 dir('api') {
-                    sh '/bin/bash ./deploy.sh'
+                    sh '''kubectl set image deployment/core-api core-api:${DOCKER_USER}/core:$(sed -rn 's/^.*"version": "(.*)",$/\1/p' package.json)'''
                 }
             }
         }
