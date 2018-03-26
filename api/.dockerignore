@@ -1,0 +1,7 @@
+deploy.sh
+test
+docker-compose.test.yaml
+Dockerfile
+Dockerfile.test
+.gitignore
+.dockerignore

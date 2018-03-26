@@ -9,12 +9,12 @@ COPY package*.json ./
 
 RUN npm install
 
-COPY . .
-
+VOLUME /usr/src/app/app
+VOLUME /usr/src/app/test
 EXPOSE 8080
 ENV NODE_ENV test
 
 RUN git clone https://github.com/vishnubob/wait-for-it.git \
- && mv wait-for-it/wait-for-it.sh .
+ && mv wait-for-it/wait-for-it.sh /usr/local/bin/
 
-ENTRYPOINT /bin/bash wait-for-it.sh $SQL_HOST:5432 -t 0 -- npm test
+ENTRYPOINT wait-for-it.sh $SQL_HOST:5432 -t 0 -- npm test
