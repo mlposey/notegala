@@ -18,3 +18,6 @@ services:
       SQL_DATABASE: test
       SQL_USER: test
       SQL_PASSWORD: test
+    volumes:
+      - ./app:/usr/src/app/app
+      - ./test:/usr/src/app/test
