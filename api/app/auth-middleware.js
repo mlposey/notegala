@@ -5,6 +5,7 @@ const Account = require('./account/account');
 const AccountRepository = require('./account/account-repository');
 const EmailSpecification = require('./account/email-spec');
 const { db } = require('./data/database');
+const logger = require('./logging/logger');
 
 module.exports = class AuthMiddleware {
     /**
@@ -13,7 +14,7 @@ module.exports = class AuthMiddleware {
      */
     constructor(clientId) {
         this.clientId = clientId;
-        console.log('client id: ' + clientId);
+        logger.info('client id: ' + clientId);
 
         let auth = new GoogleAuth();
         this.client = new auth.OAuth2(clientId, '', '');
