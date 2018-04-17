@@ -2,6 +2,7 @@
 const express = require('express');
 const graphql = require('express-graphql');
 const AuthMiddleware = require('./auth-middleware');
+const logger = require('./logging/logger');
 // Perform initial connection health check.
 require('./data/database');
 
@@ -32,4 +33,4 @@ app.use('/graphql', graphql({
 }));
 
 app.listen(8080);
-console.log('server started');
+logger.info('server started');
