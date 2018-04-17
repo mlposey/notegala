@@ -1,5 +1,6 @@
 'use strict';
 const Knex = require('knex');
+const logger = require('../logging/logger');
 
 // The application database connection
 var db = Knex({
@@ -15,10 +16,10 @@ var db = Knex({
 // Test the connection.
 db.raw('select 1 + 1 as res')
     .then(() => {
-        console.log('connected to database');
+        logger.info('connected to database');
     })
     .catch(e => {
-        console.error('could not connect to database');
+        logger.error('could not connect to database');
         process.exit(1);
     });
 
