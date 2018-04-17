@@ -2,6 +2,7 @@
 const { db } = require('./data/database');
 const Note = require('./note/note');
 const Account = require('./account/account');
+const logger = require('./logging/logger');
 
 /** Models a ranked result from a Query */
 class Result {
@@ -82,28 +83,62 @@ class Query {
         first = first ? first : Number.MAX_SAFE_INTEGER;
         
         try {
-            let response;
-            if (this.notebookId) {
-                response = await db.raw(this.contextualSearch,
-                    [this.query, this.acct.id, this.acct.id, this.notebookId,
-                    first]);
-            } else {
-                response = await db.raw(this.contextlessSearch,
-                    [this.query, this.acct.id, first]);
-            }
-
+            let response = await this._submitQuery(first, this.notebookId);
             return response.rows.map(row => {
-                const note = new Note(row['owner_id'], row['title'], row['body'], {
-                    id: row['id'],
-                    createdAt: row['created_at'],
-                    lastModified: row['last_modified'],
-                    isPublic: row['is_public']
-                });
+                const note = this._createNoteFromDbRow(row);
                 return new Result(row['score'], note);
             });
         } catch (err) {
-            console.log(err.message);
+            logger.error(err.message, this._createErrorContext());
             return [];
+        }
+    }
+
+    /**
+     * Submits the query to the search engine using the appropriate context
+     * @param {number} first Optionally limits the result set to this many items
+     * @param {number} notebookId An optional parameter indicating the context where the
+     *                            query is run
+     * @returns {Object} A Knex database response
+     */
+    async _submitQuery(first, notebookId) {
+        if (notebookId) {
+            return await db.raw(
+                this.contextualSearch,
+                [this.query, this.acct.id, this.acct.id, notebookId, first]
+            );
+        } else {
+            return await db.raw(
+                this.contextlessSearch,
+                [this.query, this.acct.id, first]
+            );
+        }
+    }
+
+    /**
+     * Creates a note using information from a database row
+     * @param {Object} row A row from a Knex query result
+     * @returns {Note}
+     */
+    _createNoteFromDbRow(row) {
+        return new Note(row['owner_id'], row['title'], row['body'], {
+            id: row['id'],
+            createdAt: row['created_at'],
+            lastModified: row['last_modified'],
+            isPublic: row['is_public']
+        });
+    }
+
+    /**
+     * Creates a payload containing diagnostic information about the query
+     * @returns {Object}
+     */
+    _createErrorContext() {
+        return {
+            accountId: this.acct.id,
+            query: this.query,
+            notebookSpecified: this.notebookId !== undefined,
+            notebookId: this.notebookId
         }
     }
 }
