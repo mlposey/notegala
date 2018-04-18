@@ -21,6 +21,8 @@ spec:
           envFrom:
             - secretRef:
                 name: database-secret
+            - secretRef:
+                name: redis-secret
           env:
             - name: CLIENT_ID
               valueFrom:
