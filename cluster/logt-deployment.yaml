@@ -1,0 +1,25 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: logt
+spec:
+  selector:
+    matchLabels:
+      app: logt
+  template:
+    metadata:
+      labels:
+        app: logt
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: logt
+          image: mlposey/logt:0.1.0
+          envFrom:
+            - configMapRef:
+                name: logt-config
+            - secretRef:
+                name: redis-secret
+            - secretRef:
+                name: elastic-secret
