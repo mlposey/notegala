@@ -1,6 +1,7 @@
 'use strict';
 process.env.NODE_ENV = 'test';
 const { db } = require('../app/data/database');
+const redis = require('../app/data/redis');
 
 /** Removes all rows from each table in the database */
 module.exports.clearDB = async () => {
@@ -14,4 +15,5 @@ module.exports.clearDB = async () => {
 // The test process will hang if the database connection is not closed.
 after(() => {
     db.destroy();
+    redis.quit();
 });
