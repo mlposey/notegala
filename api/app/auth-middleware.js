@@ -24,13 +24,62 @@ module.exports = class AuthMiddleware {
     /**
      * Writes an error message to res
      * @param {Object} res The HTTP response
-     * @param {number} code The HTTP status code
+     * @param {Object} req The HTTP request that triggered he error
+     * @param {number} code The HTTP status code to respond with
      * @param {string} msg The error description
      */
-    sendError(res, code, msg) {
+    sendError(res, req, code, msg) {
+        logger.warn('failed authentication attempt', {
+            cause: msg,
+            request: JSON.stringify({
+                ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+                path: req.path,
+                method: req.method,               
+                headers: req.headers
+            })
+        });
+
         return res.status(code)
             .set('Content-Type', 'application/json')
             .send(formatError(new GraphQLError(msg)));
+    }
+
+    /**
+     * Verifies a Google ID token, calling next if successful
+     * @param {Object} req The HTTP request
+     * @param {Object} res The HTTP response. This is sent with an appropriate
+     *                     error if verification fails.
+     * @param {Function} next A function that calls the next middleware handler
+     *                        or the GraphQL resolver.
+     */
+    verifyGId(req, res, next) {
+        let idToken;
+        try {
+            idToken = this.extractToken(req);
+        } catch (err) {
+            return this.sendError(res, req, 401, 'missing Bearer token');
+        }
+
+        this.client.verifyIdToken(
+            idToken,
+            this.clientId,
+            async (e, login) => {
+                if (e) {
+                    return this.sendError(res, req, 401, 'invalid token');
+                }
+
+                let missingClaims = this.storeClaims(req, login.getPayload());
+                if (missingClaims.length != 0) {
+                    return this.sendError(res, req, 400,
+                        'missing claims: ' + missingClaims.join(','));
+                }
+
+                try { await this.storeAccount(req, req.email, req.name); }
+                catch (err) { return this.sendError(res, req, 400, err.message); }
+                
+                next();
+            }
+        );     
     }
 
     /**
@@ -51,44 +100,6 @@ module.exports = class AuthMiddleware {
         }
 
         return parts[1];
-    }
-
-    /**
-     * Verifies a Google ID token, calling next if successful
-     * @param {Object} req The HTTP request
-     * @param {Object} res The HTTP response. This is sent with an appropriate
-     *                     error if verification fails.
-     * @param {Function} next A function that calls the next middleware handler
-     *                        or the GraphQL resolver.
-     */
-    verifyGId(req, res, next) {
-        let idToken;
-        try {
-            idToken = this.extractToken(req);
-        } catch (err) {
-            return this.sendError(res, 401, 'missing Bearer token');
-        }
-
-        this.client.verifyIdToken(
-            idToken,
-            this.clientId,
-            async (e, login) => {
-                if (e) {
-                    return this.sendError(res, 401, 'invalid token');
-                }
-
-                let missingClaims = this.storeClaims(req, login.getPayload());
-                if (missingClaims.length != 0) {
-                    return this.sendError(res, 400,
-                        'missing claims: ' + missingClaims.join(','));
-                }
-
-                try { await this.storeAccount(req, req.email, req.name); }
-                catch (err) { return this.sendError(res, 400, err.message); }
-                
-                next();
-            }
-        );     
     }
 
     /**
