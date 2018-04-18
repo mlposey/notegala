@@ -10,18 +10,12 @@ You can find GIFs of the app in action [here](res/demo).
 
 ## Architecture
 ![System Overview](res/system.png)
-### Front End
-The application is developed for Android using the Java programming language.
-The design is fairly simple; users authenticate with Google using OAuth 2.0 and
-their actions invoke the GraphQL API to evoke change. [apollo-android](https://github.com/apollographql/apollo-android)
-provides most of the network glue so that the code focuses mostly on application logic.
 
-### Back End
-#### Disclaimer
+### Disclaimer
 The back end is a bit over-engineered for the current scale. This reflects the fact that
 the project is primarily an educational pursuit.
 
-#### Service Flow
+#### System Flow
 User devices submit requests alongside Google credentials to a load-balanced API. These CRUD
 requests are satisfied by a backing PostgreSQL instance, which stores the majority of
 the system data. In addition to typical SQL queries, postgres also handles full-text search
@@ -29,7 +23,7 @@ for notes.
 
 While handling a request, the API will generate logs with standard severity levels. These
 logs are published to Redis channels and then picked up by logT. The log service currently
-forwards all data to an Elasticsearch instance, but the plan is to addtionally send critical
+forwards all data to an Elasticsearch instance, but the plan is to additionally send critical
 logs by email or SMS to an operator.
 
 #### CI/CD
