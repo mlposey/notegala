@@ -3,12 +3,9 @@ const logger = require('../logging/logger');
 const redis = require('redis');
 const redisAddr = process.env.REDIS_ADDR;
 
-const client = redis.createClient({address: redisAddr});
+const client = redis.createClient('redis://' + redisAddr);
 client.on('error', (err) => {
-    logger.error('redis error', {
-        details: err,
-        redisAddr: redisAddr
-    });
+    console.log(err);
 });
 
 module.exports = client;
