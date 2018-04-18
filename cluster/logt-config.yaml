@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logt-config
+data:
+  ELASTIC_INDEX: logs
+  ELASTIC_TYPE: log
