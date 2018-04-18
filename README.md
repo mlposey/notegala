@@ -22,9 +22,12 @@ the system data. In addition to typical SQL queries, postgres also handles full-
 for notes.
 
 While handling a request, the API will generate logs with standard severity levels. These
-logs are published to Redis channels and then picked up by logT. The log service currently
-forwards all data to an Elasticsearch instance, but the plan is to additionally send critical
-logs by email or SMS to an operator.
+logs are published to Redis channels and then picked up by logT. At that point, logs can
+go to two places:
+- Elasticsearch
+    - All logs will end up here.
+- The email inbox of a developer
+    - All (but hopefully zero) error logs end up here.
 
 ### CI/CD
 Jenkins performs integration and deployment for the API. A multibranch pipeline
@@ -54,3 +57,5 @@ Everything is AWS. Here's a nice list:
     - Houses Elasticsearch but also a pretty sweet Kibana instance
 - ElastiCache
     - Vehemently guards Redis
+- SNS
+    - Sends email alerts containing log data
