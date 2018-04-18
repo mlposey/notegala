@@ -9,6 +9,7 @@ readily accommodate new clients or integrations.
 You can find GIFs of the app in action [here](res/demo).
 
 ## Architecture
+![System Overview](res/system.png)
 ### Front End
 The application is developed for Android using the Java programming language.
 The design is fairly simple; users authenticate with Google using OAuth 2.0 and
@@ -20,17 +21,16 @@ provides most of the network glue so that the code focuses mostly on application
 The back end is a bit over-engineered for the current scale. This reflects the fact that
 the project is primarily an educational pursuit.
 
-#### Services
-There are essentially only two back-end services: PostgreSQL and the Node.js GraphQL API.
+#### Service Flow
+User devices submit requests alongside Google credentials to a load-balanced API. These CRUD
+requests are satisfied by a backing PostgreSQL instance, which stores the majority of
+the system data. In addition to typical SQL queries, postgres also handles full-text search
+for notes.
 
-Postgres may not seem the ideal candidate for the type of data stored, but its combination
-of performance and full-text search capabilities make it an ideal solution for the current
-scale. The current production version is 10.1.
-
-The rich features of postgres meant that any API would perform minimal processing and instead
-act as an authenticated message translation gateway. Further, the mobile app needed a way
-to restrict the scope of responses to save bandwidth. Node.js, in combination with GraphQL,
-provide an optimal API solution under these circumstances.
+While handling a request, the API will generate logs with standard severity levels. These
+logs are published to Redis channels and then picked up by logT. The log service currently
+forwards all data to an Elasticsearch instance, but the plan is to addtionally send critical
+logs by email or SMS to an operator.
 
 #### CI/CD
 Jenkins performs integration and deployment for the API. A multibranch pipeline
@@ -56,3 +56,7 @@ Everything is AWS. Here's a nice list:
     - Stores [kops](https://github.com/kubernetes/kops) information for the cluster
 - ELB
     - Provides classic load balancing for Kubernetes services
+- Elasticsearch
+    - Houses Elasticsearch but also a pretty sweet Kibana instance
+- ElastiCache
+    - Vehemently guards Redis
