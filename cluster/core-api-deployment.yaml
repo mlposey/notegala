@@ -18,27 +18,10 @@ spec:
           image: mlposey/core
           ports:
             - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: database-secret
           env:
-            - name: SQL_HOST
-              valueFrom:
-                secretKeyRef:
-                  name: database-secret
-                  key: host
-            - name: SQL_USER
-              valueFrom:
-                secretKeyRef:
-                  name: database-secret
-                  key: user
-            - name: SQL_DATABASE
-              valueFrom:
-                secretKeyRef:
-                  name: database-secret
-                  key: database
-            - name: SQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: database-secret
-                  key: password
             - name: CLIENT_ID
               valueFrom:
                 secretKeyRef:
