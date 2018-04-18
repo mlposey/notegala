@@ -11,11 +11,18 @@ spec:
       labels:
         app: logt
     spec:
+      volumes:
+        - name: aws-credstore
+          secret:
+            secretName: sns-creds
       imagePullSecrets:
         - name: regcred
       containers:
         - name: logt
-          image: mlposey/logt:0.1.0
+          image: mlposey/logt:0.2.1
+          volumeMounts:
+            - name: aws-credstore
+              mountPath: /root/.aws
           envFrom:
             - configMapRef:
                 name: logt-config
@@ -23,3 +30,5 @@ spec:
                 name: redis-secret
             - secretRef:
                 name: elastic-secret
+            - secretRef:
+                name: sns-secret
