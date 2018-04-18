@@ -7,17 +7,22 @@ services:
       POSTGRES_DB: test
       POSTGRES_PASSWORD: test
 
+  redis:
+    image: redis:4
+
   api:
     build:
       context: .
       dockerfile: Dockerfile.test
     depends_on:
       - database
+      - redis
     environment:
       SQL_HOST: database
       SQL_DATABASE: test
       SQL_USER: test
       SQL_PASSWORD: test
+      REDIS_ADDR: redis:6379
     volumes:
       - ./app:/usr/src/app/app
       - ./test:/usr/src/app/test
