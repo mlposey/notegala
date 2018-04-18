@@ -7,7 +7,7 @@ const logger = require('./logging/logger');
 require('./data/database');
 
 /** Encapsulates the service's HTTP server */
-class Server {
+module.exports = class Server {
     /** Constructs a Server that will listen at the given port */
     constructor(port) {
         this._port = port;
@@ -59,7 +59,3 @@ class Server {
         }));
     }
 }
-
-module.exports = {
-    Server: Server
-};
