@@ -22,7 +22,7 @@ module.exports = class Server {
     /** Opens the server up to connections */
     listen() {
         this._app.listen(this._port);
-        logger.info('server started');        
+        logger.info('listening on port ' + this._port);        
     }
 
     /** Configures an HTTP endpoint where clients can evaluate the service health */
